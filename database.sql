@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE createAllTables
 AS
 
+-- USERS
 CREATE TABLE systemUser (
 	username VARCHAR(20),
 	password VARCHAR(20),
@@ -53,6 +54,63 @@ CREATE TABLE systemAdmin (
 	username VARCHAR(20),
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser
+)
+
+-- OTHER ENTITIES
+CREATE TABLE stadium (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	location VARCHAR(20),
+	capacity INT,
+	status BIT,
+	PRIMARY KEY (id)
+)
+
+CREATE TABLE club (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	location VARCHAR(20),
+	PRIMARY KEY (id)
+)
+
+CREATE TABLE ticket (
+	id INT IDENTITY,
+	status BIT,
+	match_id INT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (match_id) REFERENCES match
+)
+
+CREATE TABLE match (
+	id INT IDENTITY,
+	startTime DATETIME,
+	endtime DATETIME,
+	hostClub_id INT,
+	guestClub_id INT,
+	stadium_id INT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (hostClub_id) REFERENCES club,
+	FOREIGN KEY (guestClub_id) REFERENCES club,
+	FOREIGN KEY (stadium_id) REFERENCES stadium 
+)
+
+-- RELATIONS
+CREATE TABLE ticketBuyingTransaction (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	location VARCHAR(20),
+	capacity INT,
+	status BIT,
+	PRIMARY KEY (id)
+)
+
+CREATE TABLE hostRequest (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	location VARCHAR(20),
+	capacity INT,
+	status BIT,
+	PRIMARY KEY (id)
 )
 GO;
 
