@@ -114,5 +114,20 @@ CREATE TABLE hostRequest (
 )
 GO;
 
+CREATE PROCEDURE dropAllTables
+AS
+DROP TABLE systemUser;
+DROP TABLE fan;
+DROP TABLE stadiumManager;
+DROP TABLE clubRepresentative;
+DROP TABLE sportsAssociationManager;
+DROP TABLE systemAdmin;
+DROP TABLE stadium;
+DROP TABLE club;
+DROP TABLE ticket;
+DROP TABLE match;
+DROP TABLE ticketBuyingTransaction;
+DROP TABLE hostRequest;
+GO;
 
 EXEC createAllTables;
