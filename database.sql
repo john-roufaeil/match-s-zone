@@ -1,13 +1,13 @@
-﻿													--| Guide |--
+﻿															--| Guide |--
 
 -- "-->" point from the milestone description
 -- "--| |--" section
 
-										--| Basic Structure of the Database |--
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+												--| 2.1 Basic Structure of the Database |--
 
 --> 2.1a createAllTables
-CREATE PROCEDURE createAllTables
-AS
+CREATE PROCEDURE createAllTables AS
 -- USERS
 CREATE TABLE systemUser (
 	username VARCHAR(20),
@@ -57,7 +57,6 @@ CREATE TABLE systemAdmin (
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser
 );
-
 -- OTHER ENTITIES
 CREATE TABLE stadium (
 	id INT IDENTITY,
@@ -92,7 +91,6 @@ CREATE TABLE match (
 	FOREIGN KEY (guestClub_id) REFERENCES club,
 	FOREIGN KEY (stadium_id) REFERENCES stadium 
 );
-
 -- RELATIONS
 CREATE TABLE ticketBuyingTransaction (
 	fanNational_id INT, 
@@ -114,8 +112,7 @@ CREATE TABLE hostRequest (
 GO;
 
 --> 2.1b dropAllTables
-CREATE PROCEDURE dropAllTables
-AS
+CREATE PROCEDURE dropAllTables AS
 DROP TABLE systemUser;
 DROP TABLE fan;
 DROP TABLE stadiumManager;
@@ -131,14 +128,12 @@ DROP TABLE hostRequest;
 GO;
 
 --> 2.1c dropAllProceduresFunctionsViews
-CREATE PROCEDURE dropAllProceduresFunctionsViews
-AS
+CREATE PROCEDURE dropAllProceduresFunctionsViews AS
 -- TODO
 GO;
 
 --> 2.1d clearAllTables
-CREATE PROCEDURE clearAllTables
-AS
+CREATE PROCEDURE clearAllTables AS
 TRUNCATE TABLE systemUser;
 TRUNCATE TABLE fan;
 TRUNCATE TABLE stadiumManager;
@@ -158,8 +153,8 @@ EXEC dropAllTables;
 EXEC dropAllProcedureFunctionsViews;
 EXEC clearAllTables;
 GO;
-
-												--|Basic Data Retrieval|--
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+													--|2.2 Basic Data Retrieval|--
 
 --> 2.2a allAssocManagers
 CREATE VIEW allAssocManagers AS
@@ -227,9 +222,16 @@ INNER JOIN clubRepresentative CR ON HR.representative_id = CR.id
 INNER JOIN stadiumManager SM ON HR.manager_id = SM.id;
 GO;
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+													--|2.3 All Other Requirements|--
+
+--> 2.3i addAssociationManager
+CREATE PROCEDURE addAssociationManager AS
 
 
-														--|REFERENCE|--
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+															--|REFERENCE|--
 
 -- TABLES:	systemUser				(*username, password)
 --			fan						(*national_id, name, birthDate, address, phoneNumber, status, .username)
@@ -243,3 +245,4 @@ GO;
 --			match					(*id, startTime, endTime, .hostClub_id, .guestClub_id, .stadium_id)
 --			ticketBuyingTransaction	(.fanNational_id, .ticket_id)
 --			hostRequest				(*id, .representative_id, .manager_id, .match_id, status)
+-----------------------------------------------------------------------------------------------------------------------------------------------------
