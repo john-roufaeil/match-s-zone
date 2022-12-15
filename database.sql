@@ -1,4 +1,10 @@
-﻿--> Guide to quick searching through the project: search for "--> point number in the milestone description"
+﻿													--| Guide |--
+
+-- "-->" point from the milestone description
+-- "--| |--" section
+
+										--| Basic Structure of the Database |--
+
 --> 2.1a createAllTables
 CREATE PROCEDURE createAllTables
 AS
@@ -89,12 +95,10 @@ CREATE TABLE match (
 
 -- RELATIONS
 CREATE TABLE ticketBuyingTransaction (
-	id INT IDENTITY,
-	name VARCHAR(20),
-	location VARCHAR(20),
-	capacity INT,
-	status BIT,
-	PRIMARY KEY (id)
+	fanNational_id INT, 
+	ticket_id INT,
+	FOREIGN KEY (fanNational_id) REFERENCES fan,
+	FOREIGN KEY (ticket_id) REFERENCES ticket
 );
 CREATE TABLE hostRequest (
 	id INT IDENTITY,
@@ -146,8 +150,36 @@ TRUNCATE TABLE ticketBuyingTransaction;
 TRUNCATE TABLE hostRequest;
 GO;
 
-
 EXEC createAllTables;
 EXEC dropAllTables;
 EXEC dropAllProcedureFunctionsViews;
 EXEC clearAllTables;
+GO;
+
+												--|Basic Data Retrieval|--
+
+--> 2.2a allAssocManagers
+CREATE VIEW allAssocManagers AS
+SELECT username, password, name
+FROM sportsAssociationManager;
+GO;
+--> 2.2b allClubRepresentatives
+CREATE VIEW allClubRepresentatives AS
+SELECT username,password, name, 
+
+
+
+														--|REFERENCE|--
+
+-- TABLES:	systemUser				(*username, password)
+--			fan						(*nationa_id, name, birthDate, address, phoneNumber, status, .username)
+--			stadiumManager			(*id, name, .stadium_id, .username)
+--			clubRepresentative		(*id, name, .club_id, .username) 
+--			sportsAssociationManager(*id, name, .username)
+--			systemAdmin				(*id, name, .username)
+--			stadium					(*id, name, location, capacity, status)
+--			club					(*id, name, location)
+--			ticket					(*id, status, .match_id)
+--			match					(*id, startTime, endTime, .hostClub_id, .guestClub_id, .stadium_id)
+--			ticketBuyingTransaction	(.fanNational_id, .ticket_id)
+--			hostRequest				(*id, name, location, capacity, status)
