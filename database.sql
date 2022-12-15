@@ -29,6 +29,31 @@ CREATE TABLE stadiumManager (
 	FOREIGN KEY (stadium_id) REFERENCES stadium
 )
 
+CREATE TABLE clubRepresentative (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	club_id INT,
+	username VARCHAR(20),
+	PRIMARY KEY (id),
+	FOREIGN KEY	(username) REFERENCES systemUser,
+	FOREIGN KEY	(club_id) REFERENCES club
+)
+
+CREATE TABLE sportsAssociationManager (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	username VARCHAR(20),
+	PRIMARY KEY (id),
+	FOREIGN KEY (username) REFERENCES systemUser
+)
+
+CREATE TABLE systemAdmin (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	username VARCHAR(20),
+	PRIMARY KEY (id),
+	FOREIGN KEY (username) REFERENCES systemUser
+)
 GO;
 
 
