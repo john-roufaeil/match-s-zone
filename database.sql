@@ -168,21 +168,27 @@ GO;
 
 --> 2.2b allClubRepresentatives
 CREATE VIEW allClubRepresentatives AS
-SELECT DISTINCT CR.username, SU.password, CR.name, CR.club_id
+SELECT DISTINCT CR.username, SU.password, CR.name, C.name clubName
 FROM clubRepresentative CR
-INNER JOIN systemUser SU ON CR.username = SU.username;
+INNER JOIN systemUser SU ON CR.username = SU.username
+INNER JOIN club C ON CR.club_id = C.id;
 GO;
 
 --> 2.2c allStadiumManagers
 CREATE VIEW allStadiumManagers AS
-SELECT DISTINCT SM.username, SU.password, SM.name, SM.stadium_id
+SELECT DISTINCT SM.username, SU.password, SM.name, S.name stadiumName
 FROM stadiumManager SM
-INNER JOIN systemUser SU ON SM.username = SU.username;
+INNER JOIN systemUser SU ON SM.username = SU.username
+INNER JOIN stadium S ON stadiumManager.stadium_id = S.id;
 GO;
 
 --> 2.2d allFans
 CREATE VIEW allFans AS
-SELECT DISTINCT F.username, SU.password, F.name, F.national_id, F.birthDate, F.status
+SELECT DISTINCT F.username, SU.password, F.name, F.national_id, F.birthDate, 
+CASE 
+	WHEN F.status=0 THEN 'blocked' 
+	ELSE 'unblocked' 
+END AS status
 FROM fan F
 INNER JOIN systemUser SU ON F.username = SU.username;
 GO;
@@ -213,7 +219,11 @@ GO;
 
 --> 2.2h allStadiums Fetches the name ,location, capacity and status (available or unavailable) for all stadiums.
 CREATE VIEW allStadiums AS
-SELECT DISTINCT S.name, S.location, S.capacity, S.status
+SELECT DISTINCT S.name, S.location, S.capacity, 
+CASE 
+	WHEN S.status=0 THEN 'unavailable' 
+	ELSE 'available' 
+END AS status
 FROM stadium S;
 GO;
 
