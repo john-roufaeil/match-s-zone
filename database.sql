@@ -243,8 +243,13 @@ GO;
 --> TESTME 2.3i addAssociationManager
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
 -- TODO CREATE USER "@username" WITH PASSWORD = '@password';
+IF NOT EXISTS (SELECT username FROM systemUser WHERE @user = systemUser.username)
 INSERT INTO systemUser VALUES (@user, @pw);
 INSERT INTO sportsAssociationManager VALUES (@name, @user);
+GO;
+DROP PROCEDURE addAssociationManager;
+GO;
+-- EXEC addAssociationManager 'john', 'jj', '123'
 GO;
 
 --> TESTME 2.3ii addNewMatch 
@@ -255,12 +260,20 @@ SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
 SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL);
 GO;
+DROP PROCEDURE addNewMatch;
+GO;
+--
+GO;
  
 --> TESTME 2.3iii clubsWithNoMatches
 CREATE VIEW clubsWithNoMatches AS
 SELECT DISTINCT C.name
 FROM club C
 WHERE NOT EXISTS (SELECT * FROM match M WHERE M.hostClub_id = C.id OR M.guestClub_id = C.id);
+GO;
+DROP VIEW clubsWithNoMatches;
+GO;
+--
 GO;
 
 --> TESTME 2.3iv deleteMatch 
@@ -300,7 +313,9 @@ GO;
 --> TESTME 2.3viii deleteClub 
 CREATE PROCEDURE deleteClub @name VARCHAR(20) AS
 DECLARE @club_id INT;
+DECLARE @user VARCHAR(20);
 SELECT @club_id=C.id FROM club C WHERE C.name = @name;
+SELECT @user= 
 DELETE FROM club 
 WHERE club.name = @name;
 DELETE FROM clubRepresentative
@@ -362,21 +377,58 @@ GO;
 
 
 
---| REFERENCE |------------------------------------------------------------------------------------
+--| SCHEMA |---------------------------------------------------------------------------------------
 
--- TABLES:	systemUser				(*username, password)
---			fan						(*national_id, name, birthDate, address, phoneNumber, status, .username)
---			stadiumManager			(*id, name, .stadium_id, .username)
---			clubRepresentative		(*id, name, .club_id, .username) 
---			sportsAssociationManager(*id, name, .username)
---			systemAdmin				(*id, name, .username)
---			stadium					(*id, name, location, capacity, status)
---			club					(*id, name, location)
---			ticket					(*id, status, .match_id)
---			match					(*id, startTime, endTime, .hostClub_id, .guestClub_id, .stadium_id)
---			ticketBuyingTransaction	(.fanNational_id, .ticket_id)
---			hostRequest				(*id, .representative_id, .manager_id, .match_id, status)
+-- TABLES:		systemUser				(*username, password)
+--				fan						(*national_id, name, birthDate, address, phoneNumber, status, .username)
+--				stadiumManager			(*id, name, .stadium_id, .username)
+--				clubRepresentative		(*id, name, .club_id, .username) 
+--				sportsAssociationManager(*id, name, .username)
+--				systemAdmin				(*id, name, .username)
+--				stadium					(*id, name, location, capacity, status)
+--				club					(*id, name, location)
+--				ticket					(*id, status, .match_id)
+--				match					(*id, startTime, endTime, .hostClub_id, .guestClub_id, .stadium_id)
+--				ticketBuyingTransaction	(.fanNational_id, .ticket_id)
+--				hostRequest				(*id, .representative_id, .manager_id, .match_id, status)
+
+-- REFERENCES:	fan.username						REFERENCES			systemUser.username			OK
+--				stadiumManager.username				REFERENCES			systemUser.username			OK
+--				stadiumManager.stadium_id			REFERENCES			stadium.id					OK
+--				clubRepresentative.username			REFERENCES			systemUser.username			OK
+--				clubRepresentative.club_id			REFERENCES			club.id						OK	
+--				sportsAssociationManager.username	REFERENCES			systemUser.username			OK
+-- 				systemAdmin.username				REFERENCES			systemUser.username			OK
+--				match.hostClub_id					REFERENCES			club.id						OK
+--				match.guestClub_id					REFERENCES			club.id						OK
+--				match.stadium_id					REFERENCES			stadium.id					OK
+--				ticket.match_id						REFERENCES			match.id					OK	
+--				ticketBuyTransaction.fanNational_id REFERENCES			fan.national_id				OK
+--				ticketBuyTransaction.ticket_id		REFERENCES			ticket.id					OK
+--				hostRequest.representative_id		REFERENCES			clubRepresentative.id,		OK
+--				hostRequest.manager_id				REFERENCES			stadiumManager.id			OK
+--				hostRequest.match_id				REFERENCES			match.id					OK
+
+-- SUPER:		systemUser.username					NECESSARY FOR		fan, stadiumManager, clubRepresentative, sportsAssociationManager,systemAdmin
+--				stadium.id							NECESSARY FOR		stadiumManager, match
+--				club.id								NECESSARY FOR		clubRepresentative, match
+--				match.id							NECESSARY FOR		ticket, hostRequest
+--				fan.national_id						NECESSARY FOR		ticketBuyTransaction
+--				ticket.id							NECESSARY FOR		ticketBuyTransaction
+--				clubRepresentative.id				NECESSARY FOR		hostRequest				
+--				stadiumManager.id					NECESSARY FOR		hostRequest
+
+
 
 
 
 --| TESTING |--------------------------------------------------------------------------------------
+
+
+
+
+
+--| TODO |-----------------------------------------------------------------------------------------
+
+-- make sure delete[x] deletes what is based on x
+-- make sure y exists when add[x] if x depends on y
