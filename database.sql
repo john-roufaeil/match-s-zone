@@ -1,8 +1,10 @@
-﻿CREATE DATABASE testing;
+﻿CREATE DATABASE testing1;
 GO;
 --| Guide |----------------------------------------------------------------------------------------
 -- "-->" point from the milestone description
 -- "--| |--" section
+
+
 
 
 
@@ -74,7 +76,7 @@ CREATE TABLE systemAdmin (
 CREATE TABLE match (
 	id INT IDENTITY,
 	startTime DATETIME,
-	endtime DATETIME,
+	endTime DATETIME,
 	hostClub_id INT,
 	guestClub_id INT,
 	stadium_id INT,
@@ -132,18 +134,18 @@ GO;
 
 --> 2.1d clearAllTables
 CREATE PROCEDURE clearAllTables AS
-TRUNCATE TABLE systemUser;
-TRUNCATE TABLE fan;
-TRUNCATE TABLE stadiumManager;
-TRUNCATE TABLE clubRepresentative;
-TRUNCATE TABLE sportsAssociationManager;
-TRUNCATE TABLE systemAdmin;
-TRUNCATE TABLE stadium;
-TRUNCATE TABLE club;
-TRUNCATE TABLE ticket;
-TRUNCATE TABLE match;
-TRUNCATE TABLE ticketBuyingTransaction;
-TRUNCATE TABLE hostRequest;
+DELETE hostRequest;
+DELETE ticketBuyingTransaction;
+DELETE ticket;
+DELETE match;
+DELETE systemAdmin;
+DELETE sportsAssociationManager;
+DELETE clubRepresentative;
+DELETE stadiumManager;
+DELETE fan;
+DELETE stadium;
+DELETE club;
+DELETE systemUser;
 GO;
 
 EXEC createAllTables;
@@ -152,12 +154,16 @@ EXEC dropAllProcedureFunctionsViews;
 EXEC clearAllTables;
 GO;
 
+
+
+
+
 --| 2.2 Basic Data Retrieval |---------------------------------------------------------------------
 --> 2.2a allAssocManagers
 CREATE VIEW allAssocManagers AS
 SELECT DISTINCT SPA.username, SU.password, SPA.name
 FROM sportsAssociationManager SPA 
-INNER JOIN systemUser SU ON R.username = SPA.username;
+INNER JOIN systemUser SU ON SPA.username = SU.username;
 GO;
 
 --> 2.2b allClubRepresentatives
@@ -213,7 +219,7 @@ GO;
 
 --> 2.2i allRequests Fetches the username of the club representative sending the request, username of the stadium manager receiving the request and the status of the request for all requests.
 CREATE VIEW allRequests AS
-SELECT DISTINCT CR.username, SM.username, HR.status
+SELECT DISTINCT CR.usernamee clubRepresentative, SM.username stadiumManager, HR.status
 FROM hostRequest HR
 INNER JOIN clubRepresentative CR ON HR.representative_id = CR.id
 INNER JOIN stadiumManager SM ON HR.manager_id = SM.id;
