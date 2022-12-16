@@ -219,7 +219,7 @@ GO;
 
 --> 2.2i allRequests Fetches the username of the club representative sending the request, username of the stadium manager receiving the request and the status of the request for all requests.
 CREATE VIEW allRequests AS
-SELECT DISTINCT CR.usernamee clubRepresentative, SM.username stadiumManager, HR.status
+SELECT DISTINCT CR.username clubRepresentative, SM.username stadiumManager, HR.status
 FROM hostRequest HR
 INNER JOIN clubRepresentative CR ON HR.representative_id = CR.id
 INNER JOIN stadiumManager SM ON HR.manager_id = SM.id;
@@ -227,20 +227,54 @@ GO;
 
 
 
+
+
 --| 2.3 All Other Requirements |-------------------------------------------------------------------
 --> 2.3i addAssociationManager
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @username VARCHAR(20), @password VARCHAR(20) AS
---TODO CREATE USER @username WITH PASSWORD = @password;
+--CREATE USER "@username" WITH PASSWORD = '@password';
 INSERT INTO systemUser VALUES (@username, @password);
 INSERT INTO sportsAssociationManager VALUES (@name, @username);
 GO;
 
 --> 2.3ii addNewMatch
 CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
---INSERT INTO match (startTime, endTime, hostClub_id) VALUES (@startTime, @endTime, SELECT C.name FROM club C WHERE C.name = @hostClubName);
---GO;
+DECLARE @host_id INT;
+DECLARE @guest_id INT;
+SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
+SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
+INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL);
+GO;
 
-EXEC addAssociationManager @name="John", @password="123";
+--> 2.3iii clubsWithNoMatches
+CREATE VIEW clubsWithNoMatches AS
+SELECT DISTINCT C.name
+FROM club C
+WHERE NOT EXISTS (SELECT * FROM match M WHERE M.hostClub_id = C.id OR M.guestClub_id = C.id);
+GO;
+
+--> 2.3iv deleteMatch
+CREATE PROCEDURE deleteMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20) AS
+DECLARE @host_id INT;
+DECLARE @guest_id INT;
+SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
+SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
+DELETE FROM match
+WHERE match.hostClub_id = @host_id AND match.guestClub_id = @guest_id;
+GO;
+
+--> 2.3v deleteMatchesOnStadium
+CREATE PROCEDURE deleteMatchesOnStadium @stadium VARCHAR(20) AS
+DECLARE @s_id INT;
+SELECT @s_id=S.id FROM stadium S WHERE S.name = @stadium;
+DELETE FROM match
+WHERE match.stadium_id = @s_id AND CURRENT_TIMESTAMP < match.startTime;
+GO;
+
+
+
+
+
 
 --| REFERENCE |------------------------------------------------------------------------------------
 
