@@ -230,14 +230,14 @@ GO;
 
 
 --| 2.3 All Other Requirements |-------------------------------------------------------------------
---> 2.3i addAssociationManager
+--> 2.3i addAssociationManager TESTME
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @username VARCHAR(20), @password VARCHAR(20) AS
 --CREATE USER "@username" WITH PASSWORD = '@password';
 INSERT INTO systemUser VALUES (@username, @password);
 INSERT INTO sportsAssociationManager VALUES (@name, @username);
 GO;
 
---> 2.3ii addNewMatch
+--> 2.3ii addNewMatch TESTME
 CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
 DECLARE @host_id INT;
 DECLARE @guest_id INT;
@@ -245,15 +245,15 @@ SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
 SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL);
 GO;
-
---> 2.3iii clubsWithNoMatches
+ 
+--> 2.3iii clubsWithNoMatches TESTME
 CREATE VIEW clubsWithNoMatches AS
 SELECT DISTINCT C.name
 FROM club C
 WHERE NOT EXISTS (SELECT * FROM match M WHERE M.hostClub_id = C.id OR M.guestClub_id = C.id);
 GO;
 
---> 2.3iv deleteMatch
+--> 2.3iv deleteMatch TESTME
 CREATE PROCEDURE deleteMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20) AS
 DECLARE @host_id INT;
 DECLARE @guest_id INT;
@@ -263,12 +263,45 @@ DELETE FROM match
 WHERE match.hostClub_id = @host_id AND match.guestClub_id = @guest_id;
 GO;
 
---> 2.3v deleteMatchesOnStadium
+--> 2.3v deleteMatchesOnStadium TESTME
 CREATE PROCEDURE deleteMatchesOnStadium @stadium VARCHAR(20) AS
 DECLARE @s_id INT;
 SELECT @s_id=S.id FROM stadium S WHERE S.name = @stadium;
 DELETE FROM match
 WHERE match.stadium_id = @s_id AND CURRENT_TIMESTAMP < match.startTime;
+GO;
+
+--> 2.3vi addClub TESTME
+CREATE PROCEDURE addClub @name VARCHAR(20), @location VARCHAR(20) AS
+INSERT INTO club VALUES (@name, @location);
+GO;
+
+--> 2.3vii addTicket TESTME
+CREATE PROCEDURE addTicket @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME AS
+DECLARE @match_id INT;
+DECLARE @host_id INT;
+DECLARE @guest_id INT;
+SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
+SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
+SELECT @match_id=M.id FROM match M WHERE M.startTime = @startTime AND M.hostClub_id = @host_id AND M.guestClub_id = @guest_id;
+INSERT INTO ticket VALUES (1, @match_id);
+GO;
+
+--> 2.3viii deleteClub TESTME
+CREATE PROCEDURE deleteClub @name VARCHAR(20) AS
+DELETE FROM club 
+WHERE club.name = @name;
+GO;
+
+--> 2.3ix addStadium TESTME
+CREATE PROCEDURE addStadium @name VARCHAR(20), @loc VARCHAR(20), @cap INT AS
+INSERT INTO stadium VALUES (@name, @loc, @cap, 1);
+GO;
+
+--> 2.3x deleteStadium TESTME
+CREATE PROCEDURE deleteStadium @name VARCHAR(20) AS
+DELETE FROM stadium
+WHERE stadium.name = @name;
 GO;
 
 
