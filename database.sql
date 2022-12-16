@@ -13,11 +13,11 @@ GO;
 CREATE PROCEDURE createAllTables AS
 CREATE TABLE systemUser (
 	username VARCHAR(20),
-	password VARCHAR(20),
+	password VARCHAR(20) NOT NULL,
 	PRIMARY KEY(username)
 );
 CREATE TABLE fan (
-	national_id INT,
+	national_id VARCHAR(20),
 	name VARCHAR(20),
 	birthDate DATE,
 	address VARCHAR(20),
@@ -103,7 +103,7 @@ CREATE TABLE hostRequest (
 	representative_id INT,
 	manager_id INT,
 	match_id INT,
-	status BIT,
+	status VARCHAR(20) DEFAULT 'unhandled',
 	PRIMARY KEY (id),
 	FOREIGN KEY (representative_id) REFERENCES clubRepresentative,
 	FOREIGN KEY (manager_id) REFERENCES stadiumManager,
@@ -230,14 +230,14 @@ GO;
 
 
 --| 2.3 All Other Requirements |-------------------------------------------------------------------
---> 2.3i addAssociationManager TESTME
-CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @username VARCHAR(20), @password VARCHAR(20) AS
---CREATE USER "@username" WITH PASSWORD = '@password';
-INSERT INTO systemUser VALUES (@username, @password);
-INSERT INTO sportsAssociationManager VALUES (@name, @username);
+--> TESTME 2.3i addAssociationManager
+CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
+-- TODO CREATE USER "@username" WITH PASSWORD = '@password';
+INSERT INTO systemUser VALUES (@user, @pw);
+INSERT INTO sportsAssociationManager VALUES (@name, @user);
 GO;
 
---> 2.3ii addNewMatch TESTME
+--> TESTME 2.3ii addNewMatch 
 CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
 DECLARE @host_id INT;
 DECLARE @guest_id INT;
@@ -246,14 +246,14 @@ SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL);
 GO;
  
---> 2.3iii clubsWithNoMatches TESTME
+--> TESTME 2.3iii clubsWithNoMatches
 CREATE VIEW clubsWithNoMatches AS
 SELECT DISTINCT C.name
 FROM club C
 WHERE NOT EXISTS (SELECT * FROM match M WHERE M.hostClub_id = C.id OR M.guestClub_id = C.id);
 GO;
 
---> 2.3iv deleteMatch TESTME
+--> TESTME 2.3iv deleteMatch 
 CREATE PROCEDURE deleteMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20) AS
 DECLARE @host_id INT;
 DECLARE @guest_id INT;
@@ -263,7 +263,7 @@ DELETE FROM match
 WHERE match.hostClub_id = @host_id AND match.guestClub_id = @guest_id;
 GO;
 
---> 2.3v deleteMatchesOnStadium TESTME
+--> TESTME 2.3v deleteMatchesOnStadium 
 CREATE PROCEDURE deleteMatchesOnStadium @stadium VARCHAR(20) AS
 DECLARE @s_id INT;
 SELECT @s_id=S.id FROM stadium S WHERE S.name = @stadium;
@@ -271,12 +271,12 @@ DELETE FROM match
 WHERE match.stadium_id = @s_id AND CURRENT_TIMESTAMP < match.startTime;
 GO;
 
---> 2.3vi addClub TESTME
+--> TESTME 2.3vi addClub 
 CREATE PROCEDURE addClub @name VARCHAR(20), @location VARCHAR(20) AS
 INSERT INTO club VALUES (@name, @location);
 GO;
 
---> 2.3vii addTicket TESTME
+--> TESTME 2.3vii addTicket 
 CREATE PROCEDURE addTicket @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME AS
 DECLARE @match_id INT;
 DECLARE @host_id INT;
@@ -287,22 +287,65 @@ SELECT @match_id=M.id FROM match M WHERE M.startTime = @startTime AND M.hostClub
 INSERT INTO ticket VALUES (1, @match_id);
 GO;
 
---> 2.3viii deleteClub TESTME
+--> TESTME 2.3viii deleteClub 
 CREATE PROCEDURE deleteClub @name VARCHAR(20) AS
+DECLARE @club_id INT;
+SELECT @club_id=C.id FROM club C WHERE C.name = @name;
 DELETE FROM club 
 WHERE club.name = @name;
+DELETE FROM clubRepresentative
+WHERE clubRepresentative.club_id = @club_id;
 GO;
 
---> 2.3ix addStadium TESTME
+--> TESTME 2.3ix addStadium 
 CREATE PROCEDURE addStadium @name VARCHAR(20), @loc VARCHAR(20), @cap INT AS
 INSERT INTO stadium VALUES (@name, @loc, @cap, 1);
 GO;
 
---> 2.3x deleteStadium TESTME
+--> TESTME 2.3x deleteStadium 
 CREATE PROCEDURE deleteStadium @name VARCHAR(20) AS
 DELETE FROM stadium
 WHERE stadium.name = @name;
 GO;
+
+--> TESTME 2.3xi blockFan
+CREATE PROCEDURE blockFan @n_id VARCHAR(20) AS
+UPDATE fan
+SET fan.status = 0
+WHERE fan.national_id = @n_id;
+GO;
+
+--> TESTME 2.3xii unblockFan
+CREATE PROCEDURE unblockFan @n_id VARCHAR(20) AS
+UPDATE fan
+SET fan.status = 1
+WHERE fan.national_id = @n_id;
+GO;
+
+--> TESTME 2.3xiii addRepresentative 
+CREATE PROCEDURE addRepresentative @name VARCHAR(20), @c_name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
+DECLARE @club_id INT;
+SELECT @club_id=C.id FROM club C WHERE C.name = @c_name;
+-- TODO CREATE USER
+INSERT INTO systemUser VALUES (@user, @pw);
+INSERT INTO clubRepresentative VALUES (@name, @club_id, @user);
+GO;
+
+--> TESTME 2.3xiv viewAvailableStadiumsOn 
+CREATE FUNCTION viewAvailableStadiumsOn(@date DATETIME)
+RETURNS TABLE AS
+RETURN
+	SELECT DISTINCT SA.name, SA.location, SA.capacity
+	FROM Stadium SA
+	EXCEPT 
+	(SELECT DISTINCT S.name, S.location, S.capacity
+	FROM stadium S
+	INNER JOIN match M ON S.id = M.stadium_id
+	WHERE M.startTime = @date);
+GO;
+
+
+
 
 
 
