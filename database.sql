@@ -1,4 +1,6 @@
-﻿--| Guide |----------------------------------------------------------------------------------------
+﻿CREATE DATABASE testing;
+GO;
+--| Guide |----------------------------------------------------------------------------------------
 -- "-->" point from the milestone description
 -- "--| |--" section
 
@@ -7,7 +9,6 @@
 --| 2.1 Basic Structure of the Database |----------------------------------------------------------
 --> 2.1a createAllTables
 CREATE PROCEDURE createAllTables AS
--- USERS
 CREATE TABLE systemUser (
 	username VARCHAR(20),
 	password VARCHAR(20),
@@ -21,8 +22,16 @@ CREATE TABLE fan (
 	phoneNumber INT,
 	status BIT,
 	username VARCHAR(20),
-	PRIMARY KEY (nationalId),
+	PRIMARY KEY (national_id),
 	FOREIGN KEY (username) REFERENCES systemUser
+);
+CREATE TABLE stadium (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	location VARCHAR(20),
+	capacity INT,
+	status BIT,
+	PRIMARY KEY (id)
 );
 CREATE TABLE stadiumManager (
 	id INT IDENTITY,
@@ -32,6 +41,12 @@ CREATE TABLE stadiumManager (
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser,
 	FOREIGN KEY (stadium_id) REFERENCES stadium
+);
+CREATE TABLE club (
+	id INT IDENTITY,
+	name VARCHAR(20),
+	location VARCHAR(20),
+	PRIMARY KEY (id)
 );
 CREATE TABLE clubRepresentative (
 	id INT IDENTITY,
@@ -56,28 +71,6 @@ CREATE TABLE systemAdmin (
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser
 );
--- OTHER ENTITIES
-CREATE TABLE stadium (
-	id INT IDENTITY,
-	name VARCHAR(20),
-	location VARCHAR(20),
-	capacity INT,
-	status BIT,
-	PRIMARY KEY (id)
-);
-CREATE TABLE club (
-	id INT IDENTITY,
-	name VARCHAR(20),
-	location VARCHAR(20),
-	PRIMARY KEY (id)
-);
-CREATE TABLE ticket (
-	id INT IDENTITY,
-	status BIT,
-	match_id INT,
-	PRIMARY KEY (id),
-	FOREIGN KEY (match_id) REFERENCES match
-);
 CREATE TABLE match (
 	id INT IDENTITY,
 	startTime DATETIME,
@@ -90,7 +83,13 @@ CREATE TABLE match (
 	FOREIGN KEY (guestClub_id) REFERENCES club,
 	FOREIGN KEY (stadium_id) REFERENCES stadium 
 );
--- RELATIONS
+CREATE TABLE ticket (
+	id INT IDENTITY,
+	status BIT,
+	match_id INT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (match_id) REFERENCES match
+);
 CREATE TABLE ticketBuyingTransaction (
 	fanNational_id INT, 
 	ticket_id INT,
@@ -152,8 +151,6 @@ EXEC dropAllTables;
 EXEC dropAllProcedureFunctionsViews;
 EXEC clearAllTables;
 GO;
-
-
 
 --| 2.2 Basic Data Retrieval |---------------------------------------------------------------------
 --> 2.2a allAssocManagers
@@ -227,17 +224,17 @@ GO;
 --| 2.3 All Other Requirements |-------------------------------------------------------------------
 --> 2.3i addAssociationManager
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @username VARCHAR(20), @password VARCHAR(20) AS
-INSERT INTO systemUser VALUES (@username, @password)
-INSERT INTO sportsAssociationManager VALUES (@name, @username)
+--TODO CREATE USER @username WITH PASSWORD = @password;
+INSERT INTO systemUser VALUES (@username, @password);
+INSERT INTO sportsAssociationManager VALUES (@name, @username);
 GO;
 
 --> 2.3ii addNewMatch
---CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME
---INSERT INTO match VALUES (@startTime, @endTime, 
---TODO
+CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
+--INSERT INTO match (startTime, endTime, hostClub_id) VALUES (@startTime, @endTime, SELECT C.name FROM club C WHERE C.name = @hostClubName);
 --GO;
 
-
+EXEC addAssociationManager @name="John", @password="123";
 
 --| REFERENCE |------------------------------------------------------------------------------------
 
@@ -253,4 +250,7 @@ GO;
 --			match					(*id, startTime, endTime, .hostClub_id, .guestClub_id, .stadium_id)
 --			ticketBuyingTransaction	(.fanNational_id, .ticket_id)
 --			hostRequest				(*id, .representative_id, .manager_id, .match_id, status)
----------------------------------------------------------------------------------------------------
+
+
+
+--| TESTING |--------------------------------------------------------------------------------------
