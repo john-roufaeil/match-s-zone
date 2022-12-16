@@ -1,10 +1,10 @@
-﻿															--| Guide |--
+﻿											--| Guide
 
 -- "-->" point from the milestone description
 -- "--| |--" section
 
------------------------------------------------------------------------------------------------------------------------------------------------------
-												--| 2.1 Basic Structure of the Database |--
+---------------------------------------------------------------------------------------------------
+											--| 2.1 Basic Structure of the Database
 
 --> 2.1a createAllTables
 CREATE PROCEDURE createAllTables AS
@@ -153,8 +153,8 @@ EXEC dropAllTables;
 EXEC dropAllProcedureFunctionsViews;
 EXEC clearAllTables;
 GO;
------------------------------------------------------------------------------------------------------------------------------------------------------
-													--|2.2 Basic Data Retrieval|--
+---------------------------------------------------------------------------------------------------
+											--|2.2 Basic Data Retrieval
 
 --> 2.2a allAssocManagers
 CREATE VIEW allAssocManagers AS
@@ -222,16 +222,24 @@ INNER JOIN clubRepresentative CR ON HR.representative_id = CR.id
 INNER JOIN stadiumManager SM ON HR.manager_id = SM.id;
 GO;
 
------------------------------------------------------------------------------------------------------------------------------------------------------
-													--|2.3 All Other Requirements|--
+---------------------------------------------------------------------------------------------------
+											--|2.3 All Other Requirements
 
 --> 2.3i addAssociationManager
-CREATE PROCEDURE addAssociationManager AS
+CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @username VARCHAR(20), @password VARCHAR(20) AS
+INSERT INTO systemUser VALUES (@username, @password)
+INSERT INTO sportsAssociationManager VALUES (@name, @username)
+GO;
+
+--> 2.3ii addNewMatch
+--CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME
+--INSERT INTO match VALUES (@startTime, @endTime, 
+--TODO
+--GO;
 
 
-
------------------------------------------------------------------------------------------------------------------------------------------------------
-															--|REFERENCE|--
+---------------------------------------------------------------------------------------------------
+											--|REFERENCE
 
 -- TABLES:	systemUser				(*username, password)
 --			fan						(*national_id, name, birthDate, address, phoneNumber, status, .username)
@@ -245,4 +253,4 @@ CREATE PROCEDURE addAssociationManager AS
 --			match					(*id, startTime, endTime, .hostClub_id, .guestClub_id, .stadium_id)
 --			ticketBuyingTransaction	(.fanNational_id, .ticket_id)
 --			hostRequest				(*id, .representative_id, .manager_id, .match_id, status)
------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
