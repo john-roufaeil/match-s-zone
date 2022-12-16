@@ -1,10 +1,11 @@
-﻿											--| Guide
+﻿--| Guide |----------------------------------------------------------------------------------------
 
 -- "-->" point from the milestone description
 -- "--| |--" section
 
----------------------------------------------------------------------------------------------------
-											--| 2.1 Basic Structure of the Database
+
+
+--| 2.1 Basic Structure of the Database |----------------------------------------------------------
 
 --> 2.1a createAllTables
 CREATE PROCEDURE createAllTables AS
@@ -153,8 +154,10 @@ EXEC dropAllTables;
 EXEC dropAllProcedureFunctionsViews;
 EXEC clearAllTables;
 GO;
----------------------------------------------------------------------------------------------------
-											--|2.2 Basic Data Retrieval
+
+
+
+--| 2.2 Basic Data Retrieval |---------------------------------------------------------------------
 
 --> 2.2a allAssocManagers
 CREATE VIEW allAssocManagers AS
@@ -222,8 +225,9 @@ INNER JOIN clubRepresentative CR ON HR.representative_id = CR.id
 INNER JOIN stadiumManager SM ON HR.manager_id = SM.id;
 GO;
 
----------------------------------------------------------------------------------------------------
-											--|2.3 All Other Requirements
+
+
+--| 2.3 All Other Requirements |-------------------------------------------------------------------
 
 --> 2.3i addAssociationManager
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @username VARCHAR(20), @password VARCHAR(20) AS
@@ -238,8 +242,8 @@ GO;
 --GO;
 
 
----------------------------------------------------------------------------------------------------
-											--|REFERENCE
+
+--| REFERENCE |------------------------------------------------------------------------------------
 
 -- TABLES:	systemUser				(*username, password)
 --			fan						(*national_id, name, birthDate, address, phoneNumber, status, .username)
