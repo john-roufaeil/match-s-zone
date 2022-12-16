@@ -90,7 +90,7 @@ CREATE TABLE ticket (
 	status BIT,
 	match_id INT,
 	PRIMARY KEY (id),
-	FOREIGN KEY (match_id) REFERENCES match  ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE ticketBuyingTransaction (
 	fanNational_id INT, 
@@ -301,7 +301,6 @@ EXEC addRepresentative 'metwally', 'fari2gamed', 'mm', '123';
 GO;
 
 
-
 --\ DELETIONS \--
 --> TESTME 2.3iv deleteMatch 
 CREATE PROCEDURE deleteMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20) AS
@@ -328,9 +327,7 @@ GO;
 --> TESTME 2.3viii deleteClub 
 CREATE PROCEDURE deleteClub @name VARCHAR(20) AS
 DECLARE @club_id INT;
-DECLARE @user VARCHAR(20);
 SELECT @club_id=C.id FROM club C WHERE C.name = @name;
---SELECT @user= 
 DELETE FROM club 
 WHERE club.name = @name;
 DELETE FROM clubRepresentative
@@ -390,16 +387,22 @@ GO;
 
 
 
-
-
-
-
-
-
-
-
-
-
+--> TESTME 2.3xv addHostRequest
+CREATE PROCEDURE addHostRequest @clubName VARCHAR(20), @stadiumName VARCHAR(20), @startTime DATETIME AS
+DECLARE @rep_id INT;
+DECLARE @mgr_id INT;
+DECLARE @m_id INT;
+DECLARE @c_id INT;
+DECLARE @s_id INT;
+SELECT @c_id=C.id FROM club C WHERE C.name = @clubName;
+SELECT @rep_id=CR.id FROM clubRepresentative CR WHERE CR.club_id = @c_id;
+SELECT @s_id=S.id FROM stadium S WHERE S.name = @stadiumName;
+SELECT @mgr_id=SM.id FROM stadiumManager SM WHERE SM.stadium_id = @s_id;
+SELECT @m_id=M.id FROM match M WHERE @c_id=M.hostClub_id AND @startTime=M.startTime AND @s_id=M.stadium_id;
+INSERT INTO hostRequest (representative_id, manager_id, match_id) VALUES (@rep_id, @mgr_id, m_id);
+DROP PROCEDURE addHostRequest;
+EXEC addHostRequest 'arsenal', 'kahera', '1-1-2022';
+GO;
 
 --| SCHEMA |---------------------------------------------------------------------------------------
 
@@ -447,7 +450,10 @@ GO;
 
 
 --| TESTING |--------------------------------------------------------------------------------------
-
+EXEC createAllTables;
+EXEC dropAllTables;
+EXEC dropAllProcedureFunctionsViews;
+EXEC clearAllTables;
 
 
 
@@ -456,3 +462,4 @@ GO;
 
 -- make sure delete[x] deletes what is based on x
 -- make sure y exists when add[x] if x depends on y
+-- make sure of restrictions on tables
