@@ -537,16 +537,24 @@ RETURN
 	INNER JOIN club C2 ON M.hostClub_id  = C2.id
 	INNER JOIN stadium S ON S.id = M.stadium_id
 	WHERE M.startTime > CURRENT_TIMESTAMP AND C1.name = @clubName)
-	
-
---	SELECT C1.name club, C2.name competent, M.startTime, S.name
---	FROM club C1, club C2
---	INNER JOIN match M ON M.hostClub_id = C1.id;
---	INNER JOIN stadium S ON M.stadium_id = S.id
---	WHERE M.startTime > CURRENT_TIMESTAMP AND C1.name = @clubName 
---	AND ((C1.id = M.hostClub_id AND C2.id = M.guestClub_id) OR (C2.id = M.hostClub_id AND C1.id = M.guestClub_id));
 GO;
 DROP FUNCTION upcomingMatchesOfClub;
+GO;
+
+--> TESTME 2.3xxiii
+CREATE FUNCTION availableMatchesToAttend (@DT DATETIME)
+RETURNS TABLE AS
+RETURN	
+	SELECT HC.name hostClubName, GC.name guestClubName, M.startTime, S.name
+	FROM match M
+	INNER JOIN club HC ON M.hostClub_id  = HC.id
+	INNER JOIN club GC ON M.guestClub_id = GC.id
+	INNER JOIN stadium S ON M.stadium_id = S.id
+	INNER JOIN ticket T ON M.id = T.match_id
+	WHERE M.startTime >= @DT and T.status=1;
+GO;
+DROP FUNCTION availableMatchesToAttend;
+GO;
 
 
 --| SCHEMA |---------------------------------------------------------------------------------------
