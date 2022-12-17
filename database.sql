@@ -573,7 +573,7 @@ EXEC purchaseTicket '123', 'a', 'b', '20000707 01:01:01 PM';
 DROP PROCEDURE purchaseTicket;
 GO;
 
---> 2.3xxv
+--> TESTME 2.3xxv
 CREATE PROCEDURE updateMatchTiming (@HCN VARCHAR(20), @GCN VARCHAR(20), @current_ST DATETIME, @new_ST DATETIME, @new_ET DATETIME) AS
 DECLARE @HC_ID INT, @GC_ID INT;
 SELECT @HC_ID=HC.id FROM club HC WHERE HC.name = @HCN;
@@ -584,8 +584,18 @@ WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.gue
 UPDATE match 
 SET match.endTime = @new_ET
 WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
+EXEC updateMatchTiming 'a', 'b', '20000707 01:01:01 PM', '20000707 01:02:01 PM', '20000707 01:03:01 PM';
+DROP PROCEDURE updateMatchTiming;
+GO;
 
-
+--> TESTME 2.3xxvi
+CREATE VIEW matchesPerTeam AS
+SELECT DISTINCT C.name, COUNT(*) matchCount
+FROM club C
+LEFT JOIN match M ON C.id = M.guestClub_id OR C.id = M.hostClub_id
+WHERE M.endTime < CURRENT_TIMESTAMP
+GROUP BY C.name;
+GO;
 
 --| SCHEMA |---------------------------------------------------------------------------------------
 
