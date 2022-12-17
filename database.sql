@@ -357,6 +357,18 @@ EXEC addStadiumManager 'slim', 'kahera', 'balabizo', 'balabizoawi';
 DROP PROCEDURE addStadiumManager;
 GO;
 
+--> TESTME 2.3xxi
+CREATE PROCEDURE addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATETIME, @address VARCHAR(20), @phone INT) AS
+IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+BEGIN 
+INSERT INTO systemUser VALUES (@user, @pw);
+END
+INSERT INTO fan VALUES (@nat_id, @name, @bdate, @address, @phone, 1, @user);
+DROP PROCEDURE addFan;
+EXEC addFan 'janjoon', 'j123', 'j123', '123457', '20000101 12:12:12 AM', 'share3', 012;
+GO;
+
+
 --| 2.3 All Other Requirements |----------------------------------------------------\ DELETIONS \--
 
 --> TESTME 2.3iv  
@@ -507,6 +519,34 @@ WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostR
 DROP PROCEDURE rejectRequest;
 EXEC acceptRequest 'jjjj', 'barcelona', 'arsenal', '2-2-2021';
 GO;
+
+--> TESTME 2.3xxii
+CREATE FUNCTION upcomingMatchesOfClub (@clubName VARCHAR(20))
+RETURNS TABLE AS
+RETURN
+	(SELECT C1.name club, C2.name competent, M.startTime, S.name
+	FROM match M
+	INNER JOIN club C1 ON M.hostClub_id	 = C1.id
+	INNER JOIN club C2 ON M.guestClub_id = C2.id
+	INNER JOIN stadium S ON S.id = M.stadium_id
+	WHERE M.startTime > CURRENT_TIMESTAMP AND C1.name = @clubName)
+	UNION
+	(SELECT C1.name club, C2.name competent, M.startTime, S.name
+	FROM match M
+	INNER JOIN club C1 ON M.guestClub_id = C1.id
+	INNER JOIN club C2 ON M.hostClub_id  = C2.id
+	INNER JOIN stadium S ON S.id = M.stadium_id
+	WHERE M.startTime > CURRENT_TIMESTAMP AND C1.name = @clubName)
+	
+
+--	SELECT C1.name club, C2.name competent, M.startTime, S.name
+--	FROM club C1, club C2
+--	INNER JOIN match M ON M.hostClub_id = C1.id;
+--	INNER JOIN stadium S ON M.stadium_id = S.id
+--	WHERE M.startTime > CURRENT_TIMESTAMP AND C1.name = @clubName 
+--	AND ((C1.id = M.hostClub_id AND C2.id = M.guestClub_id) OR (C2.id = M.hostClub_id AND C1.id = M.guestClub_id));
+GO;
+DROP FUNCTION upcomingMatchesOfClub;
 
 
 --| SCHEMA |---------------------------------------------------------------------------------------
