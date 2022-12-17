@@ -246,33 +246,47 @@ GO;
 --> TESTME 2.3i 
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
 -- TODO CREATE USER "@username" WITH PASSWORD = '@password';
-IF NOT EXISTS (SELECT username FROM systemUser WHERE @user = systemUser.username)
-INSERT INTO systemUser VALUES (@user, @pw);
+IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+BEGIN 
+INSERT INTO systemUser VALUES (@user, @pw); 
+END
 INSERT INTO sportsAssociationManager VALUES (@name, @user);
-DROP PROCEDURE addAssociationManager;
 EXEC addAssociationManager 'john', 'jj', '123';
+DROP PROCEDURE addAssociationManager;
 GO;
 
 --> TESTME 2.3ii  
 CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
+IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@hostClubName)
+BEGIN 
+INSERT INTO club VALUES (@hostClubName, NULL); 
+END
+IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@guestClubName)
+BEGIN 
+INSERT INTO club VALUES (@guestClubName, NULL); 
+END
 DECLARE @host_id INT;
 DECLARE @guest_id INT;
 SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
 SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL);
-DROP PROCEDURE addNewMatch;
 EXEC addNewMatch 'arsenal', 'barcelona', '1-1-2022', '1-1-2022';
+DROP PROCEDURE addNewMatch;
 GO;
 
 --> TESTME 2.3vi  
 CREATE PROCEDURE addClub @name VARCHAR(20), @location VARCHAR(20) AS
 INSERT INTO club VALUES (@name, @location);
-DROP PROCEDURE addClub;
 EXEC addClub 'barcelona', 'BRC';
+DROP PROCEDURE addClub;
 GO;
 
 --> TESTME 2.3vii  
 CREATE PROCEDURE addTicket @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME AS
+IF NOT EXISTS (SELECT 1 FROM match M WHERE M.id=@match_id)
+BEGIN 
+INSERT INTO match VALUES (@startTime, NULL, @host_id, @guest_id, NULL); 
+END
 DECLARE @match_id INT;
 DECLARE @host_id INT;
 DECLARE @guest_id INT;
@@ -280,23 +294,29 @@ SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
 SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 SELECT @match_id=M.id FROM match M WHERE M.startTime = @startTime AND M.hostClub_id = @host_id AND M.guestClub_id = @guest_id;
 INSERT INTO ticket VALUES (1, @match_id);
-DROP PROCEDURE addTicket;
 EXEC addTicket 'arsenal', 'barcelona', '1-1-2022';
+DROP PROCEDURE addTicket;
 GO;
 
 --> TESTME 2.3ix  
 CREATE PROCEDURE addStadium @name VARCHAR(20), @loc VARCHAR(20), @cap INT AS
 INSERT INTO stadium VALUES (@name, @loc, @cap, 1);
-DROP PROCEDURE addStadium;
 EXEC addStadium 'kahera', 'CAI', 3000;
+DROP PROCEDURE addStadium;
 GO;
 
 --> TESTME 2.3xiii  
 CREATE PROCEDURE addRepresentative @name VARCHAR(20), @c_name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
+IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+BEGIN 
+INSERT INTO systemUser VALUES (@user, @pw);
+END
+IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@c_name)
+BEGIN 
+INSERT INTO club VALUES (@c_name, NULL);
+END
 DECLARE @club_id INT;
 SELECT @club_id=C.id FROM club C WHERE C.name = @c_name;
--- TODO CREATE USER
-INSERT INTO systemUser VALUES (@user, @pw);
 INSERT INTO clubRepresentative VALUES (@name, @club_id, @user);
 DROP PROCEDURE addRepresentative;
 EXEC addRepresentative 'metwally', 'fari2gamed', 'mm', '123';
@@ -317,6 +337,23 @@ SELECT @m_id=M.id FROM match M WHERE @c_id=M.hostClub_id AND @startTime=M.startT
 INSERT INTO hostRequest (representative_id, manager_id, match_id) VALUES (@rep_id, @mgr_id, m_id);
 DROP PROCEDURE addHostRequest;
 EXEC addHostRequest 'arsenal', 'kahera', '1-1-2022';
+GO;
+
+--> TESTME 2.3xvii 
+CREATE PROCEDURE addStadiumManager(@name VARCHAR(20), @stadiumName VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)) AS
+IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+BEGIN 
+INSERT INTO systemUser VALUES (@user, @pw); 
+END
+IF NOT EXISTS (SELECT 1 FROM stadium S WHERE S.name=@stadiumName)
+BEGIN 
+INSERT INTO stadium VALUES (@stadiumName, NULL, NULL, 1); 
+END
+DECLARE @stadium_id INT;
+SELECT @stadium_id=S.id FROM stadium S WHERE @stadiumName = S.name;
+INSERT INTO stadiumManager VALUES (@name, @stadium_id, @user);
+EXEC addStadiumManager 'slim', 'kahera', 'balabizo', 'balabizoawi';
+DROP PROCEDURE addStadiumManager;
 GO;
 
 --| 2.3 All Other Requirements |----------------------------------------------------\ DELETIONS \--
@@ -351,8 +388,8 @@ DELETE FROM match
 WHERE match.guestClub_id = @club_id;
 DELETE FROM club 
 WHERE club.name = @name;
-DELETE FROM clubRepresentative
-WHERE clubRepresentative.club_id = @club_id;
+--DELETE FROM clubRepresentative
+--WHERE clubRepresentative.club_id = @club_id;
 DROP PROCEDURE deleteClub;
 EXEC deleteClub;
 GO;
@@ -420,6 +457,8 @@ GO;
 
 
 
+
+
 --| SCHEMA |---------------------------------------------------------------------------------------
 
 -- TABLES:		systemUser				(*username, password)
@@ -461,6 +500,15 @@ GO;
 --				clubRepresentative.id				NECESSARY FOR		hostRequest				
 --				stadiumManager.id					NECESSARY FOR		hostRequest
 
+-- DEPENDENCY:	fan									DEPENDS ON			systemUser
+--				stadiumManager						DEPENDS ON			systemuser, stadium
+--				clubRepresentative					DEPENDS ON			systemUser, club
+--				sportsAssociationManager			DEPENDS ON			systemUser
+--				systemAdmin							DEPENDS ON			systemUser
+--				match								DEPENDS ON			club (host and guest)
+--				ticket								DEPENDS ON			match
+--				ticketBuyingTransaction				DEPENDS ON			fan, ticket
+--				hostRequest							DEPENDS ON			match, clubRepresentative, stadiumManager
 
 
 
