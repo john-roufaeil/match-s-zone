@@ -495,12 +495,12 @@ GO;
 
 --> TESTME 2.3xx 
 CREATE PROCEDURE rejectRequest (@SM_user VARCHAR(20), @HC_name VARCHAR(20), @GC_name VARCHAR(20), @startTime DATETIME) AS
-DECLARE @SM_id INT, @HC_id INT, @GC_id INT, @M_id INT, @S_id INT;
+DECLARE @SM_id INT, @HC_id INT, @GC_id INT, @M_id INT, @S_id INT, @HCR_id INT;
 SELECT @SM_id=SM.id FROM stadiumManager SM WHERE SM.username = @SM_user;
 SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HC_name;
 SELECT @GC_id=GC.id FROM club GC WHERE GC.name = @GC_name;
 SELECT @M_id=M.id FROM match M WHERE M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id AND M.startTime = @startTime;
-SELECT @S_id=SM.stadium_id FROM stadiumManager SM WHERE SM.id = @SM_id;
+SELECT @HCR_id=CR.id FROM clubRepresentative CR INNER JOIN club C ON C.id=CR.club_id WHERE C.name=@HC_name;
 UPDATE hostRequest
 SET hostRequest.status = 'rejected'
 WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id;
