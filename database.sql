@@ -95,6 +95,7 @@ CREATE TABLE ticket (
 CREATE TABLE ticketBuyingTransaction (
 	fanNational_id VARCHAR(20), 
 	ticket_id INT,
+	PRIMARY KEY (fanNational_id, ticket_id),
 	FOREIGN KEY (fanNational_id) REFERENCES fan  ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (ticket_id) REFERENCES ticket  ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -454,10 +455,50 @@ RETURN
 	WHERE HC.name = @hostClubName AND M.stadium_id = NULL;
 GO;
 
+--> TESTME 2.3xviii
+CREATE FUNCTION allPendingRequests(@userStadiumManager VARCHAR(20))
+RETURNS TABLE AS
+RETURN 
+	SELECT CR.name clubRepresentative, GC.name guestClub, M.startTime
+	FROM hostRequest HR 
+	INNER JOIN clubRepresentative CR ON HR.representative_id = CR.id
+	INNER JOIN match M ON HR.match_id = M.id
+	INNER JOIN club GC ON M.guestClub_id = GC.id
+	INNER JOIN stadiumManager SM ON HR.manager_id = SM.id
+	WHERE (HR.status IS NULL OR HR.status = 'unhandled') AND @userStadiumManager = SM.username;
+GO;
+
+--> TESTME 2.3xix
+CREATE PROCEDURE acceptRequest(@SM_user VARCHAR(20), @HC_name VARCHAR(20), @GC_name VARCHAR(20), @startTime DATETIME) AS
+DECLARE @SM_id INT, @HC_id INT, @GC_id INT, @M_id INT, @S_id INT;
+SELECT @SM_id=SM.id FROM stadiumManager SM WHERE SM.username = @SM_user;
+SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HC_name;
+SELECT @GC_id=GC.id FROM club GC WHERE GC.name = @GC_name;
+SELECT @M_id=M.id FROM match M WHERE M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id AND M.startTime = @startTime;
+SELECT @S_id=SM.stadium_id FROM stadiumManager SM WHERE SM.id = @SM_id;
+UPDATE hostRequest
+SET hostRequset.status = 'accepted'
+WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id;
+UPDATE match
+SET match.stadium_id = @S_id
+WHERE match.id = @M_id;
+DROP PROCEDURE acceptRequest;
+EXEC acceptRequest 'jjjj', 'barcelona', 'arsenal', '2-2-2021';
 
 
+update host_request
+set request_status = 'accepted'
+where match_id = @m_id and manger_id = @mang_id
 
-
+update match
+set match.stadium_id = @s_id
+where match_id = @m_id
+declare @i int = 0,@ticket_count int = (select stadium.stadium_capacity from stadium where @s_id = stadium_id)
+while @i < @ticket_count
+begin
+exec addticket @host_club_name ,@guest_club_name,@start
+set @i =@i+1
+end
 
 --| SCHEMA |---------------------------------------------------------------------------------------
 
