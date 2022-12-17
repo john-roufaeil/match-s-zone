@@ -82,7 +82,7 @@ CREATE TABLE match (
 	stadium_id INT,
 	PRIMARY KEY (id),
 	FOREIGN KEY (hostClub_id) REFERENCES club ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (guestClub_id) REFERENCES club ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (guestClub_id) REFERENCES club, -- cannot cascade on two foreign keys referencing same attribute >> manual override in 2.3viii
 	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE ticket (
@@ -93,7 +93,7 @@ CREATE TABLE ticket (
 	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE ticketBuyingTransaction (
-	fanNational_id INT, 
+	fanNational_id VARCHAR(20), 
 	ticket_id INT,
 	FOREIGN KEY (fanNational_id) REFERENCES fan  ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (ticket_id) REFERENCES ticket  ON DELETE CASCADE ON UPDATE CASCADE
@@ -105,26 +105,30 @@ CREATE TABLE hostRequest (
 	match_id INT,
 	status VARCHAR(20) DEFAULT 'unhandled',
 	PRIMARY KEY (id),
-	FOREIGN KEY (representative_id) REFERENCES clubRepresentative ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (manager_id) REFERENCES stadiumManager ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (representative_id) REFERENCES clubRepresentative, -- gives multiple cascade error; not required in milestone anyway
+	FOREIGN KEY (manager_id) REFERENCES stadiumManager, -- gives multiple cascade error; not required in milestone anyway
 	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
 );
+EXEC createAllTables;
+DROP PROCEDURE createAllTables;
 GO;
 
 --> 2.1b dropAllTables
 CREATE PROCEDURE dropAllTables AS
-DROP TABLE systemUser;
-DROP TABLE fan;
-DROP TABLE stadiumManager;
-DROP TABLE clubRepresentative;
-DROP TABLE sportsAssociationManager;
-DROP TABLE systemAdmin;
-DROP TABLE stadium;
-DROP TABLE club;
+DROP TABLE hostRequest;
+DROP TABLE ticketBuyingTransaction;
 DROP TABLE ticket;
 DROP TABLE match;
-DROP TABLE ticketBuyingTransaction;
-DROP TABLE hostRequest;
+DROP TABLE sportsAssociationManager;
+DROP TABLE clubRepresentative;
+DROP TABLE stadiumManager;
+DROP TABLE systemAdmin;
+DROP TABLE fan;
+DROP TABLE stadium;
+DROP TABLE club;
+DROP TABLE systemUser;
+EXEC dropAllTables;
+DROP PROCEDURE dropAllTables;
 GO;
 
 --> 2.1c dropAllProceduresFunctionsViews
@@ -148,8 +152,6 @@ DELETE club;
 DELETE systemUser;
 GO;
 
-EXEC createAllTables;
-EXEC dropAllTables;
 EXEC dropAllProcedureFunctionsViews;
 EXEC clearAllTables;
 GO;
