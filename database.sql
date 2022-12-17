@@ -284,10 +284,10 @@ GO;
 
 --> TESTME 2.3vii  
 CREATE PROCEDURE addTicket @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME AS
-IF NOT EXISTS (SELECT 1 FROM match M WHERE M.id=@match_id)
-BEGIN 
-INSERT INTO match VALUES (@startTime, NULL, @host_id, @guest_id, NULL); 
-END
+--IF NOT EXISTS (SELECT 1 FROM match M WHERE M.id=@match_id)
+--BEGIN 
+--INSERT INTO match VALUES (@startTime, NULL, @host_id, @guest_id, NULL); 
+--END
 DECLARE @match_id INT;
 DECLARE @host_id INT;
 DECLARE @guest_id INT;
@@ -470,6 +470,31 @@ GO;
 
 --> TESTME 2.3xix
 CREATE PROCEDURE acceptRequest(@SM_user VARCHAR(20), @HC_name VARCHAR(20), @GC_name VARCHAR(20), @startTime DATETIME) AS
+DECLARE @SM_id INT, @HC_id INT, @GC_id INT, @M_id INT, @S_id INT, @HCR_id INT;
+SELECT @SM_id=SM.id FROM stadiumManager SM WHERE SM.username = @SM_user;
+SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HC_name;
+SELECT @GC_id=GC.id FROM club GC WHERE GC.name = @GC_name;
+SELECT @M_id=M.id FROM match M WHERE M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id AND M.startTime = @startTime;
+SELECT @S_id=SM.stadium_id FROM stadiumManager SM WHERE SM.id = @SM_id;
+SELECT @HCR_id=CR.id FROM clubRepresentative CR INNER JOIN club C ON C.id=CR.club_id WHERE C.name=@HC_name;
+UPDATE hostRequest
+SET hostRequest.status = 'accepted'
+WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id;
+UPDATE match
+SET match.stadium_id = @S_id
+WHERE match.id = @M_id;
+DECLARE @i INT = 0, @tickets INT = (SELECT S.capacity FROM stadium S WHERE @S_id = S.id);
+WHILE @i < @tickets
+BEGIN
+EXEC addTicket @HC_name, @GC_name, @startTime;
+SET @i  = @i + 1;
+END;
+DROP PROCEDURE acceptRequest;
+EXEC acceptRequest 'jjjj', 'barcelona', 'arsenal', '2-2-2021';
+GO;
+
+--> TESTME 2.3xx 
+CREATE PROCEDURE rejectRequest (@SM_user VARCHAR(20), @HC_name VARCHAR(20), @GC_name VARCHAR(20), @startTime DATETIME) AS
 DECLARE @SM_id INT, @HC_id INT, @GC_id INT, @M_id INT, @S_id INT;
 SELECT @SM_id=SM.id FROM stadiumManager SM WHERE SM.username = @SM_user;
 SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HC_name;
@@ -477,28 +502,12 @@ SELECT @GC_id=GC.id FROM club GC WHERE GC.name = @GC_name;
 SELECT @M_id=M.id FROM match M WHERE M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id AND M.startTime = @startTime;
 SELECT @S_id=SM.stadium_id FROM stadiumManager SM WHERE SM.id = @SM_id;
 UPDATE hostRequest
-SET hostRequset.status = 'accepted'
-WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id;
-UPDATE match
-SET match.stadium_id = @S_id
-WHERE match.id = @M_id;
-DROP PROCEDURE acceptRequest;
+SET hostRequest.status = 'rejected'
+WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id;
+DROP PROCEDURE rejectRequest;
 EXEC acceptRequest 'jjjj', 'barcelona', 'arsenal', '2-2-2021';
+GO;
 
-
-update host_request
-set request_status = 'accepted'
-where match_id = @m_id and manger_id = @mang_id
-
-update match
-set match.stadium_id = @s_id
-where match_id = @m_id
-declare @i int = 0,@ticket_count int = (select stadium.stadium_capacity from stadium where @s_id = stadium_id)
-while @i < @ticket_count
-begin
-exec addticket @host_club_name ,@guest_club_name,@start
-set @i =@i+1
-end
 
 --| SCHEMA |---------------------------------------------------------------------------------------
 
