@@ -556,6 +556,36 @@ GO;
 DROP FUNCTION availableMatchesToAttend;
 GO;
 
+--> TESTME 2.3xxiv
+CREATE PROCEDURE purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN VARCHAR(20), @start DATETIME) AS
+DECLARE @T_ID INT, @M_ID INT, @HC_ID INT, @GC_ID INT;
+SELECT @HC_ID=HC.id FROM club HC WHERE HC.name = @HCN;
+SELECT @GC_ID=GC.id FROM club GC WHERE GC.name = @GCN;
+SELECT @M_ID=M.id FROM match M WHERE M.startTime = @start AND M.hostClub_id = @HC_ID AND M.guestClub_id = @GC_ID;
+SELECT @T_ID=T.id FROM ticket T WHERE T.match_id = @M_ID;
+UPDATE ticket 
+SET ticket.status = 0
+WHERE ticket.id = @T_ID;
+UPDATE ticketBuyingTransaction
+SET ticketBuyingTransaction.ticket_id = @T_ID
+WHERE ticketBuyingTransaction.fanNational_id = @nat_id;
+EXEC purchaseTicket '123', 'a', 'b', '20000707 01:01:01 PM';
+DROP PROCEDURE purchaseTicket;
+GO;
+
+--> 2.3xxv
+CREATE PROCEDURE updateMatchTiming (@HCN VARCHAR(20), @GCN VARCHAR(20), @current_ST DATETIME, @new_ST DATETIME, @new_ET DATETIME) AS
+DECLARE @HC_ID INT, @GC_ID INT;
+SELECT @HC_ID=HC.id FROM club HC WHERE HC.name = @HCN;
+SELECT @GC_ID=GC.id FROM club GC WHERE GC.name = @GCN;
+UPDATE match
+SET match.startTime = @new_ST
+WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
+UPDATE match 
+SET match.endTime = @new_ET
+WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
+
+
 
 --| SCHEMA |---------------------------------------------------------------------------------------
 
