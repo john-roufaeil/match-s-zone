@@ -1,7 +1,4 @@
-﻿CREATE DATABASE testing1;
-GO;
-
---| 2.1 Basic Structure of the Database |----------------------------------------------------------
+﻿--| 2.1 Basic Structure of the Database |----------------------------------------------------------
 --> 2.1a 
 CREATE PROCEDURE createAllTables AS
 CREATE TABLE systemUser (
@@ -219,7 +216,7 @@ CREATE VIEW allStadiumManagers AS
 SELECT DISTINCT SM.username, SU.password, SM.name, S.name stadiumName
 FROM stadiumManager SM
 INNER JOIN systemUser SU ON SM.username = SU.username
-INNER JOIN stadium S ON stadiumManager.stadium_id = S.id;
+INNER JOIN stadium S ON SM.stadium_id = S.id;
 GO;
 
 --> 2.2d 
@@ -871,10 +868,13 @@ GO;
 	
 
 --| TESTING |--------------------------------------------------------------------------------------
+CREATE DATABASE testing2;
+USE testing2;
 EXEC createAllTables;
 EXEC dropAllTables;
 EXEC dropAllProcedureFunctionsViews;
 EXEC clearAllTables;
+
 
 
 
