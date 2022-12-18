@@ -278,6 +278,7 @@ CREATE USER alex WITH PASSWORD='Uvxs245!';GO;
 CREATE LOGIN MyUser WITH PASSWORD = 'pass@123';
 CREATE USER MyUser FOR LOGIN MyUser;  
 GO;
+
 --| 2.3 All Other Requirements |----------------------------------------------------\ ADDITIONS \--
 --> TESTME 2.3i  create, edit or delete the matches that will be played by the different clubs.
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
@@ -292,12 +293,16 @@ DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addNewMatch TO 
 DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON deleteMatch TO ' + QUOTENAME(@user)); EXEC(@grant2);
 DECLARE @grant3 nvarchar(500); SET @grant3 = (N'GRANT SELECT, INSERT, DELETE, UPDATE ON match TO ' + QUOTENAME(@user)); EXEC(@grant3);
 DECLARE @grant4 nvarchar(500); SET @grant4 = (N'GRANT EXECUTE ON deleteMatchesOn TO ' + QUOTENAME(@user)); EXEC(@grant4);
-DECLARE @grant5 nvarchar(500); SET @grant5 = (N'GRANT EXECUTE ON allMatches TO ' + QUOTENAME(@user)); EXEC(@grant5);
-DECLARE @grant6 nvarchar(500); SET @grant6 = (N'GRANT EXECUTE ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant6);
-DECLARE @grant7 nvarchar(500); SET @grant7 = (N'GRANT EXECUTE ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant7);
-DECLARE @grant8 nvarchar(500); SET @grant8 = (N'GRANT EXECUTE ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant8);
+DECLARE @grant5 nvarchar(500); SET @grant5 = (N'GRANT SELECT ON allMatches TO ' + QUOTENAME(@user)); EXEC(@grant5);
+DECLARE @grant6 nvarchar(500); SET @grant6 = (N'GRANT SELECT ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant6);
+DECLARE @grant7 nvarchar(500); SET @grant7 = (N'GRANT SELECT ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant7);
+DECLARE @grant8 nvarchar(500); SET @grant8 = (N'GRANT SELECT ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant8);
+DECLARE @grant9 nvarchar(500); SET @grant9 = (N'GRANT EXECUTE ON updateMatchTiming TO ' + QUOTENAME(@user)); EXEC(@grant9);
+DECLARE @grantA nvarchar(500); SET @grantA = (N'GRANT SELECT ON matchesPerTeam TO ' + QUOTENAME(@user)); EXEC(@grantA);
+DECLARE @grantB nvarchar(500); SET @grantB = (N'GRANT SELECT ON matchWithMostSoldTickets TO ' + QUOTENAME(@user)); EXEC(@grantB);
+DECLARE @grantC nvarchar(500); SET @grantC = (N'GRANT SELECT ON matchesRankedBySoldTickets TO ' + QUOTENAME(@user)); EXEC(@grantC);
 GO;
-EXEC addAssociationManager 'john', 'assoc2', '123';
+EXEC addAssociationManager 'john', 'assoc5', '123';
 DROP PROCEDURE addAssociationManager;
 GO;
 
@@ -351,10 +356,12 @@ EXEC addStadium 'kahera', 'CAI', 3000;
 DROP PROCEDURE addStadium;
 GO;
 
---> TESTME 2.3xiii  
+--> TESTME 2.3xiii  asking for the permission to host the matches played by the club
 CREATE PROCEDURE addRepresentative @name VARCHAR(20), @c_name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
+DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
+DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw);
 END
 IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@c_name)
@@ -364,8 +371,12 @@ END
 DECLARE @club_id INT;
 SELECT @club_id=C.id FROM club C WHERE C.name = @c_name;
 INSERT INTO clubRepresentative VALUES (@name, @club_id, @user);
+DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addHostRequest TO ' + QUOTENAME(@user)); EXEC(@grant1);
+DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT SELECT ON viewAvailableStadiumsOn TO ' + QUOTENAME(@user)); EXEC(@grant2);
+DECLARE @grant3 nvarchar(500); SET @grant3 = (N'GRANT SELECT ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant3);
+GO;
 DROP PROCEDURE addRepresentative;
-EXEC addRepresentative 'metwally', 'fari2gamed', 'mm', '123';
+EXEC addRepresentative 'metwally', 'fari2gamed', 'mm1', '123';
 GO;
 
 --> TESTME 2.3xv 
@@ -462,6 +473,7 @@ GO;
 CREATE PROCEDURE deleteMatchesOn (@DT DATETIME) AS -- will cascade delete to tickets and hostRequest of the match and ticketBuyingTransaction
 DELETE FROM match
 WHERE match.startTime = @DT;
+GO;
 EXEC deleteMatchesOn '20221212';
 DROP PROCEDURE deleteMatchesOn;
 GO;
@@ -626,6 +638,7 @@ WHERE ticket.id = @T_ID;
 UPDATE ticketBuyingTransaction
 SET ticketBuyingTransaction.ticket_id = @T_ID
 WHERE ticketBuyingTransaction.fanNational_id = @nat_id;
+GO;
 EXEC purchaseTicket '123', 'a', 'b', '20000707 01:01:01 PM';
 DROP PROCEDURE purchaseTicket;
 GO;
@@ -641,6 +654,7 @@ WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.gue
 UPDATE match 
 SET match.endTime = @new_ET
 WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
+GO;
 EXEC updateMatchTiming 'a', 'b', '20000707 01:01:01 PM', '20000707 01:02:01 PM', '20000707 01:03:01 PM';
 DROP PROCEDURE updateMatchTiming;
 GO;
