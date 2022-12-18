@@ -683,21 +683,43 @@ GO;
 DROP VIEW matchesRankedBySoldTickets;
 GO;
 
---> 2.3xxx
+--> TESTME 2.3xxx
 CREATE PROCEDURE clubWithTheMostSoldTickets AS
 -- TODO
 GO;
 
---> 2.3xxxi
+--> TESTME 2.3xxxi
 CREATE VIEW clubsRankedBySoldTickets AS
 SELECT C.name, COUNT(T.id) total_tickets_sold
 FROM match M
-INNER JOIN club C ON M.hostClub_id = C.id OR M.guestClub_id = C.id;
-INNER JOIN ticket T ON M.id = T.match_id;
+INNER JOIN club C ON M.hostClub_id = C.id OR M.guestClub_id = C.id
+INNER JOIN ticket T ON M.id = T.match_id
+WHERE CURRENT_TIMESTAMP > M.stadium_id
+GROUP BY C.name
+ORDER BY total_tickets_sold DESC OFFSET 0 ROWS;
+GO;
+DROP VIEW clubsRankedBySoldTickets;
+SELECT * FROM clubsRankedBySoldTickets;
 GO;
 
---the matches that has already been played ordered descendingly by the total number of sold tickets
-
+--> TESTME 2.3xxxii
+CREATE FUNCTION stadiumsNeverPlayedOn (@name VARCHAR(20))
+RETURNS TABLE AS
+RETURN	
+	(SELECT S.name, S.capacity
+	FROM match M
+	INNER JOIN stadium S ON M.stadium_id = S.id
+	INNER JOIN club HC ON M.hostClub_id = HC.id OR INNER JOIN club GC ON M.guestClub_id = GC.id
+	WHERE HC.name = )
+	EXCEPT
+	(SELECT S.name, S.capacity
+	FROM match M
+	INNER JOIN stadium S ON M.stadium_id = S.id
+	INNER JOIN club HC ON M.hostClub_id = HC.id
+	INNER JOIN club GC ON M.guestClub_id = GC.id
+	WHERE )
+GO;	
+--given club name has never played a match on these stadiums.
 
 --| SCHEMA |---------------------------------------------------------------------------------------
 
