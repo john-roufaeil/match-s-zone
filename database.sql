@@ -684,20 +684,20 @@ WHERE M.endTime < CURRENT_TIMESTAMP
 GROUP BY C.name;
 GO;
 
---> TESTME 2.3xxviii TODO
+--> TESTMEAWI 2.3xxviii
 CREATE VIEW matchWithMostSoldTickets AS
 SELECT HC.name hostClubName, GC.name guestClubName
 FROM match M
 INNER JOIN club HC ON M.hostClub_id = HC.id
 INNER JOIN club GC ON M.guestClub_id = GC.id
 INNER JOIN ticket T ON M.id = T.match_id
-
-HAVING max_ticket_count = 
+GROUP BY HC.name, GC.name
+HAVING COUNT(T.id) =
 (SELECT MAX(ticket_count) max_ticket_count FROM (
 SELECT COUNT(T.id) ticket_count FROM ticket T, match M WHERE T.match_id = M.id AND T.status=0) alias);
 GO;
 DROP VIEW matchWithMostSoldTickets;
---
+SELECT * FROM matchWithMostSoldTickets;
 GO;
 
 --> TESTME 2.3xxix
@@ -753,13 +753,13 @@ DROP FUNCTION stadiumsNeverPlayedOn;
 GO;
 
 
---> TESTME 2.3xxx
+--> TESTME 2.3xxx TODO
 CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
 SELECT C.name
 FROM match M
 INNER JOIN club C ON M.guestClub_id = C.id
 INNER JOIN ticket T ON M.id = T.match_id 
-WHERE 
+--WHERE 
 GO;
 
 --| SCHEMA |---------------------------------------------------------------------------------------
@@ -842,3 +842,4 @@ EXEC clearAllTables;
 -- make sure delete[x] deletes what is based on x
 -- make sure y exists when add[x] if x depends on y
 -- make sure of restrictions on tables
+-- make sure of privilieges
