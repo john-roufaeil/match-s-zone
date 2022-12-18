@@ -470,6 +470,7 @@ DELETE FROM club
 WHERE club.name = @name;
 --DELETE FROM clubRepresentative
 --WHERE clubRepresentative.club_id = @club_id;
+GO;
 DROP PROCEDURE deleteClub;
 EXEC deleteClub;
 GO;
@@ -725,6 +726,7 @@ ORDER BY sold_tickets DESC OFFSET 0 ROWS;
 GO;
 DROP VIEW matchesRankedBySoldTickets;
 GO;
+
 --> TESTME 2.3xxx
 CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
 SELECT C.name 
@@ -740,6 +742,7 @@ HAVING COUNT(T.id) =
 		WHERE T.match_id = M.id AND T.status=0 AND CURRENT_TIMESTAMP > M.startTime)
 	alias1)
 RETURN @name;
+
 --CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
 --SELECT name
 --FROM 
@@ -883,7 +886,7 @@ CREATE DATABASE testing2;
 USE testing2;
 EXEC createAllTables;
 EXEC dropAllTables;
-EXEC dropAllProcedureFunctionsViews;
+EXEC dropAllProceduresFunctionsViews;
 EXEC clearAllTables;
 
 
