@@ -753,13 +753,55 @@ DROP FUNCTION stadiumsNeverPlayedOn;
 GO;
 
 
---> TESTME 2.3xxx TODO
+--> TESTME 2.3xxx
 CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
-SELECT C.name
+SELECT C.name 
 FROM match M
-INNER JOIN club C ON M.guestClub_id = C.id
-INNER JOIN ticket T ON M.id = T.match_id 
---WHERE 
+INNER JOIN club C ON M.hostClub_id = C.id OR M.guestClub_id = C.id
+INNER JOIN ticket T ON M.id = T.match_id
+GROUP BY C.name
+HAVING COUNT(T.id) = 
+	(SELECT MAX(ticket_count) max_ticket_count
+	FROM
+		(SELECT COUNT(T.id) ticket_count 
+		FROM ticket T, match M 
+		WHERE T.match_id = M.id AND T.status=0 AND CURRENT_TIMESTAMP > M.startTime)
+	alias1)
+RETURN @name;
+--CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
+--SELECT name
+--FROM 
+--(SELECT HC.name name1, COUNT(T.id) count1
+--FROM match M
+--INNER JOIN club HC ON M.hostClub_id = HC.id
+--INNER JOIN ticket T ON M.id = T.match_id 
+--GROUP BY HC.name
+--HAVING COUNT(T.id) =
+--	(SELECT MAX(ticket_count) max_ticket_count
+--	FROM 
+--		(SELECT COUNT(T.id) ticket_count 
+--		FROM ticket T, match M 
+--		WHERE T.match_id = M.id AND T.status=0 AND CURRENT_TIMESTAMP > M.startTime)
+--	alias1)
+--UNION 
+--(SELECT GC.name name2, COUNT(T.id) count2
+--FROM match M
+--INNER JOIN club GC ON M.guestClub_id = GC.id
+--INNER JOIN ticket T ON M.id = T.match_id 
+--GROUP BY GC.name
+--HAVING COUNT(T.id) =
+--	(SELECT MAX(ticket_count) max_ticket_count
+--	FROM 
+--		(SELECT COUNT(T.id) ticket_count 
+--		FROM ticket T, match M 
+--		WHERE T.match_id = M.id AND T.status=0 AND CURRENT_TIMESTAMP > M.startTime)
+--	alias2))) alias3
+--WHERE (name = name1 AND count1 > count2) OR (name = name2 AND count2 > count1)
+
+GO;
+DECLARE @name VARCHAR(20)
+EXEC clubWithTheMostSoldTickets @name OUTPUT;
+DROP PROCEDURE clubWithTheMostSoldTickets;
 GO;
 
 --| SCHEMA |---------------------------------------------------------------------------------------
