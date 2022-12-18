@@ -110,6 +110,7 @@ CREATE TABLE hostRequest (
 	FOREIGN KEY (manager_id) REFERENCES stadiumManager, -- gives multiple cascade error; not required in milestone anyway
 	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
 );
+GO;
 EXEC createAllTables;
 DROP PROCEDURE createAllTables;
 GO;
@@ -128,6 +129,7 @@ DROP TABLE fan;
 DROP TABLE stadium;
 DROP TABLE club;
 DROP TABLE systemUser;
+GO;
 EXEC dropAllTables;
 DROP PROCEDURE dropAllTables;
 GO;
@@ -135,6 +137,51 @@ GO;
 --> 2.1c 
 CREATE PROCEDURE dropAllProceduresFunctionsViews AS
 -- TODO
+DROP PROCEDURE	createAllTables;
+DROP PROCEDURE	dropAllTables;
+DROP PROCEDURE	clearAllTables;
+DROP VIEW		allAssocManagers;
+DROP VIEW		allClubRepresentatives;
+DROP VIEW		allStadiumManagers;
+DROP VIEW		allFans;
+DROP VIEW		allMatches;
+DROP VIEW		allTickets;
+DROP VIEW		allCLubs;
+DROP VIEW		allStadiums;
+DROP VIEW		allRequests;
+DROP PROCEDURE	addAssociationManager;
+DROP PROCEDURE	addNewMatch;
+DROP VIEW		clubsWithNoMatches;
+DROP PROCEDURE	deleteMatch;
+DROP PROCEDURE	deleteMatchesOnStadium;
+DROP PROCEDURE	addClub;
+DROP PROCEDURE	addTicket;
+DROP PROCEDURE	deleteClub;
+DROP PROCEDURE	addStadium;
+DROP PROCEDURE	deleteStadium;
+DROP PROCEDURE	blockFan;
+DROP PROCEDURE	unblockFan;
+DROP PROCEDURE	addRepresentative;
+DROP FUNCTION	viewAvailableStadiumsOn;
+DROP PROCEDURE	addHostRequest;
+DROP FUNCTION	allUnassignedMatches;
+DROP PROCEDURE	addStadiumManager;
+DROP FUNCTION	allPendingRequests;
+DROP PROCEDURE	acceptRequest;
+DROP PROCEDURE	rejectRequest;
+DROP PROCEDURE	addFan;
+DROP FUNCTION	upcomingMatchesOfClub;
+DROP FUNCTION	availableMatchesToAttend;
+DROP PROCEDURE	purchaseTicket;
+DROP PROCEDURE	updateMatchTiming;
+DROP VIEW		matchesPerTeam;
+DROP PROCEDURE	deleteMatchesOn;	
+DROP VIEW		matchWithMostSoldTickets;
+DROP VIEW		matchesRankedBySoldTickets;
+DROP PROCEDURE	clubWithTheMostSoldTickets;
+DROP VIEW		clubsRankedBySoldTickets;
+DROP FUNCTION	stadiumsNeverPlayedOn;
+GO;
 EXEC dropAllProceduresFunctionsViews;
 DROP PROCEDURE dropAllProceduresFunctionsViews;
 GO;
@@ -153,6 +200,7 @@ DELETE fan;
 DELETE stadium;
 DELETE club;
 DELETE systemUser;
+GO;
 EXEC clearAllTables;
 DROP PROCEDURE clearAllTables;
 GO;
@@ -384,7 +432,7 @@ EXEC deleteMatch;
 GO;
 
 --> TESTME 2.3v  
-CREATE PROCEDURE deleteMatchesOnStadium @stadium VARCHAR(20) AS
+CREATE PROCEDURE deleteMatchesOnStadium @stadium VARCHAR(20) AS -- will cascade delete to tickets and hostRequest of the match and ticketBuyingTransaction
 DECLARE @s_id INT;
 SELECT @s_id=S.id FROM stadium S WHERE S.name = @stadium;
 DELETE FROM match
@@ -411,6 +459,14 @@ GO;
 CREATE PROCEDURE deleteStadium @name VARCHAR(20) AS
 DELETE FROM stadium
 WHERE stadium.name = @name;
+GO;
+
+--> TESTME 2.3xxvii
+CREATE PROCEDURE deleteMatchesOn (@DT DATETIME) AS -- will cascade delete to tickets and hostRequest of the match and ticketBuyingTransaction
+DELETE FROM match
+WHERE match.startTime = @DT;
+EXEC deleteMatchesOn '20221212';
+DROP PROCEDURE deleteMatchesOn;
 GO;
 
 --| 2.3 All Other Requirements |------------------------------------------------\ ADMINSTRATION \--
@@ -597,9 +653,55 @@ WHERE M.endTime < CURRENT_TIMESTAMP
 GROUP BY C.name;
 GO;
 
+--> TESTME 2.3xxviii TODO
+CREATE VIEW matchWithMostSoldTickets AS
+SELECT HC.name hostClubName, GC.name guestClubName
+FROM match M
+INNER JOIN club HC ON M.hostClub_id = HC.id
+INNER JOIN club GC ON M.guestClub_id = GC.id
+INNER JOIN ticket T ON M.id = T.match_id
+
+HAVING max_ticket_count = 
+(SELECT MAX(ticket_count) max_ticket_count FROM (
+SELECT COUNT(T.id) ticket_count FROM ticket T, match M WHERE T.match_id = M.id AND T.status=0) alias);
+GO;
+DROP VIEW matchWithMostSoldTickets;
+--
+GO;
+
+--> TESTME 2.3xxix
+CREATE VIEW matchesRankedBySoldTickets AS
+SELECT DISTINCT HC.name hostClubName, GC.name guestClubName, COUNT(T.id) sold_tickets
+FROM match M
+INNER JOIN club HC ON M.hostClub_id = HC.id
+INNER JOIN club GC ON M.guestClub_id = GC.id
+INNER JOIN ticket T ON M.id = T.match_id
+WHERE T.match_id = M.id AND T.status=0
+GROUP BY HC.name, GC.name
+ORDER BY sold_tickets DESC OFFSET 0 ROWS;
+GO;
+DROP VIEW matchesRankedBySoldTickets;
+GO;
+
+--> 2.3xxx
+CREATE PROCEDURE clubWithTheMostSoldTickets AS
+-- TODO
+GO;
+
+--> 2.3xxxi
+CREATE VIEW clubsRankedBySoldTickets AS
+SELECT C.name, COUNT(T.id) total_tickets_sold
+FROM match M
+INNER JOIN club C ON M.hostClub_id = C.id OR M.guestClub_id = C.id;
+INNER JOIN ticket T ON M.id = T.match_id;
+GO;
+
+--the matches that has already been played ordered descendingly by the total number of sold tickets
+
+
 --| SCHEMA |---------------------------------------------------------------------------------------
 
--- TABLES:		systemUser				(*username, password)
+-- TABLES:		systemUser			(*username, password)
 --				fan						(*national_id, name, birthDate, address, phoneNumber, status, .username)
 --				stadiumManager			(*id, name, .stadium_id, .username)
 --				clubRepresentative		(*id, name, .club_id, .username) 
