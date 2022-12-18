@@ -1,12 +1,5 @@
 ﻿CREATE DATABASE testing1;
 GO;
---| Guide |----------------------------------------------------------------------------------------
--- "-->" point from the milestone description
--- "--| |--" section
-
-
-
-
 
 --| 2.1 Basic Structure of the Database |----------------------------------------------------------
 --> 2.1a 
@@ -136,7 +129,7 @@ GO;
 
 --> 2.1c 
 CREATE PROCEDURE dropAllProceduresFunctionsViews AS
--- TODO
+-- TOCHECK
 DROP PROCEDURE	createAllTables;
 DROP PROCEDURE	dropAllTables;
 DROP PROCEDURE	clearAllTables;
@@ -204,10 +197,6 @@ GO;
 EXEC clearAllTables;
 DROP PROCEDURE clearAllTables;
 GO;
-
-
-
-
 
 --| 2.2 Basic Data Retrieval |---------------------------------------------------------------------
 --> 2.2a 
@@ -284,25 +273,30 @@ SELECT DISTINCT CR.username clubRepresentative, SM.username stadiumManager, HR.s
 FROM hostRequest HR
 INNER JOIN clubRepresentative CR ON HR.representative_id = CR.id
 INNER JOIN stadiumManager SM ON HR.manager_id = SM.id;
+GO;		
+CREATE USER alex WITH PASSWORD='Uvxs245!';GO;
+CREATE LOGIN MyUser WITH PASSWORD = 'pass@123';
+CREATE USER MyUser FOR LOGIN MyUser;  
 GO;
-
-
-
-
-
 --| 2.3 All Other Requirements |----------------------------------------------------\ ADDITIONS \--
-
 --> TESTME 2.3i 
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
--- TODO CREATE USER "@username" WITH PASSWORD = '@password';
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
+DECLARE @createLogin nvarchar(4000)
+SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, '''')
+EXEC(@createLogin);
+DECLARE @createUser nvarchar(4000)
+SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user)
+EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw); 
 END
 INSERT INTO sportsAssociationManager VALUES (@name, @user);
-EXEC addAssociationManager 'john', 'jj', '123';
+EXEC addAssociationManager 'john', 'aaa', '123';
 DROP PROCEDURE addAssociationManager;
 GO;
+GRANT EXECUTE ON addNewMatch TO j1j;
+gO;
 
 --> TESTME 2.3ii  
 CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
@@ -682,11 +676,7 @@ ORDER BY sold_tickets DESC OFFSET 0 ROWS;
 GO;
 DROP VIEW matchesRankedBySoldTickets;
 GO;
-
---> TESTME 2.3xxx
-CREATE PROCEDURE clubWithTheMostSoldTickets AS
--- TODO
-GO;
+-------------------------------------
 
 --> TESTME 2.3xxxi
 CREATE VIEW clubsRankedBySoldTickets AS
@@ -706,20 +696,34 @@ GO;
 CREATE FUNCTION stadiumsNeverPlayedOn (@name VARCHAR(20))
 RETURNS TABLE AS
 RETURN	
-	(SELECT S.name, S.capacity
-	FROM match M
-	INNER JOIN stadium S ON M.stadium_id = S.id
-	INNER JOIN club HC ON M.hostClub_id = HC.id OR INNER JOIN club GC ON M.guestClub_id = GC.id
-	WHERE HC.name = )
+	(SELECT DISTINCT S.name, S.capacity
+	FROM stadium S)
 	EXCEPT
-	(SELECT S.name, S.capacity
+	((SELECT DISTINCT S.name, S.capacity
 	FROM match M
 	INNER JOIN stadium S ON M.stadium_id = S.id
 	INNER JOIN club HC ON M.hostClub_id = HC.id
+	WHERE HC.name = @name)
+	UNION 
+	(SELECT S.name, S.capacity
+	FROM match M
+	INNER JOIN stadium S ON M.stadium_id = S.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
-	WHERE )
+	WHERE GC.name = @name))
 GO;	
---given club name has never played a match on these stadiums.
+SELECT * FROM dbo.stadiumsNeverPlayedOn('barcelona');
+DROP FUNCTION stadiumsNeverPlayedOn;
+GO;
+
+
+--> TESTME 2.3xxx
+CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
+SELECT C.name
+FROM match M
+INNER JOIN club C ON M.guestClub_id = C.id
+INNER JOIN ticket T ON M.id = T.match_id 
+WHERE 
+GO;
 
 --| SCHEMA |---------------------------------------------------------------------------------------
 
