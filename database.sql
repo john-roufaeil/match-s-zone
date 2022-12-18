@@ -411,13 +411,13 @@ END
 DECLARE @stadium_id INT;
 SELECT @stadium_id=S.id FROM stadium S WHERE @stadiumName = S.name;
 INSERT INTO stadiumManager VALUES (@name, @stadium_id, @user);
-DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant1);
+DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT SELECT ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant1);
 DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON acceptRequest TO ' + QUOTENAME(@user)); EXEC(@grant2);
 DECLARE @grant3	nvarchar(500); SET @grant3 = (N'GRANT EXECUTE ON rejectRequest TO ' + QUOTENAME(@user)); EXEC(@grant3);
 DECLARE @grant4	nvarchar(500); SET @grant4 = (N'GRANT EXECUTE ON deleteMatchesOnStadium TO ' + QUOTENAME(@user)); EXEC(@grant4);
-DECLARE @grant5	nvarchar(500); SET @grant5 = (N'GRANT EXECUTE ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant5);
+DECLARE @grant5	nvarchar(500); SET @grant5 = (N'GRANT SELECT ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant5);
 GO;
-EXEC addStadiumManager 'slim', 'kahera', 'balabizo', 'balabizoawi';
+EXEC addStadiumManager 'slim', 'kahera', 'balabizoo', 'balabizoawi';
 DROP PROCEDURE addStadiumManager;
 GO;
 
@@ -430,6 +430,12 @@ DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME
 INSERT INTO systemUser VALUES (@user, @pw);
 END
 INSERT INTO fan VALUES (@nat_id, @name, @bdate, @address, @phone, 1, @user);
+DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT SELECT ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant1);
+DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant2);
+DECLARE @grant3	nvarchar(500); SET @grant3 = (N'GRANT EXECUTE ON purchaseTicket TO ' + QUOTENAME(@user)); EXEC(@grant3);
+
+
+GO;
 DROP PROCEDURE addFan;
 EXEC addFan 'janjoon', 'j123', 'j123', '123457', '20000101 12:12:12 AM', 'share3', 012;
 GO;
