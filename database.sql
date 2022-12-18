@@ -279,24 +279,27 @@ CREATE LOGIN MyUser WITH PASSWORD = 'pass@123';
 CREATE USER MyUser FOR LOGIN MyUser;  
 GO;
 --| 2.3 All Other Requirements |----------------------------------------------------\ ADDITIONS \--
---> TESTME 2.3i 
+--> TESTME 2.3i  create, edit or delete the matches that will be played by the different clubs.
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
-DECLARE @createLogin nvarchar(4000)
-SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, '''')
-EXEC(@createLogin);
-DECLARE @createUser nvarchar(4000)
-SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user)
-EXEC(@createUser);
+DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
+DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw); 
 END
 INSERT INTO sportsAssociationManager VALUES (@name, @user);
-EXEC addAssociationManager 'john', 'aaa', '123';
+DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addNewMatch TO ' + QUOTENAME(@user)); EXEC(@grant1);
+DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON deleteMatch TO ' + QUOTENAME(@user)); EXEC(@grant2);
+DECLARE @grant3 nvarchar(500); SET @grant3 = (N'GRANT SELECT, INSERT, DELETE, UPDATE ON match TO ' + QUOTENAME(@user)); EXEC(@grant3);
+DECLARE @grant4 nvarchar(500); SET @grant4 = (N'GRANT EXECUTE ON deleteMatchesOn TO ' + QUOTENAME(@user)); EXEC(@grant4);
+DECLARE @grant5 nvarchar(500); SET @grant5 = (N'GRANT EXECUTE ON allMatches TO ' + QUOTENAME(@user)); EXEC(@grant5);
+DECLARE @grant6 nvarchar(500); SET @grant6 = (N'GRANT EXECUTE ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant6);
+DECLARE @grant7 nvarchar(500); SET @grant7 = (N'GRANT EXECUTE ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant7);
+DECLARE @grant8 nvarchar(500); SET @grant8 = (N'GRANT EXECUTE ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant8);
+GO;
+EXEC addAssociationManager 'john', 'assoc2', '123';
 DROP PROCEDURE addAssociationManager;
 GO;
-GRANT EXECUTE ON addNewMatch TO j1j;
-gO;
 
 --> TESTME 2.3ii  
 CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
@@ -480,6 +483,7 @@ CREATE PROCEDURE blockFan @n_id VARCHAR(20) AS
 UPDATE fan
 SET fan.status = 0
 WHERE fan.national_id = @n_id;
+GO;
 DROP PROCEDURE blockFan;
 EXEC blockFan 123456789;
 GO;
@@ -489,6 +493,7 @@ CREATE PROCEDURE unblockFan @n_id VARCHAR(20) AS
 UPDATE fan
 SET fan.status = 1
 WHERE fan.national_id = @n_id;
+GO;
 DROP PROCEDURE unblockFan;
 EXEC unblockFan 123456789;
 GO;
@@ -551,6 +556,7 @@ BEGIN
 EXEC addTicket @HC_name, @GC_name, @startTime;
 SET @i  = @i + 1;
 END;
+GO;
 DROP PROCEDURE acceptRequest;
 EXEC acceptRequest 'jjjj', 'barcelona', 'arsenal', '2-2-2021';
 GO;
@@ -566,6 +572,7 @@ SELECT @HCR_id=CR.id FROM clubRepresentative CR INNER JOIN club C ON C.id=CR.clu
 UPDATE hostRequest
 SET hostRequest.status = 'rejected'
 WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id;
+GO;
 DROP PROCEDURE rejectRequest;
 EXEC acceptRequest 'jjjj', 'barcelona', 'arsenal', '2-2-2021';
 GO;
@@ -776,8 +783,20 @@ GO;
 --				ticketBuyingTransaction				DEPENDS ON			fan, ticket
 --				hostRequest							DEPENDS ON			match, clubRepresentative, stadiumManager
 
+-- BASIC		createAllTables, dropAllTables, dropAllProceduresFunctionsViews, clearAllTables
 
+-- DATA			allAssocManagers, allClubRepresentatives, allStadiumManagers, 
+--				allFans, allMatches, allTickets, allCLubs, , allStadiums, allRequests
 
+-- PROC			addAssociationManager, addNewMatch, addClub, addTicket, addStadium, addHostRequest,
+--				addStadiumManager, addRepresentative, addFan
+--				deleteClub, deleteMatch, deleteStadium, deleteMatchesOnStadium,
+--				blockFan, unblockFan, acceptRequest, rejectRequest 
+
+-- VIEW			clubsWithNoMatches, allUnassignedMatches, 
+
+-- FUNC			viewAvailableStadiumsOn, allPendingRequests, upcomingMatchesOfClub, availableMatchesToAttend
+	
 
 --| TESTING |--------------------------------------------------------------------------------------
 EXEC createAllTables;
