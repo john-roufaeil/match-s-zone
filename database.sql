@@ -101,9 +101,6 @@ CREATE TABLE hostRequest (
 	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
 );
 GO;
-EXEC createAllTables;
-DROP PROCEDURE createAllTables;
-GO;
 
 --> 2.1b 
 CREATE PROCEDURE dropAllTables AS
@@ -119,9 +116,6 @@ DROP TABLE fan;
 DROP TABLE stadium;
 DROP TABLE club;
 DROP TABLE systemUser;
-GO;
-EXEC dropAllTables;
-DROP PROCEDURE dropAllTables;
 GO;
 
 --> 2.1c 
@@ -172,9 +166,6 @@ DROP PROCEDURE	clubWithTheMostSoldTickets;
 DROP VIEW		clubsRankedBySoldTickets;
 DROP FUNCTION	stadiumsNeverPlayedOn;
 GO;
-EXEC dropAllProceduresFunctionsViews;
-DROP PROCEDURE dropAllProceduresFunctionsViews;
-GO;
 
 --> 2.1d 
 CREATE PROCEDURE clearAllTables AS
@@ -190,9 +181,6 @@ DELETE fan;
 DELETE stadium;
 DELETE club;
 DELETE systemUser;
-GO;
-EXEC clearAllTables;
-DROP PROCEDURE clearAllTables;
 GO;
 
 --| 2.2 Basic Data Retrieval |---------------------------------------------------------------------
@@ -295,9 +283,6 @@ DECLARE @grantA nvarchar(500); SET @grantA = (N'GRANT SELECT ON matchesPerTeam T
 DECLARE @grantB nvarchar(500); SET @grantB = (N'GRANT SELECT ON matchWithMostSoldTickets TO ' + QUOTENAME(@user)); EXEC(@grantB);
 DECLARE @grantC nvarchar(500); SET @grantC = (N'GRANT SELECT ON matchesRankedBySoldTickets TO ' + QUOTENAME(@user)); EXEC(@grantC);
 GO;
-EXEC addAssociationManager 'john', 'assoc5', '123';
-DROP PROCEDURE addAssociationManager;
-GO;
 
 --> TESTME 2.3ii  
 CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
@@ -314,16 +299,10 @@ SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
 SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL);
 GO;
-EXEC addNewMatch 'arsenal', 'barcelona', '1-1-2022', '1-1-2022';
-DROP PROCEDURE addNewMatch;
-GO;
 
 --> TESTME 2.3vi  
 CREATE PROCEDURE addClub @name VARCHAR(20), @location VARCHAR(20) AS
 INSERT INTO club VALUES (@name, @location);
-GO;
-EXEC addClub 'barcelona', 'BRC';
-DROP PROCEDURE addClub;
 GO;
 
 --> TESTME 2.3vii  
@@ -338,16 +317,10 @@ SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 SELECT @match_id=M.id FROM match M WHERE M.startTime = @startTime AND M.hostClub_id = @host_id AND M.guestClub_id = @guest_id;
 INSERT INTO ticket VALUES (1, @match_id);
 GO;
-EXEC addTicket 'arsenal', 'barcelona', '1-1-2022';
-DROP PROCEDURE addTicket;
-GO;
 
 --> TESTME 2.3ix  
 CREATE PROCEDURE addStadium @name VARCHAR(20), @loc VARCHAR(20), @cap INT AS
 INSERT INTO stadium VALUES (@name, @loc, @cap, 1);
-GO;
-EXEC addStadium 'kahera', 'CAI', 3000;
-DROP PROCEDURE addStadium;
 GO;
 
 --> TESTME 2.3xiii  asking for the permission to host the matches played by the club
@@ -369,9 +342,6 @@ DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addHostRequest 
 DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT SELECT ON viewAvailableStadiumsOn TO ' + QUOTENAME(@user)); EXEC(@grant2);
 DECLARE @grant3 nvarchar(500); SET @grant3 = (N'GRANT SELECT ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant3);
 GO;
-DROP PROCEDURE addRepresentative;
-EXEC addRepresentative 'metwally', 'fari2gamed', 'mm1', '123';
-GO;
 
 --> TESTME 2.3xv 
 CREATE PROCEDURE addHostRequest @clubName VARCHAR(20), @stadiumName VARCHAR(20), @startTime DATETIME AS
@@ -386,9 +356,6 @@ SELECT @s_id=S.id FROM stadium S WHERE S.name = @stadiumName;
 SELECT @mgr_id=SM.id FROM stadiumManager SM WHERE SM.stadium_id = @s_id;
 SELECT @m_id=M.id FROM match M WHERE @c_id=M.hostClub_id AND @startTime=M.startTime AND @s_id=M.stadium_id;
 INSERT INTO hostRequest (representative_id, manager_id, match_id) VALUES (@rep_id, @mgr_id, @m_id);
-GO;
-DROP PROCEDURE addHostRequest;
-EXEC addHostRequest 'arsenal', 'kahera', '1-1-2022';
 GO;
 
 --> TESTME 2.3xvii 
@@ -412,9 +379,6 @@ DECLARE @grant3	nvarchar(500); SET @grant3 = (N'GRANT EXECUTE ON rejectRequest T
 DECLARE @grant4	nvarchar(500); SET @grant4 = (N'GRANT EXECUTE ON deleteMatchesOnStadium TO ' + QUOTENAME(@user)); EXEC(@grant4);
 DECLARE @grant5	nvarchar(500); SET @grant5 = (N'GRANT SELECT ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant5);
 GO;
-EXEC addStadiumManager 'slim', 'kahera', 'balabizoo', 'balabizoawi';
-DROP PROCEDURE addStadiumManager;
-GO;
 
 --> TESTME 2.3xxi
 CREATE PROCEDURE addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATETIME, @address VARCHAR(20), @phone INT) AS
@@ -429,10 +393,6 @@ DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT SELECT ON upcomingMatchesO
 DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant2);
 DECLARE @grant3	nvarchar(500); SET @grant3 = (N'GRANT EXECUTE ON purchaseTicket TO ' + QUOTENAME(@user)); EXEC(@grant3);
 GO;
-DROP PROCEDURE addFan;
-EXEC addFan 'janjoon', 'j123', 'j123', '123457', '20000101 12:12:12 AM', 'share3', 012;
-GO;
-
 
 --| 2.3 All Other Requirements |----------------------------------------------------\ DELETIONS \--
 
@@ -445,9 +405,6 @@ SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 DELETE FROM match
 WHERE match.hostClub_id = @host_id AND match.guestClub_id = @guest_id;
 GO;
-DROP PROCEDURE deleteMatch;
-EXEC deleteMatch;
-GO;
 
 --> TESTME 2.3v  
 CREATE PROCEDURE deleteMatchesOnStadium @stadium VARCHAR(20) AS -- will cascade delete to tickets and hostRequest of the match and ticketBuyingTransaction
@@ -455,9 +412,6 @@ DECLARE @s_id INT;
 SELECT @s_id=S.id FROM stadium S WHERE S.name = @stadium;
 DELETE FROM match
 WHERE match.stadium_id = @s_id AND CURRENT_TIMESTAMP < match.startTime;
-GO;
-DROP PROCEDURE deleteMatchesOnStadium;
-EXEC deleteMatchesOnStadium;
 GO;
 
 --> TESTME 2.3viii  
@@ -471,17 +425,11 @@ WHERE club.name = @name;
 --DELETE FROM clubRepresentative
 --WHERE clubRepresentative.club_id = @club_id;
 GO;
-DROP PROCEDURE deleteClub;
-EXEC deleteClub;
-GO;
 
 --> TESTME 2.3x 
 CREATE PROCEDURE deleteStadium @name VARCHAR(20) AS
 DELETE FROM stadium
 WHERE stadium.name = @name;
-GO;
-DROP PROCEDURE deleteStadium;
-EXEC deleteStadium 'balabizo';
 GO;
 
 --> TESTME 2.3xxvii
@@ -489,20 +437,13 @@ CREATE PROCEDURE deleteMatchesOn (@DT DATETIME) AS -- will cascade delete to tic
 DELETE FROM match
 WHERE match.startTime = @DT;
 GO;
-EXEC deleteMatchesOn '20221212';
-DROP PROCEDURE deleteMatchesOn;
-GO;
 
 --| 2.3 All Other Requirements |------------------------------------------------\ ADMINSTRATION \--
-
 --> TESTME 2.3iii
 CREATE VIEW clubsWithNoMatches AS
 SELECT DISTINCT C.name
 FROM club C
 WHERE NOT EXISTS (SELECT * FROM match M WHERE M.hostClub_id = C.id OR M.guestClub_id = C.id);
-GO;
-DROP VIEW clubsWithNoMatches;
-SELECT * FROM clubsWithNoMatches;
 GO;
 
 --> TESTME 2.3xi
@@ -511,18 +452,12 @@ UPDATE fan
 SET fan.status = 0
 WHERE fan.national_id = @n_id;
 GO;
-DROP PROCEDURE blockFan;
-EXEC blockFan 123456789;
-GO;
 
 --> TESTME 2.3xii
 CREATE PROCEDURE unblockFan @n_id VARCHAR(20) AS
 UPDATE fan
 SET fan.status = 1
 WHERE fan.national_id = @n_id;
-GO;
-DROP PROCEDURE unblockFan;
-EXEC unblockFan 123456789;
 GO;
 
 --> TESTME 2.3xiv
@@ -537,9 +472,6 @@ RETURN
 	INNER JOIN match M ON S.id = M.stadium_id
 	WHERE M.startTime = @date);
 GO;
-DROP FUNCTION viewAvailableStadiumsOn;
-EXEC viewAvailableStadiumsOn '20220908';
-GO;
 
 --> TESTME 2.3xvi
 CREATE FUNCTION allUnassignedMatches(@hostClubName VARCHAR(20))
@@ -550,9 +482,6 @@ RETURN
 	INNER JOIN club HC ON M.hostClub_id	 = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	WHERE HC.name = @hostClubName AND M.stadium_id = NULL;
-GO;
-DROP FUNCTION allUnassignedMatches;
-EXEC allUnassignedMatches 'name';
 GO;
 
 --> TESTME 2.3xviii
@@ -566,9 +495,6 @@ RETURN
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	INNER JOIN stadiumManager SM ON HR.manager_id = SM.id
 	WHERE (HR.status IS NULL OR HR.status = 'unhandled') AND @userStadiumManager = SM.username;
-GO;
-DROP FUNCTION allPendingRequests;
-EXEC allPendingRequests 'username';
 GO;
 
 --> TESTME 2.3xix
@@ -593,9 +519,6 @@ EXEC addTicket @HC_name, @GC_name, @startTime;
 SET @i  = @i + 1;
 END;
 GO;
-DROP PROCEDURE acceptRequest;
-EXEC acceptRequest 'jjjj', 'barcelona', 'arsenal', '2-2-2021';
-GO;
 
 --> TESTME 2.3xx 
 CREATE PROCEDURE rejectRequest (@SM_user VARCHAR(20), @HC_name VARCHAR(20), @GC_name VARCHAR(20), @startTime DATETIME) AS
@@ -608,9 +531,6 @@ SELECT @HCR_id=CR.id FROM clubRepresentative CR INNER JOIN club C ON C.id=CR.clu
 UPDATE hostRequest
 SET hostRequest.status = 'rejected'
 WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id;
-GO;
-DROP PROCEDURE rejectRequest;
-EXEC acceptRequest 'jjjj', 'barcelona', 'arsenal', '2-2-2021';
 GO;
 
 --> TESTME 2.3xxii
@@ -631,9 +551,6 @@ RETURN
 	INNER JOIN stadium S ON S.id = M.stadium_id
 	WHERE M.startTime > CURRENT_TIMESTAMP AND C1.name = @clubName)
 GO;
-DROP FUNCTION upcomingMatchesOfClub;
-EXEC upcomingMatchesOfClub 'arsenal';
-GO;
 
 --> TESTME 2.3xxiii
 CREATE FUNCTION availableMatchesToAttend (@DT DATETIME)
@@ -647,11 +564,8 @@ RETURN
 	INNER JOIN ticket T ON M.id = T.match_id
 	WHERE M.startTime >= @DT and T.status=1;
 GO;
-DROP FUNCTION availableMatchesToAttend;
-EXEC availableMatchesToAttend '20220908';
-GO;
 
---> TESTME 2.3xxiv TODO blocked IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@hostClubName)
+--> TESTME 2.3xxiv
 CREATE PROCEDURE purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN VARCHAR(20), @start DATETIME) AS
 DECLARE @T_id INT, @M_id INT, @HC_id INT, @GC_id INT;
 SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HCN;
@@ -668,9 +582,6 @@ SET ticketBuyingTransaction.ticket_id = @T_id
 WHERE ticketBuyingTransaction.fanNational_id = @nat_id;
 END
 GO;
-EXEC purchaseTicket '123', 'a', 'b', '20000707 01:01:01 PM';
-DROP PROCEDURE purchaseTicket;
-GO;
 
 --> TESTME 2.3xxv
 CREATE PROCEDURE updateMatchTiming (@HCN VARCHAR(20), @GCN VARCHAR(20), @current_ST DATETIME, @new_ST DATETIME, @new_ET DATETIME) AS
@@ -684,9 +595,6 @@ UPDATE match
 SET match.endTime = @new_ET
 WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
 GO;
-EXEC updateMatchTiming 'a', 'b', '20000707 01:01:01 PM', '20000707 01:02:01 PM', '20000707 01:03:01 PM';
-DROP PROCEDURE updateMatchTiming;
-GO;
 
 --> TESTME 2.3xxvi
 CREATE VIEW matchesPerTeam AS
@@ -695,9 +603,6 @@ FROM club C
 LEFT JOIN match M ON C.id = M.guestClub_id OR C.id = M.hostClub_id
 WHERE M.endTime < CURRENT_TIMESTAMP
 GROUP BY C.name;
-GO;
-SELECT * FROM matchesPerTeam;
-DROP VIEW matchesPerTeam;
 GO;
 
 --> TESTMEAWI 2.3xxviii
@@ -712,9 +617,6 @@ HAVING COUNT(T.id) =
 (SELECT MAX(ticket_count) max_ticket_count FROM (
 SELECT COUNT(T.id) ticket_count FROM ticket T, match M WHERE T.match_id = M.id AND T.status=0) alias);
 GO;
-DROP VIEW matchWithMostSoldTickets;
-SELECT * FROM matchWithMostSoldTickets;
-GO;
 
 --> TESTME 2.3xxix
 CREATE VIEW matchesRankedBySoldTickets AS
@@ -726,8 +628,6 @@ INNER JOIN ticket T ON M.id = T.match_id
 WHERE T.match_id = M.id AND T.status=0
 GROUP BY HC.name, GC.name
 ORDER BY sold_tickets DESC OFFSET 0 ROWS;
-GO;
-DROP VIEW matchesRankedBySoldTickets;
 GO;
 
 --> TESTME 2.3xxx
@@ -745,7 +645,7 @@ HAVING COUNT(T.id) =
 		WHERE T.match_id = M.id AND T.status=0 AND CURRENT_TIMESTAMP > M.startTime)
 	alias1)
 RETURN @name;
-
+GO;
 --CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
 --SELECT name
 --FROM 
@@ -775,11 +675,6 @@ RETURN @name;
 --		WHERE T.match_id = M.id AND T.status=0 AND CURRENT_TIMESTAMP > M.startTime)
 --	alias2))) alias3
 --WHERE (name = name1 AND count1 > count2) OR (name = name2 AND count2 > count1)
-GO;
-DECLARE @name VARCHAR(20)
-EXEC clubWithTheMostSoldTickets @name OUTPUT;
-DROP PROCEDURE clubWithTheMostSoldTickets;
-GO;
 
 --> TESTME 2.3xxxi
 CREATE VIEW clubsRankedBySoldTickets AS
@@ -885,14 +780,17 @@ GO;
 	
 
 --| TESTING |--------------------------------------------------------------------------------------
-CREATE DATABASE testing2;
-USE testing2;
+CREATE DATABASE testing3;
+USE testing3;
 EXEC createAllTables;
 EXEC dropAllTables;
 --EXEC dropAllProceduresFunctionsViews; -- DONT USE TANY WE7YATAK!!!
 EXEC clearAllTables;
 
 SELECT name FROM sys.Tables;
+SELECT * FROM systemUser;
+
+SELECT * FROM sportsAssociationManager;
 SELECT * FROM allAssocManagers;
 EXEC addAssociationManager 'am1', 'usr_am1', 'pw_am1';
 EXEC addAssociationManager 'am2', 'usr_am2', 'pw_am2';
