@@ -261,7 +261,7 @@ INNER JOIN stadiumManager SM ON HR.manager_id = SM.id;
 GO;
 
 --| 2.3 All Other Requirements |----------------------------------------------------\ ADDITIONS \--
---> TESTME 2.3i  create, edit or delete the matches that will be played by the different clubs.
+--> TESTME 2.3i 
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
@@ -323,7 +323,7 @@ CREATE PROCEDURE addStadium @name VARCHAR(20), @loc VARCHAR(20), @cap INT AS
 INSERT INTO stadium VALUES (@name, @loc, @cap, 1);
 GO;
 
---> TESTME 2.3xiii  asking for the permission to host the matches played by the club
+--> TESTME 2.3xiii
 CREATE PROCEDURE addRepresentative @name VARCHAR(20), @c_name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
@@ -531,6 +531,9 @@ SELECT @HCR_id=CR.id FROM clubRepresentative CR INNER JOIN club C ON C.id=CR.clu
 UPDATE hostRequest
 SET hostRequest.status = 'rejected'
 WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id;
+UPDATE match
+SET match.stadium_id = NULL
+WHERE match.id = @M_id;
 GO;
 
 --> TESTME 2.3xxii
@@ -572,14 +575,14 @@ SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HCN;
 SELECT @GC_id=GC.id FROM club GC WHERE GC.name = @GCN;
 SELECT @M_id=M.id FROM match M WHERE M.startTime = @start AND M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id;
 SELECT @T_id=T.id FROM ticket T WHERE T.match_id = @M_id;
-IF EXISTS (SELECT 1 FROM fan WHERE fan.status = 1 AND fan.national_id = @nat_id)
+IF EXISTS (SELECT 1 FROM fan, ticket WHERE fan.status = 1 AND fan.national_id = @nat_id AND ticket.status = 1 AND ticket.id = @T_id)
 BEGIN 
 UPDATE ticket 
 SET ticket.status = 0
 WHERE ticket.id = @T_id;
 UPDATE ticketBuyingTransaction
 SET ticketBuyingTransaction.ticket_id = @T_id
-WHERE ticketBuyingTransaction.fanNational_id = @nat_id;
+WHERE ticketBuyingTransaction.fanNational_id = @nat_id
 END
 GO;
 
@@ -677,6 +680,7 @@ GO;
 --WHERE (name = name1 AND count1 > count2) OR (name = name2 AND count2 > count1)
 
 --> TESTME 2.3xxxi
+
 CREATE VIEW clubsRankedBySoldTickets AS
 SELECT C.name, COUNT(T.id) total_tickets_sold
 FROM match M
@@ -685,9 +689,6 @@ INNER JOIN ticket T ON M.id = T.match_id
 WHERE CURRENT_TIMESTAMP > M.stadium_id
 GROUP BY C.name
 ORDER BY total_tickets_sold DESC OFFSET 0 ROWS;
-GO;
-DROP VIEW clubsRankedBySoldTickets;
-SELECT * FROM clubsRankedBySoldTickets;
 GO;
 
 --> TESTME 2.3xxxii
@@ -709,9 +710,6 @@ RETURN
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	WHERE GC.name = @name))
 GO;	
-SELECT * FROM dbo.stadiumsNeverPlayedOn('barcelona');
-DROP FUNCTION stadiumsNeverPlayedOn;
-GO;
 
 --| SCHEMA |---------------------------------------------------------------------------------------
 
