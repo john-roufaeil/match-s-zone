@@ -8,11 +8,11 @@ CREATE TABLE systemUser (
 );
 CREATE TABLE fan (
 	national_id VARCHAR(20),
-	name VARCHAR(20),
+	name VARCHAR(20) NOT NULL,
 	birthDate DATE,
 	address VARCHAR(20),
 	phoneNumber INT,
-	status BIT,
+	status BIT NOT NULL,
 	username VARCHAR(20),
 	PRIMARY KEY (national_id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE
@@ -32,7 +32,7 @@ CREATE TABLE stadiumManager (
 	username VARCHAR(20),
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE TABLE club (
 	id INT IDENTITY,
@@ -47,7 +47,7 @@ CREATE TABLE clubRepresentative (
 	username VARCHAR(20),
 	PRIMARY KEY (id),
 	FOREIGN KEY	(username) REFERENCES systemUser  ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY	(club_id) REFERENCES club  ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY	(club_id) REFERENCES club  ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE TABLE sportsAssociationManager (
 	id INT IDENTITY,
@@ -651,19 +651,22 @@ DROP FUNCTION availableMatchesToAttend;
 EXEC availableMatchesToAttend '20220908';
 GO;
 
---> TESTME 2.3xxiv
+--> TESTME 2.3xxiv TODO blocked IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@hostClubName)
 CREATE PROCEDURE purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN VARCHAR(20), @start DATETIME) AS
-DECLARE @T_ID INT, @M_ID INT, @HC_ID INT, @GC_ID INT;
-SELECT @HC_ID=HC.id FROM club HC WHERE HC.name = @HCN;
-SELECT @GC_ID=GC.id FROM club GC WHERE GC.name = @GCN;
-SELECT @M_ID=M.id FROM match M WHERE M.startTime = @start AND M.hostClub_id = @HC_ID AND M.guestClub_id = @GC_ID;
-SELECT @T_ID=T.id FROM ticket T WHERE T.match_id = @M_ID;
+DECLARE @T_id INT, @M_id INT, @HC_id INT, @GC_id INT;
+SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HCN;
+SELECT @GC_id=GC.id FROM club GC WHERE GC.name = @GCN;
+SELECT @M_id=M.id FROM match M WHERE M.startTime = @start AND M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id;
+SELECT @T_id=T.id FROM ticket T WHERE T.match_id = @M_id;
+IF EXISTS (SELECT 1 FROM fan WHERE fan.status = 1 AND fan.national_id = @nat_id)
+BEGIN 
 UPDATE ticket 
 SET ticket.status = 0
-WHERE ticket.id = @T_ID;
+WHERE ticket.id = @T_id;
 UPDATE ticketBuyingTransaction
-SET ticketBuyingTransaction.ticket_id = @T_ID
+SET ticketBuyingTransaction.ticket_id = @T_id
 WHERE ticketBuyingTransaction.fanNational_id = @nat_id;
+END
 GO;
 EXEC purchaseTicket '123', 'a', 'b', '20000707 01:01:01 PM';
 DROP PROCEDURE purchaseTicket;
@@ -868,11 +871,11 @@ GO;
 
 -- BASIC		createAllTables, dropAllTables, dropAllProceduresFunctionsViews, clearAllTables
 
--- DATA			allAssocManagers, allClubRepresentatives, allStadiumManagers, 
---				allFans, allMatches, allTickets, allCLubs, , allStadiums, allRequests
+-- DATA			allAssocManagers OK, allClubRepresentatives OK, allStadiumManagers OK, 
+--				allFans OK, allMatches OK, allTickets, allCLubs OK, , allStadiums OK, allRequests OK
 
--- PROC			addAssociationManager, addNewMatch, addClub, addTicket, addStadium, addHostRequest,
---				addStadiumManager, addRepresentative, addFan
+-- PROC			addAssociationManager OK, addNewMatch OK, addClub OK, addTicket, addStadium OK, addHostRequest OK,
+--				addStadiumManager OK, addRepresentative OK, addFan OK
 --				deleteClub, deleteMatch, deleteStadium, deleteMatchesOnStadium,
 --				blockFan, unblockFan, acceptRequest, rejectRequest 
 
@@ -886,16 +889,70 @@ CREATE DATABASE testing2;
 USE testing2;
 EXEC createAllTables;
 EXEC dropAllTables;
-EXEC dropAllProceduresFunctionsViews;
+--EXEC dropAllProceduresFunctionsViews; -- DONT USE TANY WE7YATAK!!!
 EXEC clearAllTables;
 
+SELECT name FROM sys.Tables;
+SELECT * FROM allAssocManagers;
+EXEC addAssociationManager 'am1', 'usr_am1', 'pw_am1';
+EXEC addAssociationManager 'am2', 'usr_am2', 'pw_am2';
 
+SELECT * FROM club;
+SELECT * FROM allClubs;
+EXEC addClub 'c1', 'loc_1';
+EXEC addClub 'c2', 'loc_1';
+EXEC addClub 'c3', 'loc_2';
+EXEC addClub 'c4', 'loc_2';
+EXEC addClub 'c5', 'loc_3';
 
+SELECT * FROM clubRepresentative;
+SELECT * FROM allClubRepresentatives;
+EXEC addRepresentative 'cr1', 'c1', 'usr_cr1', 'pw_cr1';
+EXEC addRepresentative 'cr2', 'c2', 'usr_cr2', 'pw_cr2';
+EXEC addRepresentative 'cr4', 'c4', 'usr_cr4', 'pw_cr4';
+EXEC addRepresentative 'cr5', 'c5', 'usr_cr5', 'pw_cr5';
 
+SELECT * FROM match;
+SELECT * FROM allMatches;
+EXEC addNewMatch 'c1', 'c6', '20221212', '20221212';
+
+SELECT * FROM allStadiums;
+EXEC addStadium 's1', 'loc_1', 1000;
+EXEC addStadium 's2', 'loc_1', 2000;
+EXEC addStadium 's3', 'loc_2', 3000;
+EXEC addStadium 's4', 'loc_3', 4000;
+
+SELECT * FROM stadiumManager;
+SELECT * FROM allStadiumManagers;
+EXEC addStadiumManager 'sm1', 's1', 'usr_sm1', 'pw_sm1';
+EXEC addStadiumManager 'sm2', 's2', 'usr_sm2', 'pw_sm2';
+EXEC addStadiumManager 'sm4', 's4', 'usr_sm4', 'pw_sm4';
+
+SELECT * FROM hostRequest;
+SELECT * FROM allRequests;
+EXEC addHostRequest 'c1', 's1', '20221212';
+EXEC addHostRequest 'c3', 's3', '20221213';
+EXEC addHostRequest 'c5', 's4', '20221213';
+
+SELECT * FROM fan;
+SELECT * FROM allFans;
+EXEC addFan 'f1', 'usr_f1', 'pw_f1', 'n_f1', '20000101', 'a_f1' ,123;
+EXEC addFan 'f2', 'usr_f2', 'pw_f2', 'n_f2', '20000102', 'a_f2' ,123;
+EXEC addFan 'f3', 'usr_f3', 'pw_f3', 'n_f3', '20000103', 'a_f3' ,123;
+EXEC addFan 'f4', 'usr_f4', 'pw_f4', 'n_f4', '20000104', 'a_f4' ,123;
+EXEC addFan 'f5', 'usr_f5', 'pw_f5', 'n_f5', '20000105', 'a_f5' ,123;
+EXEC addFan 'f6', 'usr_f6', 'pw_f6', 'n_f6', '20000106', 'a_f6' ,123;
+EXEC addFan 'f7', 'usr_f7', 'pw_f7', 'n_f7', '20000107', 'a_f7' ,123;
+EXEC addFan 'f8', 'usr_f8', 'pw_f8', 'n_f8', '20000108', 'a_f8' ,123;
+EXEC addFan 'f9', 'usr_f9', 'pw_f9', 'n_f9', '20000109', 'a_f9' ,123;
+
+SELECT * FROM ticket;
+SELECT * FROM allTickets;
+EXEC addTicket 'c1', 'c2', '20221212'
 
 --| TODO |-----------------------------------------------------------------------------------------
 
 -- make sure delete[x] deletes what is based on x
 -- make sure y exists when add[x] if x depends on y
 -- make sure of restrictions on tables
--- make sure of privilieges
+-- make sure of privilieges -- milestone 3
