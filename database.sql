@@ -11,14 +11,14 @@ CREATE TABLE fan (
 	name VARCHAR(20) NOT NULL,
 	birthDate DATE,
 	address VARCHAR(20),
-	phoneNumber INT,
+	phoneNumber VARCHAR(20),
 	status BIT NOT NULL,
 	username VARCHAR(20),
 	PRIMARY KEY (national_id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE stadium (
-	id INT IDENTITY,
+	id INT IDENTITY ,
 	name VARCHAR(20),
 	location VARCHAR(20),
 	capacity INT,
@@ -35,7 +35,7 @@ CREATE TABLE stadiumManager (
 	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE TABLE club (
-	id INT IDENTITY,
+	id INT IDENTITY (1,1),
 	name VARCHAR(20),
 	location VARCHAR(20),
 	PRIMARY KEY (id)
@@ -265,23 +265,23 @@ GO;
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
-DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
-DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
+--DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
+--DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw); 
 END
 INSERT INTO sportsAssociationManager VALUES (@name, @user);
-DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addNewMatch TO ' + QUOTENAME(@user)); EXEC(@grant1);
-DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON deleteMatch TO ' + QUOTENAME(@user)); EXEC(@grant2);
-DECLARE @grant3 nvarchar(500); SET @grant3 = (N'GRANT SELECT, INSERT, DELETE, UPDATE ON match TO ' + QUOTENAME(@user)); EXEC(@grant3);
-DECLARE @grant4 nvarchar(500); SET @grant4 = (N'GRANT EXECUTE ON deleteMatchesOn TO ' + QUOTENAME(@user)); EXEC(@grant4);
-DECLARE @grant5 nvarchar(500); SET @grant5 = (N'GRANT SELECT ON allMatches TO ' + QUOTENAME(@user)); EXEC(@grant5);
-DECLARE @grant6 nvarchar(500); SET @grant6 = (N'GRANT SELECT ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant6);
-DECLARE @grant7 nvarchar(500); SET @grant7 = (N'GRANT SELECT ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant7);
-DECLARE @grant8 nvarchar(500); SET @grant8 = (N'GRANT SELECT ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant8);
-DECLARE @grant9 nvarchar(500); SET @grant9 = (N'GRANT EXECUTE ON updateMatchTiming TO ' + QUOTENAME(@user)); EXEC(@grant9);
-DECLARE @grantA nvarchar(500); SET @grantA = (N'GRANT SELECT ON matchesPerTeam TO ' + QUOTENAME(@user)); EXEC(@grantA);
-DECLARE @grantB nvarchar(500); SET @grantB = (N'GRANT SELECT ON matchWithMostSoldTickets TO ' + QUOTENAME(@user)); EXEC(@grantB);
-DECLARE @grantC nvarchar(500); SET @grantC = (N'GRANT SELECT ON matchesRankedBySoldTickets TO ' + QUOTENAME(@user)); EXEC(@grantC);
+--DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addNewMatch TO ' + QUOTENAME(@user)); EXEC(@grant1);
+--DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON deleteMatch TO ' + QUOTENAME(@user)); EXEC(@grant2);
+--DECLARE @grant3 nvarchar(500); SET @grant3 = (N'GRANT SELECT, INSERT, DELETE, UPDATE ON match TO ' + QUOTENAME(@user)); EXEC(@grant3);
+--DECLARE @grant4 nvarchar(500); SET @grant4 = (N'GRANT EXECUTE ON deleteMatchesOn TO ' + QUOTENAME(@user)); EXEC(@grant4);
+--DECLARE @grant5 nvarchar(500); SET @grant5 = (N'GRANT SELECT ON allMatches TO ' + QUOTENAME(@user)); EXEC(@grant5);
+--DECLARE @grant6 nvarchar(500); SET @grant6 = (N'GRANT SELECT ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant6);
+--DECLARE @grant7 nvarchar(500); SET @grant7 = (N'GRANT SELECT ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant7);
+--DECLARE @grant8 nvarchar(500); SET @grant8 = (N'GRANT SELECT ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant8);
+--DECLARE @grant9 nvarchar(500); SET @grant9 = (N'GRANT EXECUTE ON updateMatchTiming TO ' + QUOTENAME(@user)); EXEC(@grant9);
+--DECLARE @grantA nvarchar(500); SET @grantA = (N'GRANT SELECT ON matchesPerTeam TO ' + QUOTENAME(@user)); EXEC(@grantA);
+--DECLARE @grantB nvarchar(500); SET @grantB = (N'GRANT SELECT ON matchWithMostSoldTickets TO ' + QUOTENAME(@user)); EXEC(@grantB);
+--DECLARE @grantC nvarchar(500); SET @grantC = (N'GRANT SELECT ON matchesRankedBySoldTickets TO ' + QUOTENAME(@user)); EXEC(@grantC);
 GO;
 
 --> TESTME 2.3ii  
@@ -327,8 +327,8 @@ GO;
 CREATE PROCEDURE addRepresentative @name VARCHAR(20), @c_name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
-DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
-DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
+--DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
+--DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw);
 END
 IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@c_name)
@@ -338,23 +338,19 @@ END
 DECLARE @club_id INT;
 SELECT @club_id=C.id FROM club C WHERE C.name = @c_name;
 INSERT INTO clubRepresentative VALUES (@name, @club_id, @user);
-DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addHostRequest TO ' + QUOTENAME(@user)); EXEC(@grant1);
-DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT SELECT ON viewAvailableStadiumsOn TO ' + QUOTENAME(@user)); EXEC(@grant2);
-DECLARE @grant3 nvarchar(500); SET @grant3 = (N'GRANT SELECT ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant3);
+--DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addHostRequest TO ' + QUOTENAME(@user)); EXEC(@grant1);
+--DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT SELECT ON viewAvailableStadiumsOn TO ' + QUOTENAME(@user)); EXEC(@grant2);
+--DECLARE @grant3 nvarchar(500); SET @grant3 = (N'GRANT SELECT ON allUnassignedMatches TO ' + QUOTENAME(@user)); EXEC(@grant3);
 GO;
 
 --> TESTME 2.3xv 
 CREATE PROCEDURE addHostRequest @clubName VARCHAR(20), @stadiumName VARCHAR(20), @startTime DATETIME AS
-DECLARE @rep_id INT;
-DECLARE @mgr_id INT;
-DECLARE @m_id INT;
-DECLARE @c_id INT;
-DECLARE @s_id INT;
+DECLARE @rep_id INT, @mgr_id INT, @m_id INT, @c_id INT, @s_id INT;
 SELECT @c_id=C.id FROM club C WHERE C.name = @clubName;
 SELECT @rep_id=CR.id FROM clubRepresentative CR WHERE CR.club_id = @c_id;
 SELECT @s_id=S.id FROM stadium S WHERE S.name = @stadiumName;
 SELECT @mgr_id=SM.id FROM stadiumManager SM WHERE SM.stadium_id = @s_id;
-SELECT @m_id=M.id FROM match M WHERE @c_id=M.hostClub_id AND @startTime=M.startTime AND @s_id=M.stadium_id;
+SELECT @m_id=M.id FROM match M WHERE @c_id=M.hostClub_id AND @startTime=M.startTime;
 INSERT INTO hostRequest (representative_id, manager_id, match_id) VALUES (@rep_id, @mgr_id, @m_id);
 GO;
 
@@ -362,8 +358,8 @@ GO;
 CREATE PROCEDURE addStadiumManager(@name VARCHAR(20), @stadiumName VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)) AS
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
-DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
-DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
+--DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
+--DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw); 
 END
 IF NOT EXISTS (SELECT 1 FROM stadium S WHERE S.name=@stadiumName)
@@ -373,25 +369,25 @@ END
 DECLARE @stadium_id INT;
 SELECT @stadium_id=S.id FROM stadium S WHERE @stadiumName = S.name;
 INSERT INTO stadiumManager VALUES (@name, @stadium_id, @user);
-DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT SELECT ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant1);
-DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON acceptRequest TO ' + QUOTENAME(@user)); EXEC(@grant2);
-DECLARE @grant3	nvarchar(500); SET @grant3 = (N'GRANT EXECUTE ON rejectRequest TO ' + QUOTENAME(@user)); EXEC(@grant3);
-DECLARE @grant4	nvarchar(500); SET @grant4 = (N'GRANT EXECUTE ON deleteMatchesOnStadium TO ' + QUOTENAME(@user)); EXEC(@grant4);
-DECLARE @grant5	nvarchar(500); SET @grant5 = (N'GRANT SELECT ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant5);
+--DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT SELECT ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant1);
+--DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON acceptRequest TO ' + QUOTENAME(@user)); EXEC(@grant2);
+--DECLARE @grant3	nvarchar(500); SET @grant3 = (N'GRANT EXECUTE ON rejectRequest TO ' + QUOTENAME(@user)); EXEC(@grant3);
+--DECLARE @grant4	nvarchar(500); SET @grant4 = (N'GRANT EXECUTE ON deleteMatchesOnStadium TO ' + QUOTENAME(@user)); EXEC(@grant4);
+--DECLARE @grant5	nvarchar(500); SET @grant5 = (N'GRANT SELECT ON allPendingRequests TO ' + QUOTENAME(@user)); EXEC(@grant5);
 GO;
 
 --> TESTME 2.3xxi
 CREATE PROCEDURE addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATETIME, @address VARCHAR(20), @phone INT) AS
 IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
 BEGIN 
-DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
-DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
+--DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
+--DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw);
 END
 INSERT INTO fan VALUES (@nat_id, @name, @bdate, @address, @phone, 1, @user);
-DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT SELECT ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant1);
-DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant2);
-DECLARE @grant3	nvarchar(500); SET @grant3 = (N'GRANT EXECUTE ON purchaseTicket TO ' + QUOTENAME(@user)); EXEC(@grant3);
+--DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT SELECT ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant1);
+--DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant2);
+--DECLARE @grant3	nvarchar(500); SET @grant3 = (N'GRANT EXECUTE ON purchaseTicket TO ' + QUOTENAME(@user)); EXEC(@grant3);
 GO;
 
 --| 2.3 All Other Requirements |----------------------------------------------------\ DELETIONS \--
@@ -610,7 +606,7 @@ GO;
 
 --> TESTMEAWI 2.3xxviii
 CREATE VIEW matchWithMostSoldTickets AS
-SELECT HC.name hostClubName, GC.name guestClubName
+SELECT TOP 1 HC.name hostClubName, GC.name guestClubName
 FROM match M
 INNER JOIN club HC ON M.hostClub_id = HC.id
 INNER JOIN club GC ON M.guestClub_id = GC.id
@@ -618,7 +614,7 @@ INNER JOIN ticket T ON M.id = T.match_id
 GROUP BY HC.name, GC.name
 HAVING COUNT(T.id) =
 (SELECT MAX(ticket_count) max_ticket_count FROM (
-SELECT COUNT(T.id) ticket_count FROM ticket T, match M WHERE T.match_id = M.id AND T.status=0) alias);
+SELECT COUNT(T.id) ticket_count FROM ticket T, match M WHERE T.match_id = M.id AND T.status=0) alias)
 GO;
 
 --> TESTME 2.3xxix
@@ -635,7 +631,7 @@ GO;
 
 --> TESTME 2.3xxx
 CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
-SELECT C.name 
+SELECT TOP 1 C.name 
 FROM match M
 INNER JOIN club C ON M.hostClub_id = C.id OR M.guestClub_id = C.id
 INNER JOIN ticket T ON M.id = T.match_id
@@ -767,14 +763,15 @@ GO;
 -- DATA			allAssocManagers OK, allClubRepresentatives OK, allStadiumManagers OK, 
 --				allFans OK, allMatches OK, allTickets, allCLubs OK, , allStadiums OK, allRequests OK
 
--- PROC			addAssociationManager OK, addNewMatch OK, addClub OK, addTicket, addStadium OK, addHostRequest OK,
---				addStadiumManager OK, addRepresentative OK, addFan OK
---				deleteClub, deleteMatch, deleteStadium, deleteMatchesOnStadium,
---				blockFan, unblockFan, acceptRequest, rejectRequest 
+-- PROC	ADD		addAssociationManager OK, addNewMatch OK, addClub OK, addTicket, addStadium OK, addHostRequest OK,
+--		ADD		addStadiumManager OK, addRepresentative OK, addFan OK
+--		DEL		deleteClub, deleteMatch, deleteStadium, deleteMatchesOnStadium, deleteMatchesOn
+--		ADM		acceptRequest, rejectRequest, purchaseTicket, updateMatchTiming, blockFan, unblockFan, clubWithTheMostSoldTickets
 
--- VIEW			clubsWithNoMatches, allUnassignedMatches, 
+-- VIEW			clubsWithNoMatches, allUnassignedMatches, matchesPerTeam, matchWithMostSoldTickets, matchesRankedBySoldTickets,
+--				clubsRankedBySoldTickets
 
--- FUNC			viewAvailableStadiumsOn, allPendingRequests, upcomingMatchesOfClub, availableMatchesToAttend
+-- FUNC			viewAvailableStadiumsOn, allPendingRequests, upcomingMatchesOfClub, availableMatchesToAttend, stadiumsNeverPlayedOn
 	
 
 --| TESTING |--------------------------------------------------------------------------------------
@@ -852,3 +849,96 @@ EXEC addTicket 'c1', 'c2', '20221212'
 -- make sure y exists when add[x] if x depends on y
 -- make sure of restrictions on tables
 -- make sure of privilieges -- milestone 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------
+CREATE DATABASE testing4;
+use  testing4;
+
+SELECT name FROM sys.Tables;
+SELECT * FROM systemUser;
+SELECT * FROM fan;
+SELECT * FROM stadium;
+SELECT * FROM stadiumManager;
+SELECT * FROM club;
+SELECT * FROM clubRepresentative;
+SELECT * FROM sportsAssociationManager
+SELECT * FROM systemAdmin;
+SELECT * FROM match;
+SELECT * FROM ticket;
+SELECT * FROM ticketBuyingTransaction;
+SELECT * FROM hostRequest;
+
+SELECT * FROM systemUser;
+SELECT * FROM allFans;
+SELECT * FROM fan;
+EXEC addFan 'saher', 'sahersamy', '12345678', '1', '20001010', 'transvaal', '12345';
+EXEC addFan 'omar', 'omartamer', '1234567', '2', '20001011', 'transvaal', '12345';
+EXEC addFan 'john', 'johnfayez', '123456', '3', '20001012', 'transvaal', '12345';
+
+SELECT * FROM stadium;
+SELECT * FROM allStadiums;
+EXEC addStadium 'santiago', 'madrid', 60000;
+EXEC addStadium 'anfield', 'liverpool', 80000;
+EXEC addStadium 'oldT', 'manchester', 90000;
+
+select * from stadiumManager;
+select * from allStadiumManagers;
+EXEC addStadiumManager 'perez', 'santiago', 'PEREZ', 'abcd';
+EXEC addStadiumManager 'glazers', 'oldT', 'GLAZERS', 'abcde';
+EXEC addStadiumManager 'fenway', 'anfield', 'FENWAY', 'abcdef';
+
+
+SELECT * from club
+SELECT * FROM allClubs;
+EXEC addClub 'barca', 'barcelona';
+EXEC addClub 'real', 'madrid'
+EXEC addClub 'man city', 'manchester'
+EXEC addClub 'man utd', 'manchester'
+EXEC addClub 'chelsea', 'london'
+EXEC addClub 'liverpool', 'liverpool'
+
+select * from clubRepresentative;
+select * from allClubRepresentatives;
+EXEC addRepresentative 'klopp', 'liverpool', 'KLOPP', '9009'
+EXEC addRepresentative 'ancelotti', 'real', 'ANCELOTTI', '8008'
+EXEC addRepresentative 'ten hag', 'man utd', 'HAG', '7007'
+EXEC addRepresentative 'pep', 'man city', 'PEP', '6006'
+EXEC addRepresentative 'xavi', 'barca', 'XAVI', '5005'
+EXEC addRepresentative 'potter', 'chelsea', 'POTTER', '4004'
+
+select * from match
+select * from allMatches
+exec addNewMatch 'real', 'barca', '2022/12/20', '2022/12/21'
+exec addNewMatch 'liverpool', 'man utd', '2022/12/21', '2022/12/22'
+exec addNewMatch 'barca', 'man city', '2022/12/21', '2022/12/22'
+exec addNewMatch 'chelsea', 'real', '2022/12/23', '2022/12/24'
+
+select * from allAssocManagers
+select * from sportsAssociationManager
+exec addAssociationManager 'infantino', 'INFANTINO', 'very hard password';
+
+select * from hostRequest;
+select * from allRequests;
+exec addHostRequest 'real', 'santiago', '2022/12/20'
+exec addHostRequest 'liverpool', 'anfield', '2022/12/21'
+exec addHostRequest 'barca', 'oldT', '2022/12/21'
+exec addHostRequest 'chelsea', 'anfield', '2022/12/23'
+
+
+
