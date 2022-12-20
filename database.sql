@@ -94,7 +94,7 @@ CREATE TABLE hostRequest (
 	representative_id INT,
 	manager_id INT,
 	match_id INT,
-	status VARCHAR(20) DEFAULT 'unhandled',
+	status VARCHAR(20) DEFAULT 'unhandled' CHECK(status IN ('accepted', 'rejected', 'unhandled')),
 	PRIMARY KEY (id),
 	FOREIGN KEY (representative_id) REFERENCES clubRepresentative, -- gives multiple cascade error; not required in milestone anyway
 	FOREIGN KEY (manager_id) REFERENCES stadiumManager, -- gives multiple cascade error; not required in milestone anyway
@@ -490,7 +490,7 @@ RETURN
 	INNER JOIN match M ON HR.match_id = M.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	INNER JOIN stadiumManager SM ON HR.manager_id = SM.id
-	WHERE (HR.status IS NULL OR HR.status = 'unhandled') AND @userStadiumManager = SM.username;
+	WHERE (HR.status = 'unhandled') AND @userStadiumManager = SM.username;
 GO;
 
 --> TESTME 2.3xix
@@ -504,7 +504,7 @@ SELECT @S_id=SM.stadium_id FROM stadiumManager SM WHERE SM.id = @SM_id;
 SELECT @HCR_id=CR.id FROM clubRepresentative CR INNER JOIN club C ON C.id=CR.club_id WHERE C.name=@HC_name;
 UPDATE hostRequest
 SET hostRequest.status = 'accepted'
-WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id;
+WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id AND NOT hostRequest.status='accepted';
 UPDATE match
 SET match.stadium_id = @S_id
 WHERE match.id = @M_id;
@@ -682,7 +682,7 @@ SELECT C.name, COUNT(T.id) total_tickets_sold
 FROM match M
 INNER JOIN club C ON M.hostClub_id = C.id OR M.guestClub_id = C.id
 INNER JOIN ticket T ON M.id = T.match_id
-WHERE CURRENT_TIMESTAMP > M.stadium_id
+WHERE CURRENT_TIMESTAMP > M.stadium_id AND T.status = 0
 GROUP BY C.name
 ORDER BY total_tickets_sold DESC OFFSET 0 ROWS;
 GO;
@@ -941,4 +941,8 @@ exec addHostRequest 'barca', 'oldT', '2022/12/21'
 exec addHostRequest 'chelsea', 'anfield', '2022/12/23'
 
 
-
+select * from hostRequest
+SELECT * FROM ticket
+exec acceptRequest 'PEREZ', 'real', 'barca', '2022/12/20'
+exec acceptRequest 'FENWAY', 'liverpool', 'man utd', '2022/12/21'
+exec rejectRequest '', 'barca', 'man city', '2022/12/21'
