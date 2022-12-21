@@ -3,32 +3,32 @@
 CREATE PROCEDURE createAllTables AS
 CREATE TABLE systemUser (
 	username VARCHAR(20),
-	password VARCHAR(20) NOT NULL,
+	password VARCHAR(20) NOT NULL CHECK(LEN(password) >= 8),
 	PRIMARY KEY(username)
 );
 CREATE TABLE fan (
 	national_id VARCHAR(20),
 	name VARCHAR(20) NOT NULL,
-	birthDate DATE,
+	birthDate DATE CHECK(CURRENT_TIMESTAMP - birthDate > 18),
 	address VARCHAR(20),
 	phoneNumber VARCHAR(20),
-	status BIT NOT NULL,
+	status BIT NOT NULL DEFAULT 1,
 	username VARCHAR(20),
 	PRIMARY KEY (national_id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE stadium (
-	id INT IDENTITY ,
-	name VARCHAR(20),
+	id INT IDENTITY,
+	name VARCHAR(20) UNIQUE,
 	location VARCHAR(20),
-	capacity INT,
-	status BIT,
+	capacity INT NOT NULL,
+	status BIT NOT NULL DEFAULT 1,
 	PRIMARY KEY (id)
 );
 CREATE TABLE stadiumManager (
 	id INT IDENTITY,
 	name VARCHAR(20),
-	stadium_id INT,
+	stadium_id INT UNIQUE, -- each stadium managed by one and only one manager and each manager manages one and only one stadium
 	username VARCHAR(20),
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE,
@@ -36,14 +36,14 @@ CREATE TABLE stadiumManager (
 );
 CREATE TABLE club (
 	id INT IDENTITY (1,1),
-	name VARCHAR(20),
+	name VARCHAR(20) UNIQUE,
 	location VARCHAR(20),
 	PRIMARY KEY (id)
 );
 CREATE TABLE clubRepresentative (
 	id INT IDENTITY,
 	name VARCHAR(20),
-	club_id INT,
+	club_id INT UNIQUE, -- each club represented by one and only one rep and each rep represents one and only one club
 	username VARCHAR(20),
 	PRIMARY KEY (id),
 	FOREIGN KEY	(username) REFERENCES systemUser  ON DELETE CASCADE ON UPDATE CASCADE,
@@ -66,9 +66,9 @@ CREATE TABLE systemAdmin (
 CREATE TABLE match (
 	id INT IDENTITY,
 	startTime DATETIME,
-	endTime DATETIME,
-	hostClub_id INT,
-	guestClub_id INT,
+	endTime DATETIME CHECK(endTime > startTime),
+	hostClub_id INT NOT NULL,
+	guestClub_id INT NOT NULL,
 	stadium_id INT,
 	PRIMARY KEY (id),
 	FOREIGN KEY (hostClub_id) REFERENCES club ON DELETE CASCADE ON UPDATE CASCADE,
@@ -77,8 +77,8 @@ CREATE TABLE match (
 );
 CREATE TABLE ticket (
 	id INT IDENTITY,
-	status BIT,
-	match_id INT,
+	status BIT NOT NULL DEFAULT 1,
+	match_id INT NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -96,8 +96,8 @@ CREATE TABLE hostRequest (
 	match_id INT,
 	status VARCHAR(20) DEFAULT 'unhandled' CHECK(status IN ('accepted', 'rejected', 'unhandled')),
 	PRIMARY KEY (id),
-	FOREIGN KEY (representative_id) REFERENCES clubRepresentative, -- gives multiple cascade error; not required in milestone anyway
-	FOREIGN KEY (manager_id) REFERENCES stadiumManager, -- gives multiple cascade error; not required in milestone anyway
+	FOREIGN KEY (representative_id) REFERENCES clubRepresentative, -- gives multiple cascade error to cascade; not required to delete representative in milestone anyway
+	FOREIGN KEY (manager_id) REFERENCES stadiumManager, -- gives multiple cascade error to cascade; not required to delete manager in milestone anyway
 	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
 );
 GO;
@@ -529,7 +529,9 @@ SET hostRequest.status = 'rejected'
 WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id;
 UPDATE match
 SET match.stadium_id = NULL
-WHERE match.id = @M_id;
+WHERE match.id = @M_id
+DELETE FROM ticket
+WHERE ticket.match_id = @M_id;
 GO;
 
 --> TESTME 2.3xxii
@@ -761,18 +763,17 @@ GO;
 -- BASIC		createAllTables, dropAllTables, dropAllProceduresFunctionsViews, clearAllTables
 
 -- DATA			allAssocManagers OK, allClubRepresentatives OK, allStadiumManagers OK, 
---				allFans OK, allMatches OK, allTickets, allCLubs OK, , allStadiums OK, allRequests OK
+--				allFans OK, allMatches OK, allTickets OK, allCLubs OK, , allStadiums OK, allRequests OK
 
 -- PROC	ADD		addAssociationManager OK, addNewMatch OK, addClub OK, addTicket, addStadium OK, addHostRequest OK,
 --		ADD		addStadiumManager OK, addRepresentative OK, addFan OK
 --		DEL		deleteClub, deleteMatch, deleteStadium, deleteMatchesOnStadium, deleteMatchesOn
 --		ADM		acceptRequest, rejectRequest, purchaseTicket, updateMatchTiming, blockFan, unblockFan, clubWithTheMostSoldTickets
 
--- VIEW			clubsWithNoMatches, allUnassignedMatches, matchesPerTeam, matchWithMostSoldTickets, matchesRankedBySoldTickets,
+-- VIEW			clubsWithNoMatches OK, allUnassignedMatches, matchesPerTeam, matchWithMostSoldTickets, matchesRankedBySoldTickets,
 --				clubsRankedBySoldTickets
 
 -- FUNC			viewAvailableStadiumsOn, allPendingRequests, upcomingMatchesOfClub, availableMatchesToAttend, stadiumsNeverPlayedOn
-	
 
 --| TESTING |--------------------------------------------------------------------------------------
 CREATE DATABASE testing3;
@@ -912,6 +913,8 @@ EXEC addClub 'man city', 'manchester'
 EXEC addClub 'man utd', 'manchester'
 EXEC addClub 'chelsea', 'london'
 EXEC addClub 'liverpool', 'liverpool'
+EXEC addClub 'zamalek', 'cairo';
+SELECT * FROM clubsWithNoMatches
 
 select * from clubRepresentative;
 select * from allClubRepresentatives;
@@ -940,9 +943,18 @@ exec addHostRequest 'liverpool', 'anfield', '2022/12/21'
 exec addHostRequest 'barca', 'oldT', '2022/12/21'
 exec addHostRequest 'chelsea', 'anfield', '2022/12/23'
 
-
+select * from match
 select * from hostRequest
 SELECT * FROM ticket
 exec acceptRequest 'PEREZ', 'real', 'barca', '2022/12/20'
 exec acceptRequest 'FENWAY', 'liverpool', 'man utd', '2022/12/21'
-exec rejectRequest '', 'barca', 'man city', '2022/12/21'
+exec rejectRequest 'PEREZ', 'real', 'barca', '2022/12/20'
+
+select * from ticket
+exec purchaseTicket '1', 'real', 'barca', '2022/12/20';
+exec purchaseTicket '2', 'real', 'barca', '2022/12/20';
+
+select * from ticketBuyingTransaction
+
+-- REVIEW MATCH
+-- REVIEW TICKET
