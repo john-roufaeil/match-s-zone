@@ -9,7 +9,7 @@ CREATE TABLE systemUser (
 CREATE TABLE fan (
 	national_id VARCHAR(20),
 	name VARCHAR(20) NOT NULL,
-	birthDate DATE CHECK(CURRENT_TIMESTAMP - birthDate > 18),
+	birthDate DATETIME CHECK(CURRENT_TIMESTAMP - birthDate > 18),
 	address VARCHAR(20),
 	phoneNumber VARCHAR(20),
 	status BIT NOT NULL DEFAULT 1,
@@ -66,7 +66,7 @@ CREATE TABLE systemAdmin (
 CREATE TABLE match (
 	id INT IDENTITY,
 	startTime DATETIME,
-	endTime DATETIME CHECK(endTime > startTime),
+	endTime DATETIME CHECK(match.endTime > match.startTime),
 	hostClub_id INT NOT NULL,
 	guestClub_id INT NOT NULL,
 	stadium_id INT,
@@ -91,9 +91,9 @@ CREATE TABLE ticketBuyingTransaction (
 );
 CREATE TABLE hostRequest (
 	id INT IDENTITY,
-	representative_id INT,
-	manager_id INT,
-	match_id INT,
+	representative_id INT NOT NULL,
+	manager_id INT NOT NULL,
+	match_id INT NOT NULL,
 	status VARCHAR(20) DEFAULT 'unhandled' CHECK(status IN ('accepted', 'rejected', 'unhandled')),
 	PRIMARY KEY (id),
 	FOREIGN KEY (representative_id) REFERENCES clubRepresentative, -- gives multiple cascade error to cascade; not required to delete representative in milestone anyway
@@ -120,7 +120,6 @@ GO;
 
 --> 2.1c 
 CREATE PROCEDURE dropAllProceduresFunctionsViews AS
--- TOCHECK
 DROP PROCEDURE	createAllTables;
 DROP PROCEDURE	dropAllTables;
 DROP PROCEDURE	clearAllTables;
@@ -182,13 +181,13 @@ DELETE stadium;
 DELETE club;
 DELETE systemUser;
 GO;
-
+exec createAllTables
 --| 2.2 Basic Data Retrieval |---------------------------------------------------------------------
 --> 2.2a 
 CREATE VIEW allAssocManagers AS
-SELECT DISTINCT SPA.username, SU.password, SPA.name
-FROM sportsAssociationManager SPA 
-INNER JOIN systemUser SU ON SPA.username = SU.username;
+SELECT DISTINCT SAM.username, SU.password, SAM.name
+FROM sportsAssociationManager SAM 
+INNER JOIN systemUser SU ON SAM.username = SU.username;
 GO;
 
 --> 2.2b 
@@ -220,19 +219,19 @@ GO;
 
 --> 2.2e 
 CREATE VIEW allMatches AS
-SELECT DISTINCT C1.name hostClub, C2.name guestClub, M.startTime
+SELECT DISTINCT HC.name hostClub, GC.name guestClub, M.startTime
 FROM match M
-INNER JOIN club C1 ON C1.id = M.hostClub_id
-INNER JOIN club C2 ON C2.id = M.guestClub_id;
+INNER JOIN club HC ON HC.id = M.hostClub_id
+INNER JOIN club GC ON GC.id = M.guestClub_id;
 GO;
 
 --> 2.2f 
 CREATE VIEW allTickets AS
-SELECT DISTINCT C1.name hostClub, C2.name guestClub, S.name stadium, M.startTime time
+SELECT DISTINCT HC.name hostClub, GC.name guestClub, S.name stadium, M.startTime
 FROM ticket T
 INNER JOIN match M	 ON T.match_id = M.id
-INNER JOIN club C1	 ON M.hostClub_id = C1.id
-INNER JOIN club C2	 ON M.guestClub_id = C2.id
+INNER JOIN club HC	 ON M.hostClub_id = HC.id
+INNER JOIN club GC	 ON M.guestClub_id = GC.id
 INNER JOIN stadium S ON M.stadium_id = S.id;
 GO;
 
@@ -958,3 +957,10 @@ select * from ticketBuyingTransaction
 
 -- REVIEW MATCH
 -- REVIEW TICKET
+
+-----------------------------------------------------------------------TESTING 21/12 2PM
+
+
+
+create database testing5;
+use testing5;
