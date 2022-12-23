@@ -563,15 +563,16 @@ RETURN
 	WHERE M.startTime >= @DT and T.status=1;
 GO;
 
---> TESTME 2.3xxiv
+--> TESTME 2.3xxiv 
 CREATE PROCEDURE purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN VARCHAR(20), @start DATETIME) AS
 DECLARE @T_id INT, @M_id INT, @HC_id INT, @GC_id INT;
 SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HCN;
 SELECT @GC_id=GC.id FROM club GC WHERE GC.name = @GCN;
 SELECT @M_id=M.id FROM match M WHERE M.startTime = @start AND M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id;
-SELECT @T_id=T.id FROM ticket T WHERE T.match_id = @M_id;
+SELECT @T_id=T.id FROM ticket T WHERE T.match_id = @M_id AND T.status = 1;
 IF EXISTS (SELECT 1 FROM fan, ticket WHERE fan.status = 1 AND fan.national_id = @nat_id AND ticket.status = 1 AND ticket.id = @T_id)
-BEGIN 
+AND NOT EXISTS (SELECT 1 FROM ticketBuyingTransaction TBT INNER JOIN ticket T ON TBT.ticket_id = T.id WHERE TBT.fanNational_id = @nat_id AND T.match_id = @M_id)
+BEGIN  
 UPDATE ticket 
 SET ticket.status = 0
 WHERE ticket.id = @T_id AND ticket.status = 1;
@@ -581,6 +582,7 @@ INSERT INTO ticketBuyingTransaction (ticket_id, fanNational_id) VALUES (@T_id, @
 END
 GO;
 
+select T. from ticket T;
 --> TESTME 2.3xxv
 CREATE PROCEDURE updateMatchTiming (@HCN VARCHAR(20), @GCN VARCHAR(20), @current_ST DATETIME, @new_ST DATETIME, @new_ET DATETIME) AS
 DECLARE @HC_ID INT, @GC_ID INT;
@@ -630,20 +632,21 @@ GO;
 
 --> TESTME 2.3xxx
 CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
-SELECT TOP 1 C.name 
-FROM match M
-INNER JOIN club C ON M.hostClub_id = C.id OR M.guestClub_id = C.id
-INNER JOIN ticket T ON M.id = T.match_id
-GROUP BY C.name
-HAVING COUNT(T.id) = 
-	(SELECT MAX(ticket_count) max_ticket_count
+
+SELECT C.name
+FROM club C
+INNER JOIN match M ON M.guestClub_id = C.id OR M.hostClub_id = C.id
+INNER JOIN ticket T ON T.match_id = M.id 
+WHERE T.status = 0
+group by c.name
+HAVING COUNT(T.id) = ( SELECT MAX(ticket_count) max_ticket_count
 	FROM
 		(SELECT COUNT(T.id) ticket_count 
 		FROM ticket T, match M 
 		WHERE T.match_id = M.id AND T.status=0 AND CURRENT_TIMESTAMP > M.startTime)
 	alias1)
-RETURN @name;
 GO;
+
 --CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
 --SELECT name
 --FROM 
@@ -1095,10 +1098,46 @@ select * from match
 select * from allmatches;
 select * from ticket;
 select * from alltickets
+select * from ticketBuyingTransaction;
 exec acceptRequest 'IRO', 'paris', 'bayern', '2022/12/1';
 exec acceptRequest 'DES', 'chelsea', 'barcelona', '2022/12/5';
+exec acceptRequest 'DES', 'liverpool', 'city', '2022/12/10';
+exec acceptRequest 'ERA', 'liverpool', 'manchester', '2022/12/13';
 exec rejectRequest 'OU', 'chelsea', 'bayern', '2022/12/6';
 
 exec deleteclub 'paris'
-exec purchaseTicket 'i', 'paris', 'bayern', '2022/12/1';
-exec purchaseTicket 'ii', 'paris', 'bayern', '2022/12/1';
+exec purchaseTicket 'i', 'liverpool', 'manchester', '2022/12/13';
+exec purchaseTicket 'iv', 'liverpool', 'manchester', '2022/12/13';
+exec purchaseTicket 'vi', 'liverpool', 'manchester', '2022/12/13';
+exec purchaseTicket 'xi', 'liverpool', 'manchester', '2022/12/13';
+exec purchaseTicket 'xxi', 'liverpool', 'manchester', '2022/12/13';
+
+
+exec deletematch 'paris', 'bayern'
+
+exec deletestadium 'rodes'
+
+select * from allmatches
+
+exec deleteMatchesOnStadiun '2022/12/17'
+
+
+select * from match
+select * from allmatches
+
+
+
+select * from ticket
+select * from ticketBuyingTransaction
+exec addNewMatch 'juventus', 'manchester', '2022/12/12', '2022/12/13'
+exec addHostRequest 'juventus', 'signal', '2022/12/12'
+exec acceptRequest 'NAL', 'juventus', 'manchester', '2022/12/12'
+exec purchaseTicket "i", 'juventus', 'manchester', '2022/12/12'
+select * from ticket
+DECLARE @name varchar(20)
+exec clubWithTheMostSoldTickets @name
+
+
+
+
+
