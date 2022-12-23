@@ -72,7 +72,8 @@ CREATE TABLE match (
 	hostClub_id INT NOT NULL,
 	guestClub_id INT NOT NULL,
 	stadium_id INT,
-	CHECK(endTime > startTime),
+	CHECK (endTime > startTime),
+--	CHECK (hostclub_id != guestclub_id),
 	PRIMARY KEY (id),
 	FOREIGN KEY (hostClub_id) REFERENCES club ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (guestClub_id) REFERENCES club, -- cannot cascade on two foreign keys referencing same attribute >> manual override in 2.3viii
@@ -481,7 +482,7 @@ RETURN
 	FROM match M 
 	INNER JOIN club HC ON M.hostClub_id	 = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
-	WHERE HC.name = @hostClubName AND M.stadium_id = NULL;
+	WHERE HC.name = @hostClubName AND M.stadium_id IS NULL;
 GO;
 
 --> TESTME 2.3xviii
@@ -606,15 +607,13 @@ GO;
 
 --> TESTMEAWI 2.3xxviii
 CREATE VIEW matchWithMostSoldTickets AS
-SELECT TOP 1 HC.name hostClubName, GC.name guestClubName
+SELECT top 1 HC.name hostClubName, GC.name guestClubName, COUNT (T.id) tickets
 FROM match M
 INNER JOIN club HC ON M.hostClub_id = HC.id
 INNER JOIN club GC ON M.guestClub_id = GC.id
-INNER JOIN ticket T ON M.id = T.match_id
+INNER JOIN ticket T ON M.id = T.match_id AND T.status = 0
 GROUP BY HC.name, GC.name
-HAVING COUNT(T.id) =
-(SELECT MAX(ticket_count) max_ticket_count FROM (
-SELECT COUNT(T.id) ticket_count FROM ticket T, match M WHERE T.match_id = M.id AND T.status=0) alias)
+ORDER BY tickets DESC;
 GO;
 
 --> TESTME 2.3xxix
@@ -1040,3 +1039,38 @@ SELECT * FROM  availablematchestoattend(@date)
 exec purchaseticket 'vii', 'paris', 'bayern', '2022/12/1'
 exec purchaseticket 'viii', 'paris', 'bayern', '2022/12/1'
 exec purchaseticket 'ix', 'paris', 'bayern', '2022/12/1'
+
+DECLARE @name varchar(20) = 'bayern'
+SELECT * FROM  allunassignedmatches(@name)
+ 
+exec deletematch 'chelsea', 'bayern'
+exec deletestadium 'rodes'
+select * from stadiummanager
+select * from match
+select * from allmatches
+select * from club
+select * from stadium
+
+select * from ticket
+
+SELECT top 1 HC.name hostClubName, GC.name guestClubName, COUNT (T.id) tickets
+FROM match M
+INNER JOIN club HC ON M.hostClub_id = HC.id
+INNER JOIN club GC ON M.guestClub_id = GC.id
+INNER JOIN ticket T ON M.id = T.match_id AND T.status = 0
+GROUP BY HC.name, GC.name
+ORDER BY tickets DESC;
+
+exec addStadiumManager 'ium', 'bigstadium', 'IUM', 'sm';
+exec addstadium 'bigstadium', 'BER', 10;
+exec addhostRequest 'arsenal', 'bigstadium', '2022/12/1'
+exec acceptrequest 'IUM', 'arsenal', 'paris', '2022/12/1';
+select * from ticket
+exec purchaseticket 'i', 'arsenal', 'paris', '2022/12/1';
+exec purchaseticket 'ii', 'arsenal', 'paris', '2022/12/1';
+exec purchaseticket 'iii', 'arsenal', 'paris', '2022/12/1';
+exec purchaseticket 'iv', 'arsenal', 'paris', '2022/12/1';
+exec purchaseticket 'v', 'arsenal', 'paris', '2022/12/1';
+exec purchaseticket 'vi', 'arsenal', 'paris', '2022/12/1';
+exec purchaseticket 'vii', 'arsenal', 'paris', '2022/12/1';
+select * from ticketBuyingTransaction
