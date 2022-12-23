@@ -607,13 +607,28 @@ GO;
 
 --> TESTMEAWI 2.3xxviii
 CREATE VIEW matchWithMostSoldTickets AS
-SELECT top 1 HC.name hostClubName, GC.name guestClubName, COUNT (T.id) tickets
+--SELECT top 1 HC.name hostClubName, GC.name guestClubName, COUNT (T.id) tickets
+--FROM match M
+--INNER JOIN club HC ON M.hostClub_id = HC.id
+--INNER JOIN club GC ON M.guestClub_id = GC.id
+--INNER JOIN ticket T ON M.id = T.match_id AND T.status = 0
+--GROUP BY HC.name, GC.name
+--ORDER BY tickets DESC;
+
+SELECT HC.name hostClubName, GC.name guestClubName
 FROM match M
 INNER JOIN club HC ON M.hostClub_id = HC.id
 INNER JOIN club GC ON M.guestClub_id = GC.id
 INNER JOIN ticket T ON M.id = T.match_id AND T.status = 0
 GROUP BY HC.name, GC.name
-ORDER BY tickets DESC;
+HAVING COUNT(T.id) = 
+(SELECT top 1 COUNT (T.id) tickets
+FROM match M
+INNER JOIN club HC ON M.hostClub_id = HC.id
+INNER JOIN club GC ON M.guestClub_id = GC.id
+INNER JOIN ticket T ON M.id = T.match_id AND T.status = 0
+GROUP BY HC.name, GC.name
+ORDER BY tickets DESC)
 GO;
 
 --> TESTME 2.3xxix
@@ -1074,3 +1089,31 @@ exec purchaseticket 'v', 'arsenal', 'paris', '2022/12/1';
 exec purchaseticket 'vi', 'arsenal', 'paris', '2022/12/1';
 exec purchaseticket 'vii', 'arsenal', 'paris', '2022/12/1';
 select * from ticketBuyingTransaction
+
+
+
+DECLARE @name varchar(20) = 'bayern'
+SELECT * FROM  allunassignedmatches(@name)
+
+select * from matchWithMostSoldTickets
+
+
+SELECT distinct top 1 C.name
+FROM club C
+INNER JOIN match M ON M.guestClub_id = C.id OR M.hostClub_id = C.id
+INNER JOIN ticket T ON T.match_id = M.id 
+WHERE T.status = 0
+group by c.name
+order by count(T.id) desc
+
+
+HAVING COUNT(T.id) = ( SELECT MAX(ticket_count) max_ticket_count
+	FROM
+		(SELECT COUNT(T.id) ticket_count 
+		FROM ticket T, match M 
+		WHERE T.match_id = M.id AND T.status=0 AND CURRENT_TIMESTAMP > M.startTime)
+	alias1)
+
+	select * from ticket
+	select * from match
+
