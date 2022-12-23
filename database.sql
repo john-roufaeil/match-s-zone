@@ -547,7 +547,7 @@ RETURN
 	INNER JOIN club HC ON M.hostClub_id	 = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	LEFT JOIN stadium S ON S.id = M.stadium_id
-	WHERE (HC.name = @clubName OR GC.name = @clubName) -- AND M.startTime > CURRENT_TIMESTAMP  
+	WHERE (HC.name = @clubName OR GC.name = @clubName) AND M.startTime > CURRENT_TIMESTAMP  
 GO;
 
 --> TESTME 2.3xxiii
@@ -1155,8 +1155,8 @@ where match.startTime = '2022/12/12'
 DECLARE @name varchar(20) = 'arsenal'
 select * from upcomingMatchesOfClub (@name)
 
+exec addNewMatch 'juventus', 'arsenal', '2023/1/1', '2023/1/2'
 
 
-
-
+select * from allMatches order by startTime DESC
 
