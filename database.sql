@@ -582,26 +582,24 @@ INSERT INTO ticketBuyingTransaction (ticket_id, fanNational_id) VALUES (@T_id, @
 END
 GO;
 
-select T. from ticket T;
 --> TESTME 2.3xxv
 CREATE PROCEDURE updateMatchTiming (@HCN VARCHAR(20), @GCN VARCHAR(20), @current_ST DATETIME, @new_ST DATETIME, @new_ET DATETIME) AS
 DECLARE @HC_ID INT, @GC_ID INT;
 SELECT @HC_ID=HC.id FROM club HC WHERE HC.name = @HCN;
 SELECT @GC_ID=GC.id FROM club GC WHERE GC.name = @GCN;
-UPDATE match
-SET match.startTime = @new_ST
-WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
 UPDATE match 
 SET match.endTime = @new_ET
+WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
+UPDATE match
+SET match.startTime = @new_ST
 WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
 GO;
 
 --> TESTME 2.3xxvi
 CREATE VIEW matchesPerTeam AS
-SELECT DISTINCT C.name, COUNT(*) matchCount
+SELECT DISTINCT C.name, COUNT(M.id) matchCount
 FROM club C
-LEFT JOIN match M ON C.id = M.guestClub_id OR C.id = M.hostClub_id
-WHERE M.endTime < CURRENT_TIMESTAMP
+LEFT JOIN match M ON (C.id = M.guestClub_id OR C.id = M.hostClub_id) AND CURRENT_TIMESTAMP > M.startTime
 GROUP BY C.name;
 GO;
 
@@ -776,197 +774,6 @@ GO;
 -- FUNC			viewAvailableStadiumsOn, allPendingRequests, upcomingMatchesOfClub, availableMatchesToAttend, stadiumsNeverPlayedOn
 
 --| TESTING |--------------------------------------------------------------------------------------
---CREATE DATABASE testing3;
---USE testing3;
---EXEC createAllTables;
---EXEC dropAllTables;
-----EXEC dropAllProceduresFunctionsViews; -- DONT USE TANY WE7YATAK!!!
---EXEC clearAllTables;
-
---SELECT name FROM sys.Tables;
---SELECT * FROM systemUser;
-
---SELECT * FROM sportsAssociationManager;
---SELECT * FROM allAssocManagers;
---EXEC addAssociationManager 'am1', 'usr_am1', 'pw_am1';
---EXEC addAssociationManager 'am2', 'usr_am2', 'pw_am2';
-
---SELECT * FROM club;
---SELECT * FROM allClubs;
---EXEC addClub 'c1', 'loc_1';
---EXEC addClub 'c2', 'loc_1';
---EXEC addClub 'c3', 'loc_2';
---EXEC addClub 'c4', 'loc_2';
---EXEC addClub 'c5', 'loc_3';
-
---SELECT * FROM clubRepresentative;
---SELECT * FROM allClubRepresentatives;
---EXEC addRepresentative 'cr1', 'c1', 'usr_cr1', 'pw_cr1';
---EXEC addRepresentative 'cr2', 'c2', 'usr_cr2', 'pw_cr2';
---EXEC addRepresentative 'cr4', 'c4', 'usr_cr4', 'pw_cr4';
---EXEC addRepresentative 'cr5', 'c5', 'usr_cr5', 'pw_cr5';
-
---SELECT * FROM match;
---SELECT * FROM allMatches;
---EXEC addNewMatch 'c1', 'c6', '20221212', '20221212';
-
---SELECT * FROM allStadiums;
---EXEC addStadium 's1', 'loc_1', 1000;
---EXEC addStadium 's2', 'loc_1', 2000;
---EXEC addStadium 's3', 'loc_2', 3000;
---EXEC addStadium 's4', 'loc_3', 4000;
-
---SELECT * FROM stadiumManager;
---SELECT * FROM allStadiumManagers;
---EXEC addStadiumManager 'sm1', 's1', 'usr_sm1', 'pw_sm1';
---EXEC addStadiumManager 'sm2', 's2', 'usr_sm2', 'pw_sm2';
---EXEC addStadiumManager 'sm4', 's4', 'usr_sm4', 'pw_sm4';
-
---SELECT * FROM hostRequest;
---SELECT * FROM allRequests;
---EXEC addHostRequest 'c1', 's1', '20221212';
---EXEC addHostRequest 'c3', 's3', '20221213';
---EXEC addHostRequest 'c5', 's4', '20221213';
-
---SELECT * FROM fan;
---SELECT * FROM allFans;
---EXEC addFan 'f1', 'usr_f1', 'pw_f1', 'n_f1', '20000101', 'a_f1' ,123;
---EXEC addFan 'f2', 'usr_f2', 'pw_f2', 'n_f2', '20000102', 'a_f2' ,123;
---EXEC addFan 'f3', 'usr_f3', 'pw_f3', 'n_f3', '20000103', 'a_f3' ,123;
---EXEC addFan 'f4', 'usr_f4', 'pw_f4', 'n_f4', '20000104', 'a_f4' ,123;
---EXEC addFan 'f5', 'usr_f5', 'pw_f5', 'n_f5', '20000105', 'a_f5' ,123;
---EXEC addFan 'f6', 'usr_f6', 'pw_f6', 'n_f6', '20000106', 'a_f6' ,123;
---EXEC addFan 'f7', 'usr_f7', 'pw_f7', 'n_f7', '20000107', 'a_f7' ,123;
---EXEC addFan 'f8', 'usr_f8', 'pw_f8', 'n_f8', '20000108', 'a_f8' ,123;
---EXEC addFan 'f9', 'usr_f9', 'pw_f9', 'n_f9', '20000109', 'a_f9' ,123;
-
---SELECT * FROM ticket;
---SELECT * FROM allTickets;
---EXEC addTicket 'c1', 'c2', '20221212'
-
-----| TODO |-----------------------------------------------------------------------------------------
-
----- make sure delete[x] deletes what is based on x
----- make sure y exists when add[x] if x depends on y
----- make sure of restrictions on tables
----- make sure of privilieges -- milestone 3
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----------------------------
---CREATE DATABASE testing4;
---use  testing4;
-
---SELECT name FROM sys.Tables;
---SELECT * FROM systemUser;
---SELECT * FROM fan;
---SELECT * FROM stadium;
---SELECT * FROM stadiumManager;
---SELECT * FROM club;
---SELECT * FROM clubRepresentative;
---SELECT * FROM sportsAssociationManager
---SELECT * FROM systemAdmin;
---SELECT * FROM match;
---SELECT * FROM ticket;
---SELECT * FROM ticketBuyingTransaction;
---SELECT * FROM hostRequest;
-
---SELECT * FROM systemUser;
---SELECT * FROM allFans;
---SELECT * FROM fan;
---EXEC addFan 'saher', 'sahersamy', '12345678', '1', '20001010', 'transvaal', '12345';
---EXEC addFan 'omar', 'omartamer', '1234567', '2', '20001011', 'transvaal', '12345';
---EXEC addFan 'john', 'johnfayez', '123456', '3', '20001012', 'transvaal', '12345';
-
---SELECT * FROM stadium;
---SELECT * FROM allStadiums;
---EXEC addStadium 'santiago', 'madrid', 60000;
---EXEC addStadium 'anfield', 'liverpool', 80000;
---EXEC addStadium 'oldT', 'manchester', 90000;
-
---select * from stadiumManager;
---select * from allStadiumManagers;
---EXEC addStadiumManager 'perez', 'santiago', 'PEREZ', 'abcd';
---EXEC addStadiumManager 'glazers', 'oldT', 'GLAZERS', 'abcde';
---EXEC addStadiumManager 'fenway', 'anfield', 'FENWAY', 'abcdef';
-
-
---SELECT * from club
---SELECT * FROM allClubs;
---EXEC addClub 'barca', 'barcelona';
---EXEC addClub 'real', 'madrid'
---EXEC addClub 'man city', 'manchester'
---EXEC addClub 'man utd', 'manchester'
---EXEC addClub 'chelsea', 'london'
---EXEC addClub 'liverpool', 'liverpool'
---EXEC addClub 'zamalek', 'cairo';
---SELECT * FROM clubsWithNoMatches
-
---select * from clubRepresentative;
---select * from allClubRepresentatives;
---EXEC addRepresentative 'klopp', 'liverpool', 'KLOPP', '9009'
---EXEC addRepresentative 'ancelotti', 'real', 'ANCELOTTI', '8008'
---EXEC addRepresentative 'ten hag', 'man utd', 'HAG', '7007'
---EXEC addRepresentative 'pep', 'man city', 'PEP', '6006'
---EXEC addRepresentative 'xavi', 'barca', 'XAVI', '5005'
---EXEC addRepresentative 'potter', 'chelsea', 'POTTER', '4004'
-
---select * from match
---select * from allMatches
---exec addNewMatch 'real', 'barca', '2022/12/20', '2022/12/21'
---exec addNewMatch 'liverpool', 'man utd', '2022/12/21', '2022/12/22'
---exec addNewMatch 'barca', 'man city', '2022/12/21', '2022/12/22'
---exec addNewMatch 'chelsea', 'real', '2022/12/23', '2022/12/24'
-
---select * from allAssocManagers
---select * from sportsAssociationManager
---exec addAssociationManager 'infantino', 'INFANTINO', 'very hard password';
-
---select * from hostRequest;
---select * from allRequests;
---exec addHostRequest 'real', 'santiago', '2022/12/20'
---exec addHostRequest 'liverpool', 'anfield', '2022/12/21'
---exec addHostRequest 'barca', 'oldT', '2022/12/21'
---exec addHostRequest 'chelsea', 'anfield', '2022/12/23'
-
---select * from match
---select * from hostRequest
---SELECT * FROM ticket
---exec acceptRequest 'PEREZ', 'real', 'barca', '2022/12/20'
---exec acceptRequest 'FENWAY', 'liverpool', 'man utd', '2022/12/21'
---exec rejectRequest 'PEREZ', 'real', 'barca', '2022/12/20'
-
---select * from ticket
---exec purchaseTicket '1', 'real', 'barca', '2022/12/20';
---exec purchaseTicket '2', 'real', 'barca', '2022/12/20';
-
---select * from ticketBuyingTransaction
-
----- REVIEW MATCH
----- REVIEW TICKET
-
--------------------------------------------------------------------------TESTING 21/12 2PM
-
-
-
---create database testing5;
---use testing5;
-
-
 exec createalltables
 select name from sys.tables;
 select * from systemuser;
@@ -1153,10 +960,34 @@ select * from match
 where match.startTime = '2022/12/12' 
 
 DECLARE @name varchar(20) = 'arsenal'
-select * from upcomingMatchesOfClub (@name)
+select * from stadiumsNeverPlayedOn(@name)
+exec addnewmatch 'juventus', 'arsenal', '2023/1/1', '2023/1/2';
+exec addHostRequest 'juventus', 'nou', '2023/1/1';
+exec acceptRequest 'OU', 'juventus', 'arsenal', '2023/1/1'
 
-exec addNewMatch 'juventus', 'arsenal', '2023/1/1', '2023/1/2'
+exec deleteclub arsenal
+select * from match
+select * from ticket
+select * from club
+select * from stadiummanager
+select * from clubrepresentative
+select * from fan
+select * from systemuser
+select * from sportsAssociationManager
+select * from ticketBuyingTransaction
+select * from hostRequest
+select * from stadium
+select * from stadiummanager
 
+exec purchaseTicket 'i', 'juventus', 'arsenal', '2023/1/1'
+exec purchaseTicket 'ix', 'juventus', 'arsenal', '2023/1/1'
+exec purchaseTicket 'xi', 'juventus', 'arsenal', '2023/1/1'
+exec purchaseTicket 'xii', 'juventus', 'arsenal', '2023/1/1'
 
-select * from allMatches order by startTime DESC
+exec deletematchesonstadium 'nou'
 
+exec purchaseTicket 'ii', 'juventus', 'manchester', '2022/12/12';
+
+exec updateMatchTiming 'juventus', 'manchester', '2022/12/12', '2023/12/12', '2023/12/13';
+
+select * from matchesperteam
