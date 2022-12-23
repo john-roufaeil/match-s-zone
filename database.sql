@@ -444,6 +444,12 @@ CREATE PROCEDURE blockFan @n_id VARCHAR(20) AS
 UPDATE fan
 SET fan.status = 0
 WHERE fan.national_id = @n_id;
+--UPDATE ticket
+--SET status = 1
+--FROM ticket T INNER JOIN ticketBuyingTransaction TBT ON T.id = TBT.ticket_id
+--WHERE TBT.fanNational_id = @n_id
+--DELETE FROM ticketBuyingTransaction
+--WHERE fanNational_id = @n_id
 GO;
 
 --> TESTME 2.3xii
@@ -457,8 +463,9 @@ GO;
 CREATE FUNCTION viewAvailableStadiumsOn(@date DATETIME)
 RETURNS TABLE AS
 RETURN
-	SELECT DISTINCT SA.name, SA.location, SA.capacity
+	(SELECT DISTINCT SA.name, SA.location, SA.capacity
 	FROM Stadium SA
+	WHERE SA.status = 1)
 	EXCEPT 
 	(SELECT DISTINCT S.name, S.location, S.capacity
 	FROM stadium S
@@ -535,19 +542,12 @@ GO;
 CREATE FUNCTION upcomingMatchesOfClub (@clubName VARCHAR(20))
 RETURNS TABLE AS
 RETURN
-	(SELECT C1.name club, C2.name competent, M.startTime, S.name
+	SELECT HC.name club, GC.name competent, M.startTime, S.name stadium
 	FROM match M
-	INNER JOIN club C1 ON M.hostClub_id	 = C1.id
-	INNER JOIN club C2 ON M.guestClub_id = C2.id
-	INNER JOIN stadium S ON S.id = M.stadium_id
-	WHERE M.startTime > CURRENT_TIMESTAMP AND C1.name = @clubName)
-	UNION
-	(SELECT C1.name club, C2.name competent, M.startTime, S.name
-	FROM match M
-	INNER JOIN club C1 ON M.guestClub_id = C1.id
-	INNER JOIN club C2 ON M.hostClub_id  = C2.id
-	INNER JOIN stadium S ON S.id = M.stadium_id
-	WHERE M.startTime > CURRENT_TIMESTAMP AND C1.name = @clubName)
+	INNER JOIN club HC ON M.hostClub_id	 = HC.id
+	INNER JOIN club GC ON M.guestClub_id = GC.id
+	LEFT JOIN stadium S ON S.id = M.stadium_id
+	WHERE (HC.name = @clubName OR GC.name = @clubName) -- AND M.startTime > CURRENT_TIMESTAMP  
 GO;
 
 --> TESTME 2.3xxiii
@@ -1136,6 +1136,25 @@ exec purchaseTicket "i", 'juventus', 'manchester', '2022/12/12'
 select * from ticket
 DECLARE @name varchar(20)
 exec clubWithTheMostSoldTickets @name
+
+exec blockfan 'i';
+exec unblockfan 'i';
+exec purchaseTicket 'i', 'liverpool', 'manchester', '2022/12/13';
+
+select * from allFans
+
+DECLARE @date datetime = '2022/12/11'
+SELECT * FROM  viewAvailableStadiumsOn (@date)
+select * from stadium
+select * from allstadiums
+
+
+select * from match
+where match.startTime = '2022/12/12' 
+
+DECLARE @name varchar(20) = 'arsenal'
+select * from upcomingMatchesOfClub (@name)
+
 
 
 
