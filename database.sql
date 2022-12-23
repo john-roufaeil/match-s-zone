@@ -31,11 +31,11 @@ CREATE TABLE stadiumManager (
 	id INT IDENTITY,
 	name VARCHAR(20) NOT NULL,
 	stadium_id INT UNIQUE, -- each stadium managed by one and only one manager and each manager manages one and only one stadium
-	username VARCHAR(20) NOT NULL UNIQUE,
+	username VARCHAR(20) NOT NULL UNIQUE NONCLUSTERED,
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE SET NULL ON UPDATE CASCADE
-);
+); 
 CREATE TABLE club (
 	id INT IDENTITY (1,1),
 	name VARCHAR(20) UNIQUE NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE clubRepresentative (
 	PRIMARY KEY (id),
 	FOREIGN KEY	(username) REFERENCES systemUser  ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY	(club_id) REFERENCES club  ON DELETE SET NULL ON UPDATE CASCADE
-);
+); 
 CREATE TABLE sportsAssociationManager (
 	id INT IDENTITY,
 	name VARCHAR(20) NOT NULL,
@@ -554,7 +554,7 @@ GO;
 CREATE FUNCTION availableMatchesToAttend (@DT DATETIME)
 RETURNS TABLE AS
 RETURN	
-	SELECT HC.name hostClubName, GC.name guestClubName, M.startTime, S.name
+	SELECT DISTINCT HC.name hostClubName, GC.name guestClubName, M.startTime, S.name
 	FROM match M
 	INNER JOIN club HC ON M.hostClub_id  = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
@@ -563,7 +563,7 @@ RETURN
 	WHERE M.startTime >= @DT and T.status=1;
 GO;
 
---> TESTME 2.3xxiv 
+--> TESTME 2.3xxiv  
 CREATE PROCEDURE purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN VARCHAR(20), @start DATETIME) AS
 DECLARE @T_id INT, @M_id INT, @HC_id INT, @GC_id INT;
 SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HCN;
@@ -595,12 +595,13 @@ SET match.startTime = @new_ST
 WHERE match.startTime = @current_ST AND match.hostClub_id = @HC_ID AND match.guestClub_id = @GC_ID;
 GO;
 
+
 --> TESTME 2.3xxvi
 CREATE VIEW matchesPerTeam AS
 SELECT DISTINCT C.name, COUNT(M.id) matchCount
 FROM club C
 LEFT JOIN match M ON (C.id = M.guestClub_id OR C.id = M.hostClub_id) AND CURRENT_TIMESTAMP > M.startTime
-GROUP BY C.name;
+GROUP BY C.name
 GO;
 
 --> TESTMEAWI 2.3xxviii
@@ -630,7 +631,6 @@ GO;
 
 --> TESTME 2.3xxx
 CREATE PROCEDURE clubWithTheMostSoldTickets (@name VARCHAR(20) OUTPUT) AS
-
 SELECT C.name
 FROM club C
 INNER JOIN match M ON M.guestClub_id = C.id OR M.hostClub_id = C.id
@@ -926,9 +926,6 @@ exec deletestadium 'rodes'
 
 select * from allmatches
 
-exec deleteMatchesOnStadiun '2022/12/17'
-
-
 select * from match
 select * from allmatches
 
@@ -990,4 +987,56 @@ exec purchaseTicket 'ii', 'juventus', 'manchester', '2022/12/12';
 
 exec updateMatchTiming 'juventus', 'manchester', '2022/12/12', '2023/12/12', '2023/12/13';
 
-select * from matchesperteam
+
+select * from match
+select * from hostRequest
+exec addHostRequest 'real', 'cairo', '2022/12/4'
+exec addHostRequest 'manchester', 'cairo', '2022/12/5'
+exec addHostRequest 'chelsea', 'cairo', '2022/12/6'
+
+
+DECLARE @usr VARCHAR(20) = 'IRO'
+SELECT * FROM  allPendingRequests(@usr)
+select * from ticket
+
+exec acceptrequest 'IRO', 'chelsea', 'bayern', '2022/12/6'
+exec acceptrequest 'IRO', 'manchester', 'juventus', '2022/12/5'
+
+exec purchaseticket 'i', 'chelsea', 'bayern', '2022/12/6'
+exec purchaseticket 'ii', 'chelsea', 'bayern', '2022/12/6'
+exec purchaseticket 'iii', 'chelsea', 'bayern', '2022/12/6'
+
+
+exec purchaseticket 'i', 'manchester', 'juventus', '2022/12/5'
+exec purchaseticket 'i', 'manchester', 'juventus', '2022/12/5'
+exec purchaseticket 'i', 'manchester', 'juventus', '2022/12/5'
+exec purchaseticket 'i', 'manchester', 'juventus', '2022/12/5'
+
+select * from ticket
+select * from ticketBuyingTransaction
+
+select * from matchesRankedBySoldTickets
+
+select * from match
+exec deleteMatchesOnStadium 'cairo'
+select * from match
+select * from stadium
+SELECT * FROM TICKET
+exec deletestadium bombonera
+exec updateMatchTiming 'manchester', 'juventus', '2022/12/5', '2023/12/5', '2023/12/6'
+exec updateMatchTiming 'chelsea', 'bayern', '2022/12/6', '2023/12/6', '2023/12/7'
+select * from stadiummanager
+
+select * from alltickets
+select * from ticket
+select * from ticketBuyingTransaction
+
+select * from matchwithmostsoldtickets
+
+select * from match
+DECLARE @date DATETIME = '2022/12/1'
+SELECT * FROM  availablematchestoattend(@date)
+
+exec purchaseticket 'vii', 'paris', 'bayern', '2022/12/1'
+exec purchaseticket 'viii', 'paris', 'bayern', '2022/12/1'
+exec purchaseticket 'ix', 'paris', 'bayern', '2022/12/1'
