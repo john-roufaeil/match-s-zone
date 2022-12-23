@@ -391,7 +391,7 @@ GO;
 
 --| 2.3 All Other Requirements |----------------------------------------------------\ DELETIONS \--
 --> 2.3iv 
-CREATE PROCEDURE deleteMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20) AS -- DELETE TICKETS
+CREATE PROCEDURE deleteMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20) AS -- cascade to delete tickets
 DECLARE @host_id INT;
 DECLARE @guest_id INT;
 SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
@@ -409,19 +409,17 @@ WHERE match.stadium_id = @s_id AND CURRENT_TIMESTAMP < match.startTime;
 GO;
 
 --> 2.3viii 
-CREATE PROCEDURE deleteClub @name VARCHAR(20) AS
+CREATE PROCEDURE deleteClub @name VARCHAR(20) AS -- cascade to delete representatives
 DECLARE @club_id INT;
 SELECT @club_id=C.id FROM club C WHERE C.name = @name;
 DELETE FROM match
 WHERE match.guestClub_id = @club_id;
 DELETE FROM club 
 WHERE club.name = @name;
---DELETE FROM clubRepresentative
---WHERE clubRepresentative.club_id = @club_id;
 GO;
 
 --> 2.3x 
-CREATE PROCEDURE deleteStadium @name VARCHAR(20) AS
+CREATE PROCEDURE deleteStadium @name VARCHAR(20) AS -- cascade to delete managers
 DELETE FROM stadium
 WHERE stadium.name = @name;
 GO;
@@ -683,7 +681,6 @@ RETURN
 GO;	
 
 --| SCHEMA |---------------------------------------------------------------------------------------
-
 -- TABLES:		systemUser				(*username, password)
 --				fan						(*national_id, name, birthDate, address, phoneNumber, status, .username)
 --				stadiumManager			(*id, name, .stadium_id, .username)
@@ -696,7 +693,6 @@ GO;
 --				match					(*id, startTime, endTime, .hostClub_id, .guestClub_id, .stadium_id)
 --				ticketBuyingTransaction	(.fanNational_id, .ticket_id)
 --				hostRequest				(*id, .representative_id, .manager_id, .match_id, status)
-
 -- REFERENCES:	fan.username						REFERENCES			systemUser.username			OK
 --				stadiumManager.username				REFERENCES			systemUser.username			OK
 --				stadiumManager.stadium_id			REFERENCES			stadium.id					OK
@@ -722,7 +718,6 @@ GO;
 --				ticket.id							NECESSARY FOR		ticketBuyTransaction
 --				clubRepresentative.id				NECESSARY FOR		hostRequest				
 --				stadiumManager.id					NECESSARY FOR		hostRequest
-
 -- DEPENDENCY:	fan									DEPENDS ON			systemUser
 --				stadiumManager						DEPENDS ON			systemuser, stadium
 --				clubRepresentative					DEPENDS ON			systemUser, club
@@ -732,18 +727,13 @@ GO;
 --				ticket								DEPENDS ON			match
 --				ticketBuyingTransaction				DEPENDS ON			fan, ticket
 --				hostRequest							DEPENDS ON			match, clubRepresentative, stadiumManager
-
 -- BASIC		createAllTables, dropAllTables, dropAllProceduresFunctionsViews, clearAllTables
-
 -- DATA			allAssocManagers OK, allClubRepresentatives OK, allStadiumManagers OK, 
 --				allFans OK, allMatches OK, allTickets OK, allCLubs OK, , allStadiums OK, allRequests OK
-
 -- PROC	ADD		addAssociationManager OK, addNewMatch OK, addClub OK, addTicket, addStadium OK, addHostRequest OK,
 --		ADD		addStadiumManager OK, addRepresentative OK, addFan OK
 --		DEL		deleteClub, deleteMatch, deleteStadium, deleteMatchesOnStadium, deleteMatchesOn
 --		ADM		acceptRequest, rejectRequest, purchaseTicket, updateMatchTiming, blockFan, unblockFan, clubWithTheMostSoldTickets
-
 -- VIEW			clubsWithNoMatches OK, allUnassignedMatches, matchesPerTeam, matchWithMostSoldTickets, matchesRankedBySoldTickets,
 --				clubsRankedBySoldTickets
-
 -- FUNC			viewAvailableStadiumsOn, allPendingRequests, upcomingMatchesOfClub, availableMatchesToAttend, stadiumsNeverPlayedOn
