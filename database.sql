@@ -266,12 +266,12 @@ GO;
 --| 2.3 All Other Requirements |----------------------------------------------------\ ADDITIONS \--
 --> 2.3i 
 CREATE PROCEDURE addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
-IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
-BEGIN 
+--IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+--BEGIN 
 --DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
 --DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw); 
-END
+--END
 INSERT INTO sportsAssociationManager VALUES (@name, @user);
 --DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT EXECUTE ON addNewMatch TO ' + QUOTENAME(@user)); EXEC(@grant1);
 --DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON deleteMatch TO ' + QUOTENAME(@user)); EXEC(@grant2);
@@ -290,14 +290,14 @@ GO;
 --> 2.3ii 
 CREATE PROCEDURE addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
 DECLARE @host_id INT, @guest_id INT;
-IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@hostClubName)
-BEGIN 
-INSERT INTO club VALUES (@hostClubName, NULL); 
-END
-IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@guestClubName)
-BEGIN 
-INSERT INTO club VALUES (@guestClubName, NULL); 
-END
+--IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@hostClubName)
+--BEGIN 
+--INSERT INTO club VALUES (@hostClubName, NULL); 
+--END
+--IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@guestClubName)
+-- BEGIN 
+-- INSERT INTO club VALUES (@guestClubName, NULL); 
+-- END
 SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
 SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
 INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL);
@@ -324,16 +324,16 @@ GO;
 
 --> 2.3xiii
 CREATE PROCEDURE addRepresentative @name VARCHAR(20), @c_name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
-IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
-BEGIN 
+-- IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+-- BEGIN 
 --DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
 --DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw);
-END
-IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@c_name)
-BEGIN 
-INSERT INTO club VALUES (@c_name, NULL);
-END
+-- END
+-- IF NOT EXISTS (SELECT 1 FROM club C WHERE C.name=@c_name)
+-- BEGIN 
+-- INSERT INTO club VALUES (@c_name, NULL);
+-- END
 DECLARE @club_id INT;
 SELECT @club_id=C.id FROM club C WHERE C.name = @c_name;
 INSERT INTO clubRepresentative VALUES (@name, @club_id, @user);
@@ -355,16 +355,16 @@ GO;
 
 --> 2.3xvii 
 CREATE PROCEDURE addStadiumManager(@name VARCHAR(20), @stadiumName VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)) AS
-IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
-BEGIN 
+-- IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+-- BEGIN 
 --DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
 --DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw); 
-END
-IF NOT EXISTS (SELECT 1 FROM stadium S WHERE S.name=@stadiumName)
-BEGIN 
-INSERT INTO stadium VALUES (@stadiumName, NULL, NULL, 1); 
-END
+-- END
+-- IF NOT EXISTS (SELECT 1 FROM stadium S WHERE S.name=@stadiumName)
+-- BEGIN 
+-- INSERT INTO stadium VALUES (@stadiumName, NULL, NULL, 1); 
+-- END
 DECLARE @stadium_id INT;
 SELECT @stadium_id=S.id FROM stadium S WHERE @stadiumName = S.name;
 INSERT INTO stadiumManager VALUES (@name, @stadium_id, @user);
@@ -377,12 +377,12 @@ GO;
 
 --> 2.3xxi
 CREATE PROCEDURE addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATETIME, @address VARCHAR(20), @phone INT) AS
-IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
-BEGIN 
+-- IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+-- BEGIN 
 --DECLARE @createLogin nvarchar(500); SET @createLogin = N'CREATE LOGIN ' + QUOTENAME(@user) + ' WITH PASSWORD = ' + QUOTENAME(@pw, ''''); EXEC(@createLogin);
 --DECLARE @createUser nvarchar(500); SET @createUser = N'CREATE USER ' + QUOTENAME(@user) + ' FOR LOGIN ' + QUOTENAME(@user); EXEC(@createUser);
 INSERT INTO systemUser VALUES (@user, @pw);
-END
+-- END
 INSERT INTO fan VALUES (@nat_id, @name, @bdate, @address, @phone, 1, @user);
 --DECLARE @grant1 nvarchar(500); SET @grant1 = (N'GRANT SELECT ON upcomingMatchesOfClub TO ' + QUOTENAME(@user)); EXEC(@grant1);
 --DECLARE @grant2 nvarchar(500); SET @grant2 = (N'GRANT EXECUTE ON availableMatchesToAttend TO ' + QUOTENAME(@user)); EXEC(@grant2);
