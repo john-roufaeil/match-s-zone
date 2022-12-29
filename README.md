@@ -1,5 +1,18 @@
 # Match'S Zone 🏟️
 
+🔴 <strong> IMPORTANT: </strong> This project is still under development.
+
+## Description 
+
+In this project, I have built a database system that keeps track of clubs and their representatives, stadiums and their managers, matches, sports adminstration managers, fans and their buying transactions. There are 5 possible users to use this system.
+1. System Admin: they are responsible for adding/deleting clubs, adding/deleting stadiums, and blocking/unblocking fans.
+2. Sports Adminstration Managers: they can add/delete matches, view all past/upcoming matches, view clubs that never played a match together.
+3. Club Representatives: they represent a club in which they can view all its related information, view all its upcoming matches, view all available stadiums at a certain time, send a request to host an upcoming match on an available stadium.
+4. Stadium Managers: they manage a stadium in which they can view all its related information, view all hosting requests the stadium received, accept/reject requests.
+5. Fans: they can view all matches that have available tickets and purchase tickets.
+
+In the making of this project, I learned to use React.js to create a beautiful user interface, use SQL to create a fairly complicated database system, and use Node.js to connect the front-end and the back-end.
+
 <!--
 ## Description
 
