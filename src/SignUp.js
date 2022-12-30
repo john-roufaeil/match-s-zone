@@ -1,4 +1,5 @@
 import NavBar from "./components/NavBar";
+import FadeIn from 'react-fade-in';
 import FadeProps from 'fade-props';
 import Form from "./components/Form"
 import maleFan from "./assets/icons/fan/male-fan.png"
@@ -50,9 +51,9 @@ const SignUp = () => {
                     </div>
                 </div>
                 <div className = "form">
-                    <FadeProps>
+                    <FadeProps><FadeIn>
                     <Form type={type} />
-                    </FadeProps>
+                    </FadeIn></FadeProps>
                 </div>
             </main>
         </div>

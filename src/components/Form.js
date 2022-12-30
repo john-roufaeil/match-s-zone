@@ -1,4 +1,5 @@
 import '../App.css'; 
+import FadeIn from 'react-fade-in';
 import {useState} from "react"; 
 import {validateEmail} from "../utils"; 
  
@@ -23,12 +24,12 @@ const Form = props => {
     const [stadiumName, setStadiumName] = useState("");
 
     const getIsFormValid = type => {
-        if (!(name && username && password && password.length >= 8))
+        if (!(name && username && password.value.length >= 8))
             return false;
         switch(type) {
-            case "stadiumManager": return stadiumName;
-            case "clubRepresentative": return clubName;
-            case "fan": return nationalId; 
+            case "stadiumManager": return stadiumName?true:false;
+            case "clubRepresentative": return clubName?true:false;
+            case "fan": return nationalId?true:false; 
             default: return true;
         }
     }
@@ -55,7 +56,7 @@ const Form = props => {
     }; 
 
     const fanForm = () => {
-        return  <form  className="fanForm fadeIn" onSubmit={handleSubmit}> 
+        return  <FadeIn><form  className="fanForm fadeIn" onSubmit={handleSubmit}> 
                     <div className="field">
                         <label for="name">
                             Name <sup>*</sup>
@@ -92,7 +93,7 @@ const Form = props => {
                             required
                             value = {password.value}
                             onChange={(e) => {
-                                setPassword({...password, isTouched: true});
+                                setPassword({value:e.target.value, isTouched: true});
                             }}
                             id ="username" 
                             type="password"
@@ -153,14 +154,14 @@ const Form = props => {
                             type="tel"
                         />
                     </div>
-                    <button type="submit" disabled={!getIsFormValid("clubRepresentative")}> 
+                    <button type="submit" disabled={!getIsFormValid("fan")}> 
                         Create account 
                     </button>  
-                </form>
+                </form></FadeIn>
     }
 
     const managerForm = () => {
-        return <form  className="fanForm" onSubmit={handleSubmit}> 
+        return <FadeIn><form  className="fanForm" onSubmit={handleSubmit}> 
                     <div className="field">
                         <label for="name">
                             Name <sup>*</sup>
@@ -197,7 +198,7 @@ const Form = props => {
                             required
                             value = {password.value}
                             onChange={(e) => {
-                                setPassword({...password, isTouched: true});
+                                setPassword({value:e.target.value, isTouched: true});
                             }}
                             id ="username" 
                             type="password"
@@ -205,14 +206,15 @@ const Form = props => {
                         {password.isTouched && password.value.length < 8 ? 
                         (<PasswordErrorMessage />) : null} 
                     </div>
-                    <button type="submit" disabled={!getIsFormValid("clubRepresentative")}> 
+                    <button type="submit" disabled={!getIsFormValid("manager")}> 
                         Create account 
                     </button>  
                 </form>
+                </FadeIn>
     }
    
     const clubRepresentativeForm = () => {
-        return <form  className="fanForm" onSubmit={handleSubmit}> 
+        return <FadeIn><form  className="fanForm" onSubmit={handleSubmit}> 
                     <div className="field">
                         <label for="name">
                             Name <sup>*</sup>
@@ -249,7 +251,7 @@ const Form = props => {
                             required
                             value = {password.value}
                             onChange={(e) => {
-                                setPassword({...password, isTouched: true});
+                                setPassword({value:e.target.value, isTouched: true});
                             }}
                             id ="username" 
                             type="password"
@@ -275,10 +277,11 @@ const Form = props => {
                         Create account 
                     </button>  
                 </form>
+                </FadeIn>
     }
 
     const stadiumManagerForm = () => {
-        return  <form  className="fanForm" onSubmit={handleSubmit}> 
+        return  <FadeIn><div><form  className="fanForm" onSubmit={handleSubmit}> 
                     <div className="field">
                         <label for="name">
                             Name <sup>*</sup>
@@ -315,7 +318,7 @@ const Form = props => {
                             required
                             value = {password.value}
                             onChange={(e) => {
-                                setPassword({...password, isTouched: true});
+                                setPassword({value:e.target.value, isTouched: true});
                             }}
                             id ="username" 
                             type="password"
@@ -337,10 +340,11 @@ const Form = props => {
                             type="text"
                         />
                     </div>
-                    <button type="submit" disabled={!getIsFormValid("clubRepresentative")}> 
+                    <button type="submit" disabled={!getIsFormValid("stadiumManager")}> 
                         Create account 
                     </button>  
-                </form>
+                </form></div>
+                </FadeIn>
     }
 
 
