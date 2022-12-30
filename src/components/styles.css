@@ -1,0 +1,89 @@
+* {
+    box-sizing: border-box;
+}
+
+nav {
+    /* border-bottom: 3px solid #333; */
+    display: flex;
+    justify-content: space-between
+}
+
+
+.logo {
+    padding-top: 10px;
+    width: 200px;
+    justify-content: center;
+    align-items: center;
+}
+
+.left {
+    margin-left: 50px;
+    width: 300px;
+    align-self: flex-start;
+}
+
+.right {
+    margin-right: 50px;
+    width: 300px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+nav button {    
+    background-color: black;
+    color: white;
+    font-size: 18px;
+    padding: 10px 40px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+nav button:hover {
+    font-size: 20px;
+
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    background-color: #f7f7f7;
+    margin: 50px 10%;
+    height: 70%;
+    width: 80%;
+    padding: 10px 50px;
+}
+
+main .welcome {
+    width: 50%;
+}
+
+main .welcome .userType {
+    column-gap: 10px;
+    row-gap: 15px;
+}
+
+main .welcome .userType figure {
+    padding:10px;
+    margin: 0;
+    width: fit-content;
+    text-align: center;
+}
+
+main .welcome .userType button {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    cursor: pointer;
+}
+
+main .welcome .userType img{
+    width:100px;
+    padding: 0;
+    margin: 0;
+}
+
+main .form {
+    width: 50%;
+}
