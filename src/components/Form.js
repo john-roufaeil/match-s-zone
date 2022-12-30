@@ -51,7 +51,10 @@ const Form = props => {
 
     const handleSubmit = (e) => { 
         e.preventDefault(); 
-        alert("Account created!"); 
+        var firstName = name.split(" ")[0];
+        firstName = firstName.toLowerCase();
+        firstName = firstName[0].toUpperCase() + firstName.substring(1,);
+        alert(`Thank you, ${firstName}, your account has been created! You can log in now.`); 
         clearForm(); 
     }; 
 

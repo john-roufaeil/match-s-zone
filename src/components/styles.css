@@ -46,7 +46,7 @@ nav button:hover {
 }
 
 nav button:active {
-    border: 3px solid white;
+    border: 5px solid #2E86AB;
 }
 
 main {
@@ -121,6 +121,12 @@ main .form button {
 
 main .form button:hover {
     transform: scale(1.1);
+}
+
+main .form button:disabled {
+    transform: scale(1);
+    background-color: #222;
+    cursor: not-allowed;
 }
 
 main .form button:active {
