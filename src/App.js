@@ -1,11 +1,7 @@
-import './App.css';
+import SignUp from "./SignUp"
 
 function App() {
-  return <Header />
-}
-
-function Header() {
-  return <h1>Hello World!</h1>
+  return <SignUp />
 }
 
 export default App;
