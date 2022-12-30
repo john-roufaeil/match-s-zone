@@ -168,3 +168,7 @@ main .field {
     transition: width 0.5s, height 0.5s, opacity 0.5s 0.5s;
 
 }
+
+button {
+    border:1px solid black;
+}

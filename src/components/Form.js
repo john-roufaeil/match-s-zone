@@ -2,6 +2,8 @@ import '../App.css';
 import FadeIn from 'react-fade-in';
 import {useState} from "react"; 
 import {validateEmail} from "../utils"; 
+import { Routes, Route, Link } from "react-router-dom";
+
  
 const PasswordErrorMessage = () => { 
     return ( 
@@ -24,7 +26,7 @@ const Form = props => {
     const [stadiumName, setStadiumName] = useState("");
 
     const getIsFormValid = type => {
-        if (!(name && username && password.value.length >= 8))
+        if (!(username && password.value.length >= 8))
             return false;
         switch(type) {
             case "stadiumManager": return stadiumName?true:false;
@@ -57,6 +59,12 @@ const Form = props => {
         alert(`Thank you, ${firstName}, your account has been created! You can log in now.`); 
         clearForm(); 
     }; 
+
+    const logIn = (e) => {
+        e.preventDefault(); 
+        alert("You have succesfully logged in");
+        clearForm();
+    }
 
     const fanForm = () => {
         return  <FadeIn><form  className="fanForm fadeIn" onSubmit={handleSubmit}> 
@@ -350,6 +358,44 @@ const Form = props => {
                 </FadeIn>
     }
 
+    const logInForm = () => {
+        return  <FadeIn><div><form  className="logInForm" onSubmit={logIn}> 
+                    <div className="field">
+                        <label for="username">
+                            Username
+                        </label><br />
+                        <input
+                            required
+                            value = {username}
+                            onChange={(e) => {
+                                setUsername(e.target.value);
+                            }}
+                            id ="username" 
+                            type="text"
+                        />
+                    </div>
+                    <div className="field">
+                        <label for="password">
+                            Password
+                        </label><br />
+                        <input
+                            required
+                            value = {password.value}
+                            onChange={(e) => {
+                                setPassword({value:e.target.value, isTouched: true});
+                            }}
+                            id ="username" 
+                            type="password"
+                        />
+                    </div>
+                    <p>Forgot Password?</p>
+                    <button type="submit" disabled={!getIsFormValid("logIn")}> 
+                        Log In
+                    </button>  
+                </form></div>
+                </FadeIn>
+    }
+
 
     switch(props.type) {
         case "manager":
@@ -358,8 +404,10 @@ const Form = props => {
             return clubRepresentativeForm();
         case "stadiumManager":
             return stadiumManagerForm();
-        default: 
+        case "fan": 
             return fanForm();
+        default:
+            return logInForm();
     }
 }
 

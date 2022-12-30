@@ -1,7 +1,10 @@
+import { useState } from "react";
+import { Routes, Route, Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import FadeIn from 'react-fade-in';
 import FadeProps from 'fade-props';
 import Form from "./components/Form"
+// icons
 import maleFan from "./assets/icons/fan/male-fan.png"
 import maleFanDis from "./assets/icons/fan/male-fan-disabled.png"
 import maleManager from "./assets/icons/sports-manager/male-manager.png"
@@ -10,7 +13,6 @@ import stadium1 from "./assets/icons/stadium-manager/stadium1.png"
 import stadium1Dis from "./assets/icons/stadium-manager/stadium1-disabled.png"
 import club1 from "./assets/icons/club-representative/club1.png"
 import club1Dis from "./assets/icons/club-representative/club1-disabled.png"
-import { useState } from "react";
 
 const SignUp = () => {
     const barComponents = {left: null, right: "login"};
