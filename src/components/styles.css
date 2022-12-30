@@ -3,6 +3,7 @@
 }
 
 nav {
+    /* padding-bottom: 10px; */
     /* border-bottom: 3px solid #333; */
     display: flex;
     justify-content: space-between
@@ -16,13 +17,13 @@ nav {
     align-items: center;
 }
 
-.left {
+nav .left {
     margin-left: 50px;
     width: 300px;
     align-self: flex-start;
 }
 
-.right {
+nav .right {
     margin-right: 50px;
     width: 300px;
     display: flex;
@@ -40,8 +41,11 @@ nav button {
 }
 
 nav button:hover {
-    font-size: 20px;
+    transform: scale(1.1);
+}
 
+nav button:active {
+    border: 3px solid white;
 }
 
 main {
@@ -50,7 +54,7 @@ main {
     position: fixed;
     background-color: #f7f7f7;
     margin: 50px 10%;
-    height: 70%;
+    height: fit-content;
     width: 80%;
     padding: 10px 50px;
 }
@@ -67,7 +71,7 @@ main .welcome .userType {
 main .welcome .userType figure {
     padding:10px;
     margin: 0;
-    width: fit-content;
+    width: 200px;
     text-align: center;
 }
 
@@ -76,6 +80,11 @@ main .welcome .userType button {
     margin: 0;
     border: 0;
     cursor: pointer;
+    background-color: transparent;
+}
+
+main .welcome .userType button:hover {
+    transform: scale(1.2);
 }
 
 main .welcome .userType img{
@@ -85,5 +94,64 @@ main .welcome .userType img{
 }
 
 main .form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: #2E86AB;
+    margin: 25px;
+    padding: 25px;
     width: 50%;
+    border-radius:25px;
+}
+
+main .form button {
+    background-color: #F24236;
+    font-size: 18px;
+    cursor: pointer;
+    color: white;
+    margin: 20px auto;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+    display: flex;
+    justify-self: center;
+}
+
+main .form button:hover {
+    transform: scale(1.1);
+}
+
+main .form button:active {
+    border: 3px solid #2E86AB;
+}
+
+.fieldError {
+    color: #AD160B;
+    top: -2px;
+    margin: 0;
+    padding: 0;
+    font-size: 80%;   
+}
+
+sup {
+    color: #AD160B;
+    top: -2px;
+    font-size: 125%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+main .form input {
+    font-size: 17px;
+    padding: 2px 2px;
+    width: 330px;
+}
+
+main .field {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 10px 0 0 0;
+    width: 80%;
 }

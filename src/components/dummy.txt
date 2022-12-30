@@ -1,0 +1,13 @@
+//          <div className="Field"> 
+//            <label> 
+//              Role <sup>*</sup> 
+//            </label> 
+//            <select value={role} onChange={(e) => setRole(e.target.value)}> 
+//              <option value="role">Role</option> 
+//              <option value="individual">Individual</option> 
+//              <option value="business">Business</option> 
+//            </select> 
+//          </div> 
+//          <button type="submit" disabled={!getIsFormValid()}> 
+//            Create account 
+//          </button>  

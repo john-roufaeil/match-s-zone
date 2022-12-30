@@ -1,4 +1,5 @@
 import NavBar from "./components/NavBar";
+import Form from "./components/Form"
 import maleFan from "./assets/icons/fan/male-fan.png"
 import maleFanDis from "./assets/icons/fan/male-fan-disabled.png"
 import femaleFan from "./assets/icons/fan/female-fan.png"
@@ -26,31 +27,31 @@ const SignUp = () => {
                     <button onClick={() => {setType("fan")}}>
                         <figure>
                             <img src={type==="fan"?maleFan:maleFanDis} alt="fan" />
-                            <figcaption>Fan</figcaption>
+                            <figcaption>{type==="fan"?<strong>Fan</strong>:<>Fan</>}</figcaption>
                         </figure>
                     </button>
                     <button onClick={() => {setType("manager")}}>
                         <figure>
                             <img src={type==="manager"?maleManager:maleManagerDis} alt="manager" />
-                            <figcaption>Sports Manager</figcaption>
+                            <figcaption>{type==="manager"?<strong>Sports Manager</strong>:<>Sports Manager</>}</figcaption>
                         </figure>
                     </button>
                     <button onClick={() => {setType("clubRepresentative")}}>
                         <figure>
                             <img src={type==="clubRepresentative"?club1:club1Dis} alt="club representative" />
-                            <figcaption>Club Representative</figcaption>
+                            <figcaption>{type==="clubRepresentative"?<strong>Club Representative</strong>:<>Club Representative</>}</figcaption>
                         </figure>
                     </button><button onClick={() => {setType("stadiumManager")}}>
                         <figure>
                             <img src={type==="stadiumManager"?stadium1:stadium1Dis}  alt="stadium manager"/>
-                            <figcaption>Stadium Manager</figcaption>
+                            <figcaption>{type==="stadiumManager"?<strong>Stadium Manager</strong>:<>Stadium Manager</>}</figcaption>
                         </figure>
                     </button>
 
                     </div>
                 </div>
                 <div className = "form">
-                    
+                    <Form type={type} />
                 </div>
             </main>
             {/* <Greeting>
