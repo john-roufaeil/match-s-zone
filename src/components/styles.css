@@ -3,8 +3,9 @@
 }
 
 nav {
-    /* padding-bottom: 10px; */
+    padding-bottom: 15px;
     /* border-bottom: 3px solid #333; */
+    background-color :#2E86AB;
     display: flex;
     justify-content: space-between
 }
@@ -32,7 +33,7 @@ nav .right {
 }
 
 nav button {    
-    background-color: black;
+    background-color: #222;
     color: white;
     font-size: 18px;
     padding: 10px 40px;
@@ -154,4 +155,10 @@ main .field {
     font-weight: 600;
     margin: 10px 0 0 0;
     width: 80%;
+}
+
+.fadeIn{
+    opacity:1;
+    transition: width 0.5s, height 0.5s, opacity 0.5s 0.5s;
+
 }

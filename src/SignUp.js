@@ -1,9 +1,8 @@
 import NavBar from "./components/NavBar";
+import FadeProps from 'fade-props';
 import Form from "./components/Form"
 import maleFan from "./assets/icons/fan/male-fan.png"
 import maleFanDis from "./assets/icons/fan/male-fan-disabled.png"
-import femaleFan from "./assets/icons/fan/female-fan.png"
-import femaleFanDis from "./assets/icons/fan/female-fan-disabled.png"
 import maleManager from "./assets/icons/sports-manager/male-manager.png"
 import maleManagerDis from "./assets/icons/sports-manager/male-manager-disabled.png"
 import stadium1 from "./assets/icons/stadium-manager/stadium1.png"
@@ -16,7 +15,7 @@ const SignUp = () => {
     const barComponents = {left: null, right: "login"};
     const [type, setType] = useState("fan");
     return (
-        <>
+        <div>
             <NavBar barComponents = {barComponents} />
             <main>
                 <div className = "welcome">
@@ -51,17 +50,12 @@ const SignUp = () => {
                     </div>
                 </div>
                 <div className = "form">
+                    <FadeProps>
                     <Form type={type} />
+                    </FadeProps>
                 </div>
             </main>
-            {/* <Greeting>
-                <Icon desc="fan" />
-                <Icon desc="manager" />
-                <Icon desc="stadium" />
-                <Icon desc="club" />
-            </Greeting>
-            <Form /> */}
-        </>
+        </div>
     );
 };
 

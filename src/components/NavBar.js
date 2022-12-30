@@ -10,7 +10,7 @@ const NavBar = props => {
             <div className="left">
                 {left == null?<></>:<></>}
             </div>
-            <img src={lightLogo} alt="logo" className="logo"></img>
+            <img src={darkLogo} alt="logo" className="logo"></img>
             <div className="right">     
                 {right === "login"?<button>Log In</button>:<></>}
             </div>

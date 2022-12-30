@@ -55,7 +55,7 @@ const Form = props => {
     }; 
 
     const fanForm = () => {
-        return  <form  className="fanForm" onSubmit={handleSubmit}> 
+        return  <form  className="fanForm fadeIn" onSubmit={handleSubmit}> 
                     <div className="field">
                         <label for="name">
                             Name <sup>*</sup>
@@ -156,11 +156,11 @@ const Form = props => {
                     <button type="submit" disabled={!getIsFormValid("clubRepresentative")}> 
                         Create account 
                     </button>  
-                </form>; 
+                </form>
     }
 
     const managerForm = () => {
-        return  <form  className="fanForm" onSubmit={handleSubmit}> 
+        return <form  className="fanForm" onSubmit={handleSubmit}> 
                     <div className="field">
                         <label for="name">
                             Name <sup>*</sup>
@@ -212,7 +212,7 @@ const Form = props => {
     }
    
     const clubRepresentativeForm = () => {
-        return  <form  className="fanForm" onSubmit={handleSubmit}> 
+        return <form  className="fanForm" onSubmit={handleSubmit}> 
                     <div className="field">
                         <label for="name">
                             Name <sup>*</sup>
