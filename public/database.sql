@@ -730,10 +730,15 @@ GO;
 -- BASIC		createAllTables, dropAllTables, dropAllProceduresFunctionsViews, clearAllTables
 -- DATA			allAssocManagers OK, allClubRepresentatives OK, allStadiumManagers OK, 
 --				allFans OK, allMatches OK, allTickets OK, allCLubs OK, , allStadiums OK, allRequests OK
--- PROC	ADD		addAssociationManager OK, addNewMatch OK, addClub OK, addTicket, addStadium OK, addHostRequest OK,
---		ADD		addStadiumManager OK, addRepresentative OK, addFan OK
---		DEL		deleteClub, deleteMatch, deleteStadium, deleteMatchesOnStadium, deleteMatchesOn
---		ADM		acceptRequest, rejectRequest, purchaseTicket, updateMatchTiming, blockFan, unblockFan, clubWithTheMostSoldTickets
+
+-- PROC	ADD		 OK, addTicket, addHostRequest OK,
+--		ADM		acceptRequest, rejectRequest, purchaseTicket, updateMatchTiming, clubWithTheMostSoldTickets
 -- VIEW			clubsWithNoMatches OK, allUnassignedMatches, matchesPerTeam, matchWithMostSoldTickets, matchesRankedBySoldTickets,
 --				clubsRankedBySoldTickets
--- FUNC			viewAvailableStadiumsOn, allPendingRequests, upcomingMatchesOfClub, availableMatchesToAttend, stadiumsNeverPlayedOn
+-- FUNC			viewAvailableStadiumsOn, allPendingRequests, availableMatchesToAttend, stadiumsNeverPlayedOn
+
+-- ADMIN		addClub, addStadium, deleteClub, deleteStadium, blockFan, unblockFan
+-- MANAGER		addNewMatch, deleteMatch, deleteMatchesOnStadium, deleteMatchesOn, upcomingMatchesOfClub
+-- FAN			
+-- STADIUM		
+-- CLUB			

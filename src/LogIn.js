@@ -12,7 +12,7 @@ const LogIn = () => {
             <NavBar barComponents = {barComponents} />
             <main>
             <div className = "welcome">
-                <h1>Welcome back!</h1>
+                <h1>Welcome back! <br /> Log in to your account.</h1>
                 <div className = "greeting-gif">
                     <img src={greetingGif} alt="man waving" width="180px"/>
                 </div>

@@ -396,7 +396,6 @@ const Form = props => {
                 </FadeIn>
     }
 
-
     switch(props.type) {
         case "manager":
             return managerForm();

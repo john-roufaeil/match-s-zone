@@ -1,0 +1,106 @@
+.title {
+    margin: 50px 0 30px;
+    text-align: center;
+}
+
+.dashboardMenu {
+    margin: auto;
+    width: 50%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.dashboardMenuButton {
+    margin: 10px 50px;
+    font-size: 20px;
+    padding: 5px 25px;
+    border-radius: 25px;
+    background-color: #333333;
+    color: #FFFFFF;
+    cursor: pointer;
+    border: 3px solid #333333;
+}
+
+.dashboardMenuButton:hover {
+    transform: scale(1.1)
+}
+
+.dashboardMenuButton:active {
+    border: 3px solid #F7F7F7;
+    /* background-color: white; */
+}
+
+main {
+    min-height: 50%;
+    padding: 3% 3%;
+}
+
+.selectedButton {
+    background-color: #F24236;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+.newEntry {
+    display: flex;
+    margin: 0 0 30px 0;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.newEntryField {
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    gap: 25px;
+}
+
+.actionIcon {
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+}
+
+.actionButton {
+    margin: 5px 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+input {
+    border-radius: 5px;
+    border: 1px solid #888;
+    padding: 3px;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+tr {
+    background-color: #2E86AB;
+    color: #ffffff;
+    text-align: center;
+    border-bottom: 1px solid #dddddd;
+}
+
+tr:nth-of-type(even) {
+    background-color: #14213D;
+}
+
+tr:last-of-type {
+    border-bottom: 2px solid #14213D;
+}
+
+th, td {
+    padding: 12px 15px;
+}
+

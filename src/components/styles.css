@@ -51,12 +51,13 @@ nav button:active {
 
 main {
     display: flex;
+    justify-self: center;
     flex-direction: row;
     position: fixed;
     background-color: #f7f7f7;
-    margin: 50px 10%;
+    margin: 50px 15%;
     height: fit-content;
-    width: 80%;
+    width: 70%;
     padding: 10px 50px;
 }
 
@@ -106,7 +107,7 @@ main .form {
     border-radius:25px;
 }
 
-main .form button {
+form button {
     background-color: #F24236;
     font-size: 18px;
     cursor: pointer;
@@ -117,6 +118,8 @@ main .form button {
     text-align: center;
     display: flex;
     justify-self: center;
+    width: fit-content;
+    padding: 5px 100px;
 }
 
 main .form button:hover {
@@ -154,6 +157,8 @@ main .form input {
     font-size: 17px;
     padding: 2px 2px;
     width: 330px;
+    border-radius: 3px;
+    border: 2px solid #777
 }
 
 main .field {
@@ -161,12 +166,6 @@ main .field {
     font-weight: 600;
     margin: 10px 0 0 0;
     width: 80%;
-}
-
-.fadeIn{
-    opacity:1;
-    transition: width 0.5s, height 0.5s, opacity 0.5s 0.5s;
-
 }
 
 button {
