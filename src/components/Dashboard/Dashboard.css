@@ -30,18 +30,15 @@
     /* background-color: white; */
 }
 
-main {
-    min-height: 50%;
-    padding: 3% 3%;
-}
-
 .selectedButton {
     background-color: #F24236;
 }
 
-main {
+.dashboardMain {
     display: flex;
     flex-direction: column;
+    min-height: 50%;
+    padding: 3% 3%;
 }
 
 .newEntry {

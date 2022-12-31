@@ -28,7 +28,7 @@ const Dashboard = props => {
                 Fans
             </button>
         </div>
-        <main>
+        <main className="dashboardMain">
             <Add object={selected} />
             <List object={selected} />
         </main>

@@ -1,6 +1,7 @@
 import SignUp from "./SignUp"
 import LogIn from "./LogIn"
-import Dashboard from "./components/Dashboard/Dashboard"
+import AdminDashboard from "./components/Dashboard/AdminDashboard"
+import FanDashboard from "./components/Dashboard/FanDashboard"
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
 function App() {
@@ -10,7 +11,8 @@ function App() {
         <Route path="/" element={<LogIn />} exact />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/dashboard" element={<Dashboard />} />        
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />        
+        <Route path="/fan-dashboard" element={<FanDashboard />} />        
       </Routes>
     </BrowserRouter>
   );

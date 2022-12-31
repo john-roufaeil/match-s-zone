@@ -10,24 +10,6 @@ const List = props => {
                         <th></th>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Zamalek</td>
-                            <td>Cairo</td>
-                            <td>3000</td>
-                            <button className="actionButton"><img className="actionIcon" src={trash} /></button>
-                        </tr>
-                        <tr>
-                            <td>Zamalek</td>
-                            <td>Cairo</td>
-                            <td>3000</td>
-                            <button className="actionButton"><img className="actionIcon" src={trash} /></button>
-                        </tr>
-                        <tr>
-                            <td>Zamalek</td>
-                            <td>Cairo</td>
-                            <td>3000</td>
-                            <button className="actionButton"><img className="actionIcon" src={trash} /></button>
-                        </tr>
                     </tbody>
                 </table>
     }
@@ -40,23 +22,37 @@ const List = props => {
                         <th></th>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Zamalek</td>
-                            <td>Cairo</td>
-                            <button className="actionButton"><img className="actionIcon" src={trash} /></button>
-                        </tr>
-                        <tr>
-                            <td>Zamalek</td>
-                            <td>Cairo</td>
-                            <button className="actionButton"><img className="actionIcon" src={trash} /></button>
-                        </tr>
-                        <tr>
-                            <td>Zamalek</td>
-                            <td>Cairo</td>
-                            <button className="actionButton"><img className="actionIcon" src={trash} /></button>
-                        </tr>
                     </tbody>
                 </table>
+    }
+
+    const viewFans = () => {
+        return  <table>
+                    <thead>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Name</th>
+                        <th>National ID</th>
+                        <th>Birth Date</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+    }
+
+    const viewMatches = () => {
+        return  <table>
+                <thead>
+                    <th>Host Club</th>
+                    <th>Guest Club</th>
+                    <th>Stadium</th>
+                    <th>Location</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
     }
 
     switch(props.object) {
@@ -64,8 +60,10 @@ const List = props => {
             return viewStadiums();
         case "clubs":
             return viewClubs();
-        // case "fans":
-        //     return viewFans();
+        case "fans":
+            return viewFans();
+        case "matches":
+            return viewMatches();
         default: 
             return null;
     }
