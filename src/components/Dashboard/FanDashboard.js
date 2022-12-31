@@ -1,7 +1,7 @@
 import NavBar from "../NavBar";
 import "./Dashboard.css";
 import { useState } from "react";
-import Add from "./Add";
+import Add from "./Manipulate";
 import List from "./List";
 
 const Dashboard = props => {

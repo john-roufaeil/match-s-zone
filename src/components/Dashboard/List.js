@@ -10,6 +10,126 @@ const List = props => {
                         <th></th>
                     </thead>
                     <tbody>
+                    <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
+                        <tr>
+                            <td>Zamalek</td>
+                            <td>Cairo</td>
+                            <td>30000</td>
+                            <td>delete</td>
+                        </tr>
                     </tbody>
                 </table>
     }
@@ -55,6 +175,45 @@ const List = props => {
             </table>
     }
 
+    const viewUpcoming = () => {
+        return  <table>
+                <thead>
+                    <th>Host Club</th>
+                    <th>Guest Club</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+    }
+
+    const viewPrevious = () => {
+        return  <table>
+                <thead>
+                    <th>Host Club</th>
+                    <th>Guest Club</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+    }
+
+    const neverTogether = () => {
+        return  <table>
+                <thead>
+                    <th>Host Club</th>
+                    <th>Guest Club</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+    }
+
     switch(props.object) {
         case "stadiums": 
             return viewStadiums();
@@ -64,6 +223,12 @@ const List = props => {
             return viewFans();
         case "matches":
             return viewMatches();
+        case "upcoming":
+            return viewUpcoming();
+        case "previous":
+            return viewPrevious();
+        case "never":
+            return neverTogether();
         default: 
             return null;
     }
