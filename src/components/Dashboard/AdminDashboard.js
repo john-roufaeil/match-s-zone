@@ -3,8 +3,6 @@ import "./Dashboard.css";
 import { useState } from "react";
 import Manipulate from "./Manipulate";
 import List from "./List";
-import { addBackToTop } from 'vanilla-back-to-top'
-import { ScrollToTop } from 'react-simple-scroll-up'
 
 
 
@@ -13,7 +11,6 @@ const Dashboard = props => {
     const [selected, setSelected] = useState("clubs");
 
     return <div>
-        <ScrollToTop />
         <NavBar barComponents = {barComponents} />
         <h1 className="title">SYSTEM ADMIN</h1>
         <div className="dashboardMenu">

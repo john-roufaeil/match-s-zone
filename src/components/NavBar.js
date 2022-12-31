@@ -3,12 +3,14 @@ import lightLogo from "../assets/icons/match-s-zone/light.png";
 import { Routes, Route, Link } from "react-router-dom";
 import "./styles.css"
 import logout from "../assets/icons/actions/logout.png"
+import { ScrollToTop } from 'react-simple-scroll-up'
 
 const NavBar = props => {
     const left = props.barComponents.left;
     const right = props.barComponents.right;
     return (
         <nav>
+            <ScrollToTop />
             <div className="left">
                 {left == null?null:null}
             </div>
