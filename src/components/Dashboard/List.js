@@ -125,6 +125,44 @@ const List = props => {
                 </table>
     }
 
+    const viewMyClub = () => {
+        return  <table>
+                    <thead>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Location</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+    }
+
+    const viewMatchesForStadium = () => {
+        return  <table>
+                    <thead>
+                        <th>Host Club</th>
+                        <th>Guest Club</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Stadium</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+    }
+
+    const viewAvailableStadiums = () => {
+        return  <table>
+                    <thead>
+                        <th>NameClub</th>
+                        <th>Location</th>
+                        <th>Capacity</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+    }
+
     switch(props.object) {
         case "stadiums": 
             return viewStadiums();
@@ -144,6 +182,12 @@ const List = props => {
             return viewMyStadium();
         case "requests":
             return viewRequests();
+        case "myClub":
+            return viewMyClub();
+        case "matchesForStadium":
+            return viewMatchesForStadium();
+        case "availableStadiums":
+            return viewAvailableStadiums();
         default: 
             return null;
     }
