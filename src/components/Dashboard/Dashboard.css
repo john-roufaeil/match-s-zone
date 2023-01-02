@@ -66,19 +66,26 @@ body {
     cursor: pointer;
 }
 
-.actionButton {
-    margin: 5px 0;
+.logoutIcon {
+    margin-top: 15px;
+    width:50px;
+    height:50px;
+    cursor: pointer;
+}
+
+.actionButton, .logoutButton {
+    margin: 0;
     padding: 0;
     border: none;
     background-color: transparent;
 }
 
-.actionButton:hover {
+.actionButton:hover, .logoutButton:hover {
     transform: scale(1.1);
 }
 
-.actionButton:active {
-    transform: scale(0.9);
+.actionButton:active, .logoutButton:active {
+    transform: scale(0.9) ;
 }
 
 input {
@@ -118,4 +125,18 @@ th {
     background-color: #FFFFFF;
     top: 0;
     position: sticky;
+}
+
+.actionColumn {
+    color: #F24236;
+}
+
+.choose {
+    padding: 5px 20px;
+    border: 3px solid #F7F7F7;
+}
+
+.choose:hover {
+    transform: scale(1.05);
+    cursor: pointer;
 }

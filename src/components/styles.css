@@ -2,19 +2,14 @@
     box-sizing: border-box;
 }
 
-body {
-    min-height: 100vh;
-    overflow: scroll;
-}
-
 nav {
     padding-bottom: 15px;
     /* border-bottom: 3px solid #333; */
     background-color :#2E86AB;
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
+    align-items: center;
 }
-
 
 .logo {
     padding-top: 10px;
@@ -124,17 +119,16 @@ main .form {
 } 
 
 main .form button:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 main .form button:disabled {
     transform: scale(1);
-    background-color: #222;
     cursor: not-allowed;
 }
 
 main .form button:active {
-    border: 3px solid #2E86AB;
+    transform: scale(0.95);
 }
 
 .fieldError {
@@ -197,4 +191,51 @@ main {
     width: 70%;
     padding: 10px 50px;
     flex-direction: row;
+}
+
+footer {
+    position: absolute;
+    display: flex;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #EEEEEE;
+    height: 50px;
+    padding: 30px 0;
+    justify-content: space-around;
+    align-items: center;
+}
+
+body {
+    position: relative;
+}
+  
+body::after {
+    content: '';
+    display: block;
+    height: 50px;
+}
+
+.external-links {
+    display: flex;
+    gap: 10px;
+}
+
+.cp-text{ 
+    color: rgba(0,0,0,.7); 
+    text-shadow: 0 1px rgba(255, 255, 255, 0.1);
+}
+
+body::-webkit-scrollbar-track {
+    background: #EEEEEE;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #90A4AE ;
+    border-radius: 10px;
+    border: 3px solid #EEEEEE;
+}
+
+body::-webkit-scrollbar{
+    height: 0;
 }

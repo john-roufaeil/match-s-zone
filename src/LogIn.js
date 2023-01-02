@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Form from "./components/Form"
 import greetingGif from "./assets/icons/match-s-zone/greeting.gif"
+import Footer from "./components/Footer"
 
 const LogIn = () => {
     const barComponents = {left: null, right: "signup"};
@@ -21,6 +20,7 @@ const LogIn = () => {
                 <Form type={type} />
             </div>
         </main>
+        <Footer />
     </div>
     )
 }

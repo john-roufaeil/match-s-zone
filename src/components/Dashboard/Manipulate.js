@@ -2,6 +2,10 @@ import plus from "../../assets/icons/actions/plus.png"
 import minus from "../../assets/icons/actions/minus.png"
 import block from "../../assets/icons/actions/block.png"
 import unblock from "../../assets/icons/actions/unblock.png"
+import accept from "../../assets/icons/actions/accept.png"
+import refuse from "../../assets/icons/actions/refuse.png"
+import open from "../../assets/icons/actions/open.png"
+import close from "../../assets/icons/actions/close.png"
 
 const Manipulate = props => {
     const addStadium = () => {
@@ -127,6 +131,24 @@ const Manipulate = props => {
                 </div>
     }
 
+    const openStadium = () => {
+        return <div className="newEntry">
+                    <div className="newEntryField">
+                        <p>Set Stadium as Available</p>
+                    </div>
+                    <button className="actionButton"><img className="actionIcon" src={open} alt="minus-sign" /></button>
+                </div>
+    }
+
+    const closeStadium = () => {
+        return <div className="newEntry">
+                    <div className="newEntryField">
+                        <p>Set Stadium as Unavailable</p>
+                    </div>
+                    <button className="actionButton"><img className="actionIcon" src={close} alt="minus-sign" /></button>
+                </div>
+    }
+
     if (props.object=="stadiums" && props.action=="add")
         return addStadium();
     else if (props.object=="stadiums" && props.action=="delete")
@@ -143,6 +165,12 @@ const Manipulate = props => {
         return deleteMatch();
     else if (props.object=="matches" && props.action=="add")
         return addMatch();
+    else if (props.object=="myStadium" && props.action=="add")
+        return openStadium();
+    else if (props.object=="myStadium" && props.action=="delete")
+        return closeStadium();
+    
+    
 }
 
 export default Manipulate;

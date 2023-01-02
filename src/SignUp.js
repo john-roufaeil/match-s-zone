@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import FadeIn from 'react-fade-in';
 import FadeProps from 'fade-props';
 import Form from "./components/Form"
+import Footer from "./components/Footer"
 // icons
 import maleFan from "./assets/icons/fan/male-fan.png"
 import maleFanDis from "./assets/icons/fan/male-fan-disabled.png"
@@ -58,6 +58,7 @@ const SignUp = () => {
                     </FadeIn></FadeProps>
                 </div>
             </main>
+            <Footer />
         </div>
     );
 };

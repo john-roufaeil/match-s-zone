@@ -1,0 +1,6 @@
+{
+    "sqltools.connections": [],
+    "dataworkspace.excludedProjects": [
+        "public/db/db.sqlproj"
+    ]
+}
