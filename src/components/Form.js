@@ -3,6 +3,8 @@ import FadeIn from 'react-fade-in';
 import {useState} from "react"; 
 import {validateEmail} from "../utils"; 
 import { Routes, Route, Link } from "react-router-dom";
+const cors = require('cors');
+
 
  
 const PasswordErrorMessage = () => { 
@@ -66,10 +68,29 @@ const Form = props => {
         clearForm();
     }
 
+    const submitNewSAM = async (e) => {
+        e.preventDefault(); 
+        console.log("in fetchData");
+        const newData = await fetch('http://localhost:5000/newSAM', {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {name}.name,
+                username: {username}.username,
+                password: {password}.password.value
+            })
+        })
+        .then(res => console.log(res.json()))
+    }
+
     const fanForm = () => {
         return  <FadeIn><form  className="fanForm fadeIn" onSubmit={handleSubmit}> 
                     <div className="field">
-                        <label for="name">
+                        <label htmlFor="name">
                             Name <sup>*</sup>
                         </label><br />
                         <input
@@ -83,7 +104,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="username">
+                        <label htmlFor="username">
                             Username <sup>*</sup>
                         </label><br />
                         <input
@@ -97,7 +118,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="password">
+                        <label htmlFor="password">
                             Password <sup>*</sup>
                         </label><br />
                         <input
@@ -113,7 +134,7 @@ const Form = props => {
                         (<PasswordErrorMessage />) : null} 
                     </div>
                     <div className="field">
-                        <label for="nationalId">
+                        <label htmlFor="nationalId">
                             National ID Number <sup>*</sup>
                         </label><br />
                         <input
@@ -127,7 +148,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="birthDate">
+                        <label htmlFor="birthDate">
                             Date of Birth
                         </label><br />
                         <input
@@ -140,7 +161,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="address">
+                        <label htmlFor="address">
                             Address
                         </label><br />
                         <input
@@ -153,7 +174,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="phone">
+                        <label htmlFor="phone">
                             Phone Number
                         </label><br />
                         <input
@@ -172,9 +193,9 @@ const Form = props => {
     }
 
     const managerForm = () => {
-        return <FadeIn><form  className="fanForm" onSubmit={handleSubmit}> 
+        return <FadeIn><form method="POST" action="/newSAM" className="fanForm" onSubmit={submitNewSAM}> 
                     <div className="field">
-                        <label for="name">
+                        <label htmlFor="name">
                             Name <sup>*</sup>
                         </label><br />
                         <input
@@ -183,12 +204,13 @@ const Form = props => {
                             onChange={(e) => {
                                 setName(e.target.value);
                             }}
+                            name = "name"
                             id ="name" 
                             type="text"
                         />
                     </div>
                     <div className="field">
-                        <label for="username">
+                        <label htmlFor="username">
                             Username <sup>*</sup>
                         </label><br />
                         <input
@@ -197,12 +219,13 @@ const Form = props => {
                             onChange={(e) => {
                                 setUsername(e.target.value);
                             }}
+                            name="username"
                             id ="username" 
                             type="text"
                         />
                     </div>
                     <div className="field">
-                        <label for="password">
+                        <label htmlFor="password">
                             Password <sup>*</sup>
                         </label><br />
                         <input
@@ -211,7 +234,8 @@ const Form = props => {
                             onChange={(e) => {
                                 setPassword({value:e.target.value, isTouched: true});
                             }}
-                            id ="username" 
+                            name="password"
+                            id ="password" 
                             type="password"
                         />
                         {password.isTouched && password.value.length < 8 ? 
@@ -227,7 +251,7 @@ const Form = props => {
     const clubRepresentativeForm = () => {
         return <FadeIn><form  className="fanForm" onSubmit={handleSubmit}> 
                     <div className="field">
-                        <label for="name">
+                        <label htmlFor="name">
                             Name <sup>*</sup>
                         </label><br />
                         <input
@@ -241,7 +265,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="username">
+                        <label htmlFor="username">
                             Username <sup>*</sup>
                         </label><br />
                         <input
@@ -255,7 +279,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="password">
+                        <label htmlFor="password">
                             Password <sup>*</sup>
                         </label><br />
                         <input
@@ -271,7 +295,7 @@ const Form = props => {
                         (<PasswordErrorMessage />) : null} 
                     </div>
                     <div className="field">
-                        <label for="clubName">
+                        <label htmlFor="clubName">
                             Club to Represent <sup>*</sup>
                         </label><br />
                         <input
@@ -294,7 +318,7 @@ const Form = props => {
     const stadiumManagerForm = () => {
         return  <FadeIn><div><form  className="fanForm" onSubmit={handleSubmit}> 
                     <div className="field">
-                        <label for="name">
+                        <label htmlFor="name">
                             Name <sup>*</sup>
                         </label><br />
                         <input
@@ -308,7 +332,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="username">
+                        <label htmlFor="username">
                             Username <sup>*</sup>
                         </label><br />
                         <input
@@ -322,7 +346,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="password">
+                        <label htmlFor="password">
                             Password <sup>*</sup>
                         </label><br />
                         <input
@@ -338,7 +362,7 @@ const Form = props => {
                         (<PasswordErrorMessage />) : null} 
                     </div>
                     <div className="field">
-                        <label for="stadiumName">
+                        <label htmlFor="stadiumName">
                             Stadium to Manage <sup>*</sup>
                         </label><br />
                         <input
@@ -361,7 +385,7 @@ const Form = props => {
     const logInForm = () => {
         return  <FadeIn><div><form  className="logInForm" onSubmit={logIn}> 
                     <div className="field">
-                        <label for="username">
+                        <label htmlFor="username">
                             Username
                         </label><br />
                         <input
@@ -375,7 +399,7 @@ const Form = props => {
                         />
                     </div>
                     <div className="field">
-                        <label for="password">
+                        <label htmlFor="password">
                             Password
                         </label><br />
                         <input
