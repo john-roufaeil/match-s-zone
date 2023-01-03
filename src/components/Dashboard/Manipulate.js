@@ -6,24 +6,69 @@ import accept from "../../assets/icons/actions/accept.png"
 import refuse from "../../assets/icons/actions/refuse.png"
 import open from "../../assets/icons/actions/open.png"
 import close from "../../assets/icons/actions/close.png"
+import { useState } from "react"
 
 const Manipulate = props => {
+    const [name, setName] = useState("");
+    const [location, setLocation] = useState("");
+    const [capacity, setCapacity] = useState(0);
+    const [nat_id, setNat_id] = useState("");
+
+    const clickAddStadium = async (e) => {
+        e.preventDefault();
+        const newData = await fetch(`http://localhost:5000/addStadium`, {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {name}.name,
+                location: {location}.location,
+                capacity: {capacity}.capacity
+            })
+        })
+        .then(res => console.log(res.json()))
+    }
+
     const addStadium = () => {
-        return <div className="newEntry">
+        return <form  method="POST" action="/addStadium" onSubmit={clickAddStadium}>
+                    <div className="newEntry">
                     <div className="newEntryField">
                         <p>Add a new Stadium</p>
                         <div className="newEntryInput">
-                        <input type="text" placeholder= "Name" />
+                        <input 
+                            type="text" 
+                            placeholder= "Name" 
+                            onChange={(e) => {
+                                setName(e.target.value);
+                            }}
+                        />
                         </div>
                         <div className="newEntryInput">
-                            <input type="location" placeholder= "Location" />
+                            <input 
+                                type="location" 
+                                placeholder= "Location"
+                                onChange={(e) => {
+                                    setLocation(e.target.value);
+                                }}
+                            />
                         </div>
                         <div className="newEntryInput">
-                            <input type="number" placeholder= "Capacity" />
+                            <input 
+                                type="number" 
+                                placeholder= "Capacity"
+                                onChange={(e) => {
+                                    setCapacity(e.target.value);
+                                }}
+                            />
                         </div>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={plus} alt="plus-sign" /></button>
-                </div>
+                    <button type="submit" className="actionButton">
+                        <img className="actionIcon" src={plus} alt="plus-sign" />
+                    </button>
+                </div></form>
     }
 
     const deleteStadium = () => {
@@ -31,7 +76,13 @@ const Manipulate = props => {
                     <div className="newEntryField">
                         <p>Delete a Stadium</p>
                         <div className="newEntryInput">
-                            <input type="text" placeholder= "Name" />
+                            <input 
+                                type="text" 
+                                placeholder= "Name"
+                                onChange={(e) => {
+                                    setName(e.target.value);
+                                }}
+                            />
                         </div>
                     </div>
                     <button className="actionButton"><img className="actionIcon" src={minus} alt="plus-sign" /></button>
@@ -43,10 +94,22 @@ const Manipulate = props => {
                     <div className="newEntryField">
                         <p>Add a new Club</p>
                         <div className="newEntryInput">
-                        <input type="text" placeholder= "Name" />
+                        <input 
+                            type="text" 
+                            placeholder= "Name" 
+                            onChange={(e) => {
+                                setName(e.target.value);
+                            }}
+                        />
                         </div>
                         <div className="newEntryInput">
-                            <input type="location" placeholder= "Location" />
+                            <input 
+                                type="location" 
+                                placeholder= "Location" 
+                                onChange={(e) => {
+                                    setLocation(e.target.value);
+                                }}
+                            />
                         </div>
                     </div>
                     <button className="actionButton"><img className="actionIcon" src={plus} alt="plus-sign" /></button>
@@ -58,7 +121,13 @@ const Manipulate = props => {
                     <div className="newEntryField">
                         <p>Delete a Club</p>
                         <div className="newEntryInput">
-                            <input type="text" placeholder= "Name" />
+                            <input 
+                                type="text" 
+                                placeholder= "Name" 
+                                onChange={(e) => {
+                                    setName(e.target.value);
+                                }}
+                            />
                         </div>
                     </div>
                     <button className="actionButton"><img className="actionIcon" src={minus} alt="minus-sign" /></button>
@@ -70,7 +139,13 @@ const Manipulate = props => {
                     <div className="newEntryField">
                         <p>Block a Fan</p>
                         <div className="newEntryInput">
-                        <input type="text" placeholder= "National ID" />
+                        <input 
+                            type="text" 
+                            placeholder= "National ID" 
+                            onChange={(e) => {
+                                setNat_id(e.target.value);
+                            }}
+                        />
                         </div>
                     </div>
                     <button className="actionButton"><img className="actionIcon" src={block} alt="plus-sign" /></button>
@@ -82,7 +157,13 @@ const Manipulate = props => {
                     <div className="newEntryField">
                         <p>Unblock a Fan</p>
                         <div className="newEntryInput">
-                        <input type="text" placeholder= "National ID" />
+                        <input 
+                            type="text" 
+                            placeholder= "National ID" 
+                            onChange={(e) => {
+                                setNat_id(e.target.value);
+                            }}
+                        />
                         </div>
                     </div>
                     <button className="actionButton"><img className="actionIcon" src={unblock} alt="plus-sign" /></button>

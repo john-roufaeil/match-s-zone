@@ -5,21 +5,10 @@ import {validateEmail} from "../utils";
 import { Routes, Route, Link } from "react-router-dom";
 const cors = require('cors');
 
-
- 
-const PasswordErrorMessage = () => { 
-    return ( 
-        <p className="fieldError">Password should have at least 8 characters</p> 
-    ); 
-}; 
-
 const Form = props => { 
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState({
-        value:"",
-        isTouched: false
-    });
+    const [password, setPassword] = useState("");
     const [nationalId, setNationalId] = useState("");
     const [birthDate, setBirthDate] = useState("");
     const [address, setAddress] = useState("");
@@ -28,7 +17,7 @@ const Form = props => {
     const [stadiumName, setStadiumName] = useState("");
 
     const getIsFormValid = type => {
-        if (!(username && password.value.length >= 8))
+        if (!(username && password))
             return false;
         switch(type) {
             case "stadiumManager": return stadiumName?true:false;
@@ -41,25 +30,13 @@ const Form = props => {
     const clearForm = () => { 
         setName(""); 
         setUsername(""); 
-        setPassword({ 
-        value: "", 
-        isTouched: false, 
-        }); 
+        setPassword(""); 
         setNationalId(""); 
         setBirthDate(""); 
         setAddress("");
         setPhone("");  
         setClubName(""); 
         setStadiumName(""); 
-    }; 
-
-    const handleSubmit = (e) => { 
-        e.preventDefault(); 
-        var firstName = name.split(" ")[0];
-        firstName = firstName.toLowerCase();
-        firstName = firstName[0].toUpperCase() + firstName.substring(1,);
-        alert(`Thank you, ${firstName}, your account has been created! You can log in now.`); 
-        clearForm(); 
     }; 
 
     const logIn = (e) => {
@@ -70,7 +47,7 @@ const Form = props => {
 
     const submitNewSAM = async (e) => {
         e.preventDefault(); 
-        console.log("in fetchData");
+        clearForm();
         const newData = await fetch('http://localhost:5000/newSAM', {
             method: 'POST', 
             url: 'http://localhost:5000',
@@ -81,14 +58,77 @@ const Form = props => {
             body: JSON.stringify({
                 name: {name}.name,
                 username: {username}.username,
-                password: {password}.password.value
+                password: {password}.password
+            })
+        })
+        .then(res => console.log(res.json()))
+    }
+
+    const submitNewF = async (e) => {
+        e.preventDefault(); 
+        const newData = await fetch('http://localhost:5000/newF', {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {name}.name,
+                username: {username}.username,
+                password: {password}.password,
+                nat_id: {nationalId}.nationalId,
+                birthdate: {birthDate}.birthDate,
+                address: {address}.address,
+                phone: {phone}.phone
+            })
+        })
+        .then(res => console.log(res.json()))
+        .then(clearForm())
+    }
+
+    const submitNewCR = async (e) => {
+        e.preventDefault(); 
+        clearForm();
+        const newData = await fetch('http://localhost:5000/newCR', {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {name}.name,
+                username: {username}.username,
+                password: {password}.password,
+                club: {clubName}.clubName
+            })
+        })
+        .then(res => console.log(res.json()))
+    }
+
+    const submitNewSM = async (e) => {
+        e.preventDefault(); 
+        clearForm();
+        const newData = await fetch('http://localhost:5000/newSM', {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {name}.name,
+                username: {username}.username,
+                password: {password}.password,
+                stadium: {stadiumName}.stadiumName
             })
         })
         .then(res => console.log(res.json()))
     }
 
     const fanForm = () => {
-        return  <FadeIn><form  className="fanForm fadeIn" onSubmit={handleSubmit}> 
+        return  <FadeIn><form  method="POST" action="/newF" className="fanForm" onSubmit={submitNewF}> 
                     <div className="field">
                         <label htmlFor="name">
                             Name <sup>*</sup>
@@ -99,8 +139,9 @@ const Form = props => {
                             onChange={(e) => {
                                 setName(e.target.value);
                             }}
-                            id ="name" 
-                            type="text"
+                            name = "name"
+                            id = "name" 
+                            type = "text"
                         />
                     </div>
                     <div className="field">
@@ -113,8 +154,9 @@ const Form = props => {
                             onChange={(e) => {
                                 setUsername(e.target.value);
                             }}
-                            id ="username" 
-                            type="text"
+                            name = "username"
+                            id = "username" 
+                            type= "text"
                         />
                     </div>
                     <div className="field">
@@ -123,15 +165,14 @@ const Form = props => {
                         </label><br />
                         <input
                             required
-                            value = {password.value}
+                            value = {password}
                             onChange={(e) => {
-                                setPassword({value:e.target.value, isTouched: true});
+                                setPassword(e.target.value);
                             }}
-                            id ="username" 
+                            name = "password"
+                            id = "password" 
                             type="password"
                         />
-                        {password.isTouched && password.value.length < 8 ? 
-                        (<PasswordErrorMessage />) : null} 
                     </div>
                     <div className="field">
                         <label htmlFor="nationalId">
@@ -143,8 +184,9 @@ const Form = props => {
                             onChange={(e) => {
                                 setNationalId(e.target.value);
                             }}
-                            id ="nationalId" 
-                            type="text"
+                            name = "nationalId"
+                            id = "nationalId" 
+                            type= "text"
                         />
                     </div>
                     <div className="field">
@@ -193,7 +235,7 @@ const Form = props => {
     }
 
     const managerForm = () => {
-        return <FadeIn><form method="POST" action="/newSAM" className="fanForm" onSubmit={submitNewSAM}> 
+        return <FadeIn><form method="POST" action="/newSAM" className="managerForm" onSubmit={submitNewSAM}> 
                     <div className="field">
                         <label htmlFor="name">
                             Name <sup>*</sup>
@@ -230,16 +272,14 @@ const Form = props => {
                         </label><br />
                         <input
                             required
-                            value = {password.value}
+                            value = {password}
                             onChange={(e) => {
-                                setPassword({value:e.target.value, isTouched: true});
+                                setPassword(e.target.value);
                             }}
                             name="password"
                             id ="password" 
                             type="password"
                         />
-                        {password.isTouched && password.value.length < 8 ? 
-                        (<PasswordErrorMessage />) : null} 
                     </div>
                     <button type="submit" disabled={!getIsFormValid("manager")}> 
                         Create account 
@@ -249,7 +289,7 @@ const Form = props => {
     }
    
     const clubRepresentativeForm = () => {
-        return <FadeIn><form  className="fanForm" onSubmit={handleSubmit}> 
+        return <FadeIn><form  method="POST" action="/newCR" className="clubRepresentativeForm" onSubmit={submitNewCR}> 
                     <div className="field">
                         <label htmlFor="name">
                             Name <sup>*</sup>
@@ -284,15 +324,13 @@ const Form = props => {
                         </label><br />
                         <input
                             required
-                            value = {password.value}
+                            value = {password}
                             onChange={(e) => {
-                                setPassword({value:e.target.value, isTouched: true});
+                                setPassword(e.target.value);
                             }}
                             id ="username" 
                             type="password"
                         />
-                        {password.isTouched && password.value.length < 8 ? 
-                        (<PasswordErrorMessage />) : null} 
                     </div>
                     <div className="field">
                         <label htmlFor="clubName">
@@ -316,7 +354,7 @@ const Form = props => {
     }
 
     const stadiumManagerForm = () => {
-        return  <FadeIn><div><form  className="fanForm" onSubmit={handleSubmit}> 
+        return  <FadeIn><div><form  method="POST" action="/newSM" className="stadiumManagerForm" onSubmit={submitNewSM}> 
                     <div className="field">
                         <label htmlFor="name">
                             Name <sup>*</sup>
@@ -351,15 +389,13 @@ const Form = props => {
                         </label><br />
                         <input
                             required
-                            value = {password.value}
+                            value = {password}
                             onChange={(e) => {
-                                setPassword({value:e.target.value, isTouched: true});
+                                setPassword(e.target.value);
                             }}
                             id ="username" 
                             type="password"
                         />
-                        {password.isTouched && password.value.length < 8 ? 
-                        (<PasswordErrorMessage />) : null} 
                     </div>
                     <div className="field">
                         <label htmlFor="stadiumName">
@@ -404,9 +440,9 @@ const Form = props => {
                         </label><br />
                         <input
                             required
-                            value = {password.value}
+                            value = {password}
                             onChange={(e) => {
-                                setPassword({value:e.target.value, isTouched: true});
+                                setPassword(e.target.value);
                             }}
                             id ="username" 
                             type="password"
