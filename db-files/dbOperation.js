@@ -108,7 +108,7 @@ const addNewCR = async (name, username, password, club) => {
 const addNewSM = async (name, username, password, stadium) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SM_addStadiumManager ${name}, ${username}, ${password}, ${stadium}`);
+        let exec = await pool.request().query(`EXEC SM_addStadiumManager ${name}, ${stadium}, ${username}, ${password}`);
         return exec;
     } catch (error) {
         console.log(error);
