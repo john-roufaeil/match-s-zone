@@ -13,6 +13,10 @@ const Manipulate = props => {
     const [location, setLocation] = useState("");
     const [capacity, setCapacity] = useState(0);
     const [nat_id, setNat_id] = useState("");
+    const [host, setHost] = useState("");
+    const [guest, setGuest] = useState("");
+    const [startTime, setStartTime] = useState("");
+    const [endTime, setEndTime] = useState("");
 
     const clear = () => { 
         setName("");
@@ -174,7 +178,7 @@ const Manipulate = props => {
         .then(res => console.log(res.json()))
     }
     const deleteClub = () => {
-        return <form method="POST" onClick={clickDelClub} action="/delClub">
+        return <form method="POST" action="/delClub" onClick={clickDelClub}>
                     <div className="newEntry">
                     <div className="newEntryField">
                         <p>Delete a Club</p>
@@ -263,46 +267,135 @@ const Manipulate = props => {
                 </form>
     }
 
+    const clickAddMatch = async (e) => {
+        e.preventDefault();
+        const newData = await fetch(`http://localhost:5000/newMatch`, {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                host: {host}.host,
+                guest: {guest}.guest,
+                startTime: {startTime}.startTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
+                endTime: {endTime}.endTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
+            })
+        })
+        .then(res => console.log(res.json()))
+    }
     const addMatch = () => {
-        return <div className="newEntry">
+        return <form method="POST" action="/newMatch" onSubmit={clickAddMatch}>
+                    <div className="newEntry">
                     <div className="newEntryField">
                         <p>Add new Match</p>
                         <div className="newEntryInput">
-                        <input type="text" placeholder= "Host Club" />
+                        <input 
+                            type="text" 
+                            placeholder= "Host Club" 
+                            onChange={(e) => {
+                                setHost(e.target.value);
+                            }}
+                        />
                         </div>
                         <div className="newEntryInput">
-                        <input type="text" placeholder= "Guest Club" />
+                        <input 
+                            type="text" 
+                            placeholder= "Guest Club" 
+                            onChange={(e) => {
+                                setGuest(e.target.value);
+                            }}
+                        />
                         </div>
                         <div className="newEntryInput">
-                            <input type="datetime-local" placeholder= "Start Time" />
+                            <input 
+                                type="datetime-local" 
+                                placeholder= "Start Time" 
+                                onChange={(e) => {
+                                    setStartTime(e.target.value);
+                                }}
+                            />
                         </div>
                         <div className="newEntryInput">
-                            <input type="datetime-local" placeholder= "End Time" />
+                            <input 
+                                type="datetime-local" 
+                                placeholder= "End Time" 
+                                onChange={(e) => {
+                                    setEndTime(e.target.value);
+                                }}
+                            />
                         </div>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={plus} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={plus} alt="plus-sign" /></button>
                 </div>
+                </form>
     }
 
+    const clickDelMatch = async (e) => {
+        console.log();
+        e.preventDefault();
+        const newData = await fetch(`http://localhost:5000/delMatch`, {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                host: {host}.host,
+                guest: {guest}.guest,
+                startTime: {startTime}.startTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
+                endTime: {endTime}.endTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
+            })
+        })
+        .then(res => console.log(res.json()))
+    }
     const deleteMatch = () => {
-        return <div className="newEntry">
+        return <form method="POST" action="/delMatch" onSubmit={clickDelMatch}>
+                    <div className="newEntry">
                     <div className="newEntryField">
                         <p>Delete a Match</p>
                         <div className="newEntryInput">
-                        <input type="text" placeholder= "Host Club" />
+                        <input 
+                            type="text" 
+                            placeholder= "Host Club" 
+                            onChange={(e) => {
+                                setHost(e.target.value);
+                            }}
+                        />
                         </div>
                         <div className="newEntryInput">
-                        <input type="text" placeholder= "Guest Club" />
+                        <input 
+                            type="text" 
+                            placeholder= "Guest Club" 
+                            onChange={(e) => {
+                                setGuest(e.target.value);
+                            }}
+                        />
                         </div>
                         <div className="newEntryInput">
-                            <input type="datetime-local" placeholder= "Start Time" />
+                            <input 
+                                type="datetime-local" 
+                                placeholder= "Start Time" 
+                                onChange={(e) => {
+                                    setStartTime(e.target.value);
+                                }}
+                            />
                         </div>
                         <div className="newEntryInput">
-                            <input type="datetime-local" placeholder= "End Time" />
+                            <input 
+                                type="datetime-local" 
+                                placeholder= "End Time" 
+                                onChange={(e) => {
+                                    setEndTime(e.target.value);
+                                }}
+                            />
                         </div>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={minus} alt="minus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="plus-sign" /></button>
                 </div>
+                </form>
     }
 
     const openStadium = () => {

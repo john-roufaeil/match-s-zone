@@ -54,6 +54,15 @@ app.post('/newSAM', jsonParser, async (req, res) => {
     return await dbOperation.addNewSAM(req.body.name, req.body.username, req.body.password);
 })
 
+app.post('/newMatch', jsonParser, async(req, res) => {
+    console.log(req.body.startTime)
+    return await dbOperation.addNewMatch(req.body.host, req.body.guest, req.body.startTime, req.body.endTime);
+})
+
+app.post('/delMatch', jsonParser, async(req, res) => {
+    return await dbOperation.delMatch(req.body.host, req.body.guest, req.body.startTime, req.body.endTime);
+})
+
 // Club Representative //
 app.post('/newCR', jsonParser, async (req, res) => {
     return await dbOperation.addNewCR(

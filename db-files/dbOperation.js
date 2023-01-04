@@ -93,6 +93,54 @@ const addNewSAM = async (name, username, password) => {
     }
 }
 
+const addNewMatch = async (host, guest, startTime, endTime) => {
+    try {
+        sYear = parseInt(startTime).toString().slice(0,4);
+        sMonth = parseInt(startTime).toString().slice(4,6);
+        sDay = parseInt(startTime).toString().slice(6,8);
+        sHour = parseInt(startTime).toString().slice(8,10);
+        sMin = parseInt(startTime).toString().slice(10);
+        eYear = parseInt(endTime).toString().slice(0,4);
+        eMonth = parseInt(endTime).toString().slice(4,6);
+        eDay = parseInt(endTime).toString().slice(6,8);
+        eHour = parseInt(endTime).toString().slice(8,10);
+        eMin = parseInt(endTime).toString().slice(10);
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SAM_addNewMatch 
+            ${host}, ${guest}, 
+            '${sYear}-${sMonth}-${sDay} ${sHour}:${sMin}', 
+            '${eYear}-${eMonth}-${eDay} ${eHour}:${eMin}'
+        `);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const delMatch = async (host, guest, startTime, endTime) => {
+    try {
+        sYear = parseInt(startTime).toString().slice(0,4);
+        sMonth = parseInt(startTime).toString().slice(4,6);
+        sDay = parseInt(startTime).toString().slice(6,8);
+        sHour = parseInt(startTime).toString().slice(8,10);
+        sMin = parseInt(startTime).toString().slice(10);
+        eYear = parseInt(endTime).toString().slice(0,4);
+        eMonth = parseInt(endTime).toString().slice(4,6);
+        eDay = parseInt(endTime).toString().slice(6,8);
+        eHour = parseInt(endTime).toString().slice(8,10);
+        eMin = parseInt(endTime).toString().slice(10);
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SAM_deleteMatch 
+            ${host}, ${guest}, 
+            '${sYear}-${sMonth}-${sDay} ${sHour}:${sMin}', 
+            '${eYear}-${eMonth}-${eDay} ${eHour}:${eMin}'
+        `);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // Club Representative //
 const addNewCR = async (name, username, password, club) => {
     try {
@@ -146,6 +194,8 @@ module.exports = {
     viewClubs,
 
     addNewSAM,
+    addNewMatch,
+    delMatch,
 
     addNewCR,
 
