@@ -97,7 +97,7 @@ const addNewSAM = async (name, username, password) => {
 const addNewCR = async (name, username, password, club) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC CR_addRepresentative ${name}, ${username}, ${password}, ${club}`);
+        let exec = await pool.request().query(`EXEC CR_addRepresentative ${name}, ${club}, ${username}, ${password}`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -146,7 +146,10 @@ module.exports = {
     viewClubs,
 
     addNewSAM,
+
     addNewCR,
+
     addNewSM,
+    
     addNewF,
 }
