@@ -9,6 +9,7 @@ const jsonParser = bodyParser.json();
 app.use(express.json({
     type: ['application/json', 'text/plain']
   }))
+// app.use(bodyParser.urlencoded({extended: true}));
 
 
 // Admin //
@@ -21,7 +22,6 @@ app.post('/delClub', jsonParser, async (req, res) => {
 })
 
 app.post('/addStadium', jsonParser, async (req, res) => {
-    console.log(req.body);
     return await dbOperation.addStadium(req.body.name, req.body.location, req.body.capacity);
 })
 
@@ -35,6 +35,18 @@ app.post('/blockFan', jsonParser, async (req, res) => {
 
 app.post('/unblockFan', jsonParser, async (req, res) => {
     return await dbOperation.unblockFan(req.body.nat_id);
+})
+
+app.post('/viewStadiums', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewStadiums();
+    console.log(result.recordset)
+    res.send(result.recordset);
+})
+
+app.get('/viewClubs', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewClubs();
+    console.log(result.recordset)
+    res.send(result.recordset);
 })
 
 // Sports Association Manager //

@@ -1,20 +1,65 @@
 // import trash from "../../assets/icons/actions/trash.png"
+import { useState } from "react";
+const cors = require('cors');
+
 
 const List = props => {
+    const [stadiums, setStadiums] = useState([{'name':"hi", location:"place", capacity:5}, {'name':"hello", 'location':"anotherPlace", capacity:10}]);
+
+    const fetchStadiums = async () => {
+        const newData = await fetch(`http://localhost:5000/viewStadiums`, {
+            method: 'POST', 
+            mode: 'no-cors',
+            url: 'http://localhost:5000',
+            headers : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json',
+                "Access-Control-Allow-Origin" : "*", 
+                "Access-Control-Allow-Credentials" : true,
+            },
+            body : JSON.stringify(stadiums)
+        })
+        .then(res => res.json())
+        setStadiums(newData[0])
+        // setStadiums(newData)
+    }
+
+    const fetchClubs = async () => {
+        const newData = await fetch(`http://localhost:5000/viewClubs`, {
+            method: 'POST', 
+            mode: 'no-cors',
+            url: 'http://localhost:5000',
+            headers : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json',
+            },
+        })
+    }
+
     const viewStadiums = () => {
+        fetchStadiums();
+        console.log(stadiums);
+        const data = stadiums.map((stadium) => {
+            return  <tr key={stadium.name}>
+                        <td>{stadium.name}</td>
+                        <td>{stadium.location}</td>
+                        <td>{stadium.capacity}</td>
+                    </tr>
+        });
         return  <table>
                     <thead>
                         <th>Name</th>
                         <th>Location</th>
                         <th>Capacity</th>
-                        <th></th>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
     }
 
     const viewClubs = () => {
+        fetchClubs();
         return  <table>
                     <thead>
                         <th>Name</th>

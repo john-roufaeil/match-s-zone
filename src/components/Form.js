@@ -66,6 +66,8 @@ const Form = props => {
 
     const submitNewF = async (e) => {
         e.preventDefault(); 
+        console.log(`date: ${{birthDate}.birthDate}`)
+        console.log(`type of date: ${typeof({birthDate}.birthDate)}`)
         const newData = await fetch('http://localhost:5000/newF', {
             method: 'POST', 
             url: 'http://localhost:5000',
@@ -78,9 +80,9 @@ const Form = props => {
                 username: {username}.username,
                 password: {password}.password,
                 nat_id: {nationalId}.nationalId,
-                birthdate: {birthDate}.birthDate,
+                birthdate: {birthDate}.birthDate.replaceAll('-', ''),
                 address: {address}.address,
-                phone: {phone}.phone
+                phone: parseInt({phone}.phone)
             })
         })
         .then(res => console.log(res.json()))

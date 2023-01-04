@@ -4,11 +4,11 @@ CREATE TABLE systemUser (
 	password VARCHAR(20) NOT NULL,
 --	CHECK(LEN(password) >= 8)
 	PRIMARY KEY(username)
-);
+); 
 CREATE TABLE fan (
 	national_id VARCHAR(20),
 	name VARCHAR(20) NOT NULL,
-	birthDate DATETIME,
+	birthDate DATE,
 	address VARCHAR(20),
 	phoneNumber INT,
 	status BIT NOT NULL DEFAULT 1,
@@ -83,13 +83,6 @@ CREATE TABLE ticket (
 	match_id INT NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
-);
-CREATE TABLE ticketBuyingTransaction (
-	fanNational_id VARCHAR(20), 
-	ticket_id INT,
-	PRIMARY KEY (fanNational_id, ticket_id),
-	FOREIGN KEY (fanNational_id) REFERENCES fan ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (ticket_id) REFERENCES ticket ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE hostRequest (
 	id INT IDENTITY,
@@ -172,6 +165,15 @@ CREATE PROCEDURE SA_unblockFan @n_id VARCHAR(20) AS
     WHERE fan.national_id = @n_id;
 GO;
 
+CREATE PROCEDURE SA_viewStadiums AS 
+    SELECT DISTINCT S.name, S.location, S.capacity
+    FROM stadium S;
+GO;
+
+CREATE PROCEDURE SA_viewClubs AS 
+    SELECT DISTINCT C.name, C.location
+    FROM club C;
+GO;
 
 --/ Sports Association Manager /--
 CREATE PROCEDURE SAM_addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
@@ -324,8 +326,8 @@ GO;
 
 
 
---/ Fan /--
-CREATE PROCEDURE F_addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATETIME, @address VARCHAR(20), @phone INT) AS
+--/ Fan /-- 
+CREATE PROCEDURE F_addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATE, @address VARCHAR(20), @phone INT) AS
     INSERT INTO systemUser VALUES (@user, @pw);
     INSERT INTO fan VALUES (@nat_id, @name, @bdate, @address, @phone, 1, @user);
 GO;
@@ -355,4 +357,3 @@ CREATE PROCEDURE F_purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN V
     INSERT INTO ticketBuyingTransaction (ticket_id, fanNational_id) VALUES (@T_id, @nat_id)
     END
 GO;
-

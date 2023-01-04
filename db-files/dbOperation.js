@@ -62,6 +62,26 @@ const unblockFan = async (nat_id) => {
     }
 }
 
+const viewStadiums = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SA_viewStadiums`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const viewClubs = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SA_viewClubs`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // Sports Association Manager //
 const addNewSAM = async (name, username, password) => {
     try {
@@ -98,10 +118,16 @@ const addNewSM = async (name, username, password, stadium) => {
 // Fan //
 const addNewF = async (name, username, password, nat_id, birthdate, address, phone) => {
     try {
+        year = parseInt(birthdate).toString().slice(0,4);
+        month = parseInt(birthdate).toString().slice(4, 6);
+        day = parseInt(birthdate).toString().slice(6);
+        console.log(``)
+        console.log(birthdate);
+        console.log(typeof(birthdate));
         let pool = await sql.connect(config);
         let exec = await pool.request().query(
             `EXEC F_addFan ${name}, ${username}, ${password},
-            ${nat_id}, ${birthdate}, ${address}, ${phone}`);
+            ${nat_id}, '${year}-${month}-${day}', ${address}, ${phone}`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -116,6 +142,9 @@ module.exports = {
     delStadium,
     blockFan,
     unblockFan,
+    viewStadiums,
+    viewClubs,
+
     addNewSAM,
     addNewCR,
     addNewSM,
