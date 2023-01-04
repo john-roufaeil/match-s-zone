@@ -25,7 +25,7 @@ const Form = props => {
             case "fan": return nationalId?true:false; 
             default: return true;
         }
-    }
+    };
 
     const clearForm = () => { 
         setName(""); 
@@ -39,35 +39,8 @@ const Form = props => {
         setStadiumName(""); 
     }; 
 
-    const logIn = (e) => {
-        e.preventDefault(); 
-        alert("You have succesfully logged in");
-        clearForm();
-    }
-
-    const submitNewSAM = async (e) => {
-        e.preventDefault(); 
-        clearForm();
-        const newData = await fetch('http://localhost:5000/newSAM', {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name,
-                username: {username}.username,
-                password: {password}.password
-            })
-        })
-        .then(res => console.log(res.json()))
-    }
-
     const submitNewF = async (e) => {
         e.preventDefault(); 
-        console.log(`date: ${{birthDate}.birthDate}`)
-        console.log(`type of date: ${typeof({birthDate}.birthDate)}`)
         const newData = await fetch('http://localhost:5000/newF', {
             method: 'POST', 
             url: 'http://localhost:5000',
@@ -87,48 +60,8 @@ const Form = props => {
         })
         .then(res => console.log(res.json()))
         .then(clearForm())
-    }
-
-    const submitNewCR = async (e) => {
-        e.preventDefault(); 
-        clearForm();
-        const newData = await fetch('http://localhost:5000/newCR', {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name,
-                username: {username}.username,
-                password: {password}.password,
-                club: {clubName}.clubName
-            })
-        })
-        .then(res => console.log(res.json()))
-    }
-
-    const submitNewSM = async (e) => {
-        e.preventDefault(); 
-        clearForm();
-        const newData = await fetch('http://localhost:5000/newSM', {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name,
-                username: {username}.username,
-                password: {password}.password,
-                stadium: {stadiumName}.stadiumName
-            })
-        })
-        .then(res => console.log(res.json()))
-    }
-
+        .catch(console.log("i failed"))
+    };
     const fanForm = () => {
         return  <FadeIn><form  method="POST" action="/newF" className="fanForm" onSubmit={submitNewF}> 
                     <div className="field">
@@ -234,8 +167,26 @@ const Form = props => {
                         Create account 
                     </button>  
                 </form></FadeIn>
-    }
+    };
 
+    const submitNewSAM = async (e) => {
+        e.preventDefault(); 
+        clearForm();
+        const newData = await fetch('http://localhost:5000/newSAM', {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {name}.name,
+                username: {username}.username,
+                password: {password}.password
+            })
+        })
+        .then(res => console.log(res.json()))
+    };
     const managerForm = () => {
         return <FadeIn><form method="POST" action="/newSAM" className="managerForm" onSubmit={submitNewSAM}> 
                     <div className="field">
@@ -288,8 +239,27 @@ const Form = props => {
                     </button>  
                 </form>
                 </FadeIn>
-    }
+    };
    
+    const submitNewCR = async (e) => {
+        e.preventDefault(); 
+        clearForm();
+        const newData = await fetch('http://localhost:5000/newCR', {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {name}.name,
+                username: {username}.username,
+                password: {password}.password,
+                club: {clubName}.clubName
+            })
+        })
+        .then(res => console.log(res.json()))
+    };
     const clubRepresentativeForm = () => {
         return <FadeIn><form  method="POST" action="/newCR" className="clubRepresentativeForm" onSubmit={submitNewCR}> 
                     <div className="field">
@@ -353,8 +323,27 @@ const Form = props => {
                     </button>  
                 </form>
                 </FadeIn>
-    }
+    };
 
+    const submitNewSM = async (e) => {
+        e.preventDefault(); 
+        clearForm();
+        const newData = await fetch('http://localhost:5000/newSM', {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {name}.name,
+                username: {username}.username,
+                password: {password}.password,
+                stadium: {stadiumName}.stadiumName
+            })
+        })
+        .then(res => console.log(res.json()))
+    };
     const stadiumManagerForm = () => {
         return  <FadeIn><div><form  method="POST" action="/newSM" className="stadiumManagerForm" onSubmit={submitNewSM}> 
                     <div className="field">
@@ -418,10 +407,27 @@ const Form = props => {
                     </button>  
                 </form></div>
                 </FadeIn>
-    }
+    };
 
+    const logIn = async (e) => {
+        e.preventDefault(); 
+        // alert("You have succesfully logged in");
+        clearForm();
+        const users = await fetch('http://localhost:5000/getUsers', {
+            method: 'GET', 
+            url: 'http://localhost:5000',
+            mode: "no-cors",
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => console.log(res.json()))
+        .catch(console.log("CATCH"))
+        console.log(users);
+    };
     const logInForm = () => {
-        return  <FadeIn><div><form  className="logInForm" onSubmit={logIn}> 
+        return  <FadeIn><div><form  className="logInForm" onSubmit={logIn} method="GET" action="/getUsers"> 
                     <div className="field">
                         <label htmlFor="username">
                             Username
@@ -456,7 +462,7 @@ const Form = props => {
                     </button>  
                 </form></div>
                 </FadeIn>
-    }
+    };
 
     switch(props.type) {
         case "manager":

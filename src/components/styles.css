@@ -151,7 +151,7 @@ sup {
 main .form input {
     font-size: 17px;
     padding: 2px 2px;
-    width: 330px;
+    width: 120%;
     border-radius: 3px;
     border: 2px solid #777
 }

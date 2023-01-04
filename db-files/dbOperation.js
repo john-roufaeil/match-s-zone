@@ -1,6 +1,16 @@
 const config = require('./dbConfig');
 const sql = require('mssql');
 
+const getUsers = async() => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`SELECT * FROM systemUser`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // Admin //
 const addClub = async (name, location) => {
     try {
@@ -184,6 +194,8 @@ const addNewF = async (name, username, password, nat_id, birthdate, address, pho
 
 
 module.exports = {
+    getUsers,
+
     addClub,
     delClub,
     addStadium,

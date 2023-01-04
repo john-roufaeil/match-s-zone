@@ -9,9 +9,12 @@ const jsonParser = bodyParser.json();
 app.use(express.json({
     type: ['application/json', 'text/plain']
   }))
-// app.use(bodyParser.urlencoded({extended: true}));
-
-
+  
+  
+app.get('/getUsers', jsonParser, async(req, res) => {
+    res.send(await dbOperation.getUsers());
+})
+ 
 // Admin //
 app.post('/addClub', jsonParser, async (req, res) => {
     return await dbOperation.addClub(req.body.name, req.body.location);

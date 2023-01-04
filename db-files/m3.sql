@@ -2,9 +2,10 @@ CREATE PROCEDURE createAllTables AS
 CREATE TABLE systemUser (
 	username VARCHAR(20),
 	password VARCHAR(20) NOT NULL,
+    type INT NOT NULL,
 --	CHECK(LEN(password) >= 8)
 	PRIMARY KEY(username)
-); 
+);  
 CREATE TABLE fan (
 	national_id VARCHAR(20),
 	name VARCHAR(20) NOT NULL,
@@ -84,6 +85,13 @@ CREATE TABLE ticket (
 	PRIMARY KEY (id),
 	FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
 );
+CREATE TABLE ticketBuyingTransaction (
+	fanNational_id VARCHAR(20), 
+	ticket_id INT,
+	PRIMARY KEY (fanNational_id, ticket_id),
+	FOREIGN KEY (fanNational_id) REFERENCES fan ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (ticket_id) REFERENCES ticket ON DELETE CASCADE ON UPDATE CASCADE
+); 
 CREATE TABLE hostRequest (
 	id INT IDENTITY,
 	representative_id INT NOT NULL,
@@ -177,8 +185,11 @@ GO;
 
 --/ Sports Association Manager /--
 CREATE PROCEDURE SAM_addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
-    INSERT INTO systemUser VALUES (@user, @pw); 
+    IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+    BEGIN 
+    INSERT INTO systemUser VALUES (@user, @pw, 2); 
     INSERT INTO sportsAssociationManager VALUES (@name, @user);
+    END;
 GO;
 
 CREATE PROCEDURE SAM_addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
@@ -220,12 +231,15 @@ GO;
 
 
 
---/ Club Representative /--
+--/ Club Representative /-- 
 CREATE PROCEDURE CR_addRepresentative @name VARCHAR(20), @c_name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
-    INSERT INTO systemUser VALUES (@user, @pw);
     DECLARE @club_id INT;
     SELECT @club_id=C.id FROM club C WHERE C.name = @c_name;
+    IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+    BEGIN 
+    INSERT INTO systemUser VALUES (@user, @pw, 4);
     INSERT INTO clubRepresentative VALUES (@name, @club_id, @user);
+    END
 GO;
 
 CREATE PROCEDURE CR_viewClubInfo @clubRepresentative_id INT AS
@@ -256,14 +270,15 @@ GO;
 --         manager_id INT NOT NULL,
 --         match_id INT NOT NULL,
 
-
-
 --/ Stadium Manager /--
 CREATE PROCEDURE SM_addStadiumManager(@name VARCHAR(20), @stadiumName VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)) AS
-    INSERT INTO systemUser VALUES (@user, @pw); 
     DECLARE @stadium_id INT;
     SELECT @stadium_id=S.id FROM stadium S WHERE @stadiumName = S.name;
+    IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+    BEGIN 
+    INSERT INTO systemUser VALUES (@user, @pw, 3); 
     INSERT INTO stadiumManager VALUES (@name, @stadium_id, @user);
+    END;
 GO;
 
 CREATE PROCEDURE SM_viewStadiumInfo @stadiumManager_id INT AS
@@ -325,11 +340,14 @@ WHERE ticket.match_id = @M_id;
 GO;
 
 
-
+exec SAM_addAssociationManager 'b', 'b', 'b'
 --/ Fan /-- 
-CREATE PROCEDURE F_addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATE, @address VARCHAR(20), @phone INT) AS
-    INSERT INTO systemUser VALUES (@user, @pw);
+CREATE PROCEDURE F_addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATETIME, @address VARCHAR(20), @phone INT) AS
+    IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
+    BEGIN 
+    INSERT INTO systemUser VALUES (@user, @pw , 1);
     INSERT INTO fan VALUES (@nat_id, @name, @bdate, @address, @phone, 1, @user);
+    END
 GO;
 
 CREATE PROCEDURE F_availableMatchesToAttend (@DT DATETIME) AS
@@ -357,3 +375,4 @@ CREATE PROCEDURE F_purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN V
     INSERT INTO ticketBuyingTransaction (ticket_id, fanNational_id) VALUES (@T_id, @nat_id)
     END
 GO;
+

@@ -2,10 +2,12 @@ import NavBar from "./components/NavBar";
 import Form from "./components/Form"
 import greetingGif from "./assets/icons/match-s-zone/greeting.gif"
 import Footer from "./components/Footer"
+import { useState } from "react";
 
 const LogIn = () => {
     const barComponents = {left: null, right: "signup"};
     const type = "login";
+
     return (
         <div>
             <NavBar barComponents = {barComponents} />
