@@ -1,7 +1,11 @@
 import darkLogo from "../assets/icons/match-s-zone/dark.png";
+import lightLogo from "../assets/icons/match-s-zone/light.png";
 import { Routes, Route, Link } from "react-router-dom";
 import "./styles.css"
 import logout from "../assets/icons/actions/logout.png"
+import { Toggle } from 'react-hook-theme';
+import 'react-hook-theme/dist/styles/style.css';
+
 
 const NavBar = props => {
     const left = props.barComponents.left;
@@ -12,7 +16,8 @@ const NavBar = props => {
                 {left == null?null:null}
             </div>
             <img src={darkLogo} alt="logo" className="logo"></img>
-            <div className="right">     
+            <div className="right">   
+                <Toggle />  
                 {right === "login"?
                 <Link to="/login" className="nav-item"><button>Log In</button></Link>
                 :right === "signup"?

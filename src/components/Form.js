@@ -45,7 +45,7 @@ const Form = props => {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
-                'Content-Type': 'application/json', 
+                'Content-Type': 'application/json',  
                 'Accept': 'application/json'
             },
             body: JSON.stringify({

@@ -20,6 +20,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-fade-in": "^2.0.1",
+    "react-hook-theme": "^1.2.4",
     "react-router-dom": "^6.6.1",
     "react-scripts": "5.0.1",
     "react-simple-scroll-up": "^0.2.3",
