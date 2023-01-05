@@ -2,28 +2,7 @@
     box-sizing: border-box;
 }
 
-[data-theme='light'] {
-    --body-background   : #FFFFFF;
-    --main-background   : #F7F7F7;
-    --button-bg         : #222222;
-    --button-txt        : #FFFFFF;
-    --txt               : #000000;
-    --cp-txt            : rgba(0,0,0,.7);
-    --special1          : #2E86AB;
-    --special2          : #F24236;
-}
 
-[data-theme='dark'] {
-    --body-background   : #15202B;
-    --main-background   : #192734;
-    --button-bg         : #DDDDDD;
-    --button-txt        : #000;
-    --txt               : #FFFFFF;
-    --cp-txt            : rgba(255, 255, 255, 0.7);
-    --special1          : #22303C;
-    --special2          : #8899A6;
-
-}
 
 body {
     background-color: var(--body-background)
