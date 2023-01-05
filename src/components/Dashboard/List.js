@@ -1,44 +1,24 @@
+import axios, * as others from 'axios';
 // import trash from "../../assets/icons/actions/trash.png"
 import { useState } from "react";
 const cors = require('cors');
+// const axios = require('axios');
+
+
 
 
 const List = props => {
-    const [stadiums, setStadiums] = useState([{'name':"hi", location:"place", capacity:5}, {'name':"hello", 'location':"anotherPlace", capacity:10}]);
+    const [stadiums, setStadiums] = useState([]);
+    const [clubs, setClubs] = useState([]);
 
     const fetchStadiums = async () => {
-        const newData = await fetch(`http://localhost:5000/viewStadiums`, {
-            method: 'POST', 
-            mode: 'no-cors',
-            url: 'http://localhost:5000',
-            headers : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json',
-                "Access-Control-Allow-Origin" : "*", 
-                "Access-Control-Allow-Credentials" : true,
-            },
-            body : JSON.stringify(stadiums)
+        axios.get('http://localhost:5000/viewStadiums', {
         })
-        .then(res => res.json())
-        setStadiums(newData[0])
-        // setStadiums(newData)
+        .then(res => setStadiums(res.data))
     }
-
-    const fetchClubs = async () => {
-        const newData = await fetch(`http://localhost:5000/viewClubs`, {
-            method: 'POST', 
-            mode: 'no-cors',
-            url: 'http://localhost:5000',
-            headers : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json',
-            },
-        })
-    }
-
     const viewStadiums = () => {
         fetchStadiums();
-        console.log(stadiums);
+        console.log(stadiums)
         const data = stadiums.map((stadium) => {
             return  <tr key={stadium.name}>
                         <td>{stadium.name}</td>
@@ -48,9 +28,11 @@ const List = props => {
         });
         return  <table>
                     <thead>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Capacity</th>
+                        <tr>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Capacity</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {data}
@@ -58,28 +40,52 @@ const List = props => {
                 </table>
     }
 
+    const fetchClubs = async () => {
+        // e.preventDefault();
+        const newData = await fetch(`http://localhost:5000/viewClubs`, {
+            method: "GET",
+            url: 'http://localhost:5000',
+            mode: "no-cors",
+            headers : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body : undefined
+        })
+        
+        
+    }
     const viewClubs = () => {
-        fetchClubs();
+        // {const result = fetchClubs();}
+        // {const result=fetchClubs();
+        // console.log(result.then)}
+        // console.log("hi");}
+        // return  <form method="POST" action="/viewClubs" onLoad={fetchClubs}>
         return  <table>
                     <thead>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th></th>
+                        <tr>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
+                // </form>
     }
 
     const viewFans = () => {
         return  <table>
                     <thead>
-                        <th>Username</th>
-                        <th>Password</th>
-                        <th>Name</th>
-                        <th>National ID</th>
-                        <th>Birth Date</th>
-                        <th></th>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Name</th>
+                            <th>National ID</th>
+                            <th>Birth Date</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -89,11 +95,13 @@ const List = props => {
     const viewMatches = () => {
         return  <table>
                 <thead>
-                    <th>Host Club</th>
-                    <th>Guest Club</th>
-                    <th>Stadium</th>
-                    <th>Location</th>
-                    <th></th>
+                    <tr>
+                        <th>Host Club</th>
+                        <th>Guest Club</th>
+                        <th>Stadium</th>
+                        <th>Location</th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -103,10 +111,12 @@ const List = props => {
     const viewUpcoming = () => {
         return  <table>
                 <thead>
-                    <th>Host Club</th>
-                    <th>Guest Club</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
+                    <tr>
+                        <th>Host Club</th>
+                        <th>Guest Club</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -116,10 +126,12 @@ const List = props => {
     const viewPrevious = () => {
         return  <table>
                 <thead>
-                    <th>Host Club</th>
-                    <th>Guest Club</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
+                    <tr>
+                        <th>Host Club</th>
+                        <th>Guest Club</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -129,8 +141,10 @@ const List = props => {
     const neverTogether = () => {
         return  <table>
                 <thead>
-                    <th>Host Club</th>
-                    <th>Guest Club</th>
+                    <tr>
+                        <th>Host Club</th>
+                        <th>Guest Club</th>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -140,11 +154,13 @@ const List = props => {
     const viewMyStadium = () => {
         return  <table>
                     <thead>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Capacity</th>
-                        <th>Status</th>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Capacity</th>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -154,14 +170,16 @@ const List = props => {
     const viewRequests = () => {
         return  <table>
                     <thead>
-                        <th>Club Representative</th>
-                        <th>Host Club</th>
-                        <th>Guest Club</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Status</th>
-                        <th className="actionColumn">Accept</th>
-                        <th className="actionColumn">Refuse</th>
+                        <tr>
+                            <th>Club Representative</th>
+                            <th>Host Club</th>
+                            <th>Guest Club</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Status</th>
+                            <th className="actionColumn">Accept</th>
+                            <th className="actionColumn">Refuse</th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -171,9 +189,11 @@ const List = props => {
     const viewMyClub = () => {
         return  <table>
                     <thead>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Location</th>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Location</th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -183,11 +203,13 @@ const List = props => {
     const viewMatchesForStadium = () => {
         return  <table>
                     <thead>
-                        <th>Host Club</th>
-                        <th>Guest Club</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Stadium</th>
+                        <tr>
+                            <th>Host Club</th>
+                            <th>Guest Club</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Stadium</th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -197,9 +219,11 @@ const List = props => {
     const viewAvailableStadiums = () => {
         return  <table>
                     <thead>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Capacity</th>
+                        <tr>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Capacity</th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -209,10 +233,12 @@ const List = props => {
     const viewMyTickets = () => {
         return  <table>
                     <thead>
-                        <th>ID</th>
-                        <th>Host Club</th>
-                        <th>Guest Club</th>
-                        <th>Start Time</th>
+                        <tr>
+                            <th>ID</th>
+                            <th>Host Club</th>
+                            <th>Guest Club</th>
+                            <th>Start Time</th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -222,12 +248,14 @@ const List = props => {
     const viewAvailableTickets = () => {
         return  <table>
                     <thead>
-                        <th>Host Club</th>
-                        <th>Guest Club</th>
-                        <th>Stadium</th>
-                        <th>Location</th>
-                        <th>Start Time</th>
-                        <th className="actionColumn">Purchase Ticket</th>
+                        <tr>
+                            <th>Host Club</th>
+                            <th>Guest Club</th>
+                            <th>Stadium</th>
+                            <th>Location</th>
+                            <th>Start Time</th>
+                            <th className="actionColumn">Purchase Ticket</th>
+                        </tr>
                     </thead>
                     <tbody>
                     </tbody>

@@ -9,8 +9,14 @@ const jsonParser = bodyParser.json();
 app.use(express.json({
     type: ['application/json', 'text/plain']
   }))
-  
-  
+
+app.use(
+    cors({
+        origin: true,
+        credentials: true
+    })
+);
+
 app.get('/getUsers', jsonParser, async(req, res) => {
     res.send(await dbOperation.getUsers());
 })
@@ -40,21 +46,20 @@ app.post('/unblockFan', jsonParser, async (req, res) => {
     return await dbOperation.unblockFan(req.body.nat_id);
 })
 
-app.post('/viewStadiums', jsonParser, async (req, res) => {
+app.get('/viewStadiums', jsonParser, async (req, res) => {
     const result = await dbOperation.viewStadiums();
-    console.log(result.recordset)
-    res.send(result.recordset);
+    // console.log(`result.recordset: ${JSON.stringify(result.recordset)}`);
+    res.send(JSON.stringify(result.recordset));
 })
 
 app.get('/viewClubs', jsonParser, async (req, res) => {
     const result = await dbOperation.viewClubs();
-    console.log(result.recordset)
-    res.send(result.recordset);
+    return res.send(result.recordset);
 })
 
 // Sports Association Manager //
 app.post('/newSAM', jsonParser, async (req, res) => {
-    return await dbOperation.addNewSAM(req.body.name, req.body.username, req.body.password);
+    const a = await dbOperation.addNewSAM(req.body.name, req.body.username, req.body.password);
 })
 
 app.post('/newMatch', jsonParser, async(req, res) => {

@@ -186,6 +186,7 @@ const Form = props => {
             })
         })
         .then(res => console.log(res.json()))
+        console.log(newData);
     };
     const managerForm = () => {
         return <FadeIn><form method="POST" action="/newSAM" className="managerForm" onSubmit={submitNewSAM}> 
