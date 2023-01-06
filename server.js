@@ -61,6 +61,16 @@ app.get('/viewFans', jsonParser, async (req, res) => {
     return res.send(result.recordset);
 })
 
+app.post('/openStadium', jsonParser, async (req, res) => {
+    return await dbOperation.openStadium(req.body.name.name);
+})
+
+app.post('/closeStadium', jsonParser, async (req, res) => {
+    return await dbOperation.closeStadium(req.body.name.name);
+})
+
+
+
 // Sports Association Manager //
 app.post('/newSAM', jsonParser, async (req, res) => {
     const a = await dbOperation.addNewSAM(req.body.name, req.body.username, req.body.password);
@@ -75,13 +85,27 @@ app.post('/delMatch', jsonParser, async(req, res) => {
     return await dbOperation.delMatch(req.body.host, req.body.guest, req.body.startTime, req.body.endTime);
 })
 
-app.post('/openStadium', jsonParser, async (req, res) => {
-    return await dbOperation.openStadium(req.body.name.name);
+app.get('/viewAllMatches', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewAllMatches();
+    return res.send(result.recordset);
 })
 
-app.post('/closeStadium', jsonParser, async (req, res) => {
-    return await dbOperation.closeStadium(req.body.name.name);
+app.get('/viewUpcomingMatches', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewUpcomingMatches();
+    return res.send(result.recordset);
 })
+
+app.get('/viewPreviousMatches', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewPreviousMatches();
+    return res.send(result.recordset);
+})
+
+app.get('/viewClubsNotScheduledTogether', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewClubsNotScheduledTogether();
+    return res.send(result.recordset);
+})
+
+
 
 // Club Representative //
 app.post('/newCR', jsonParser, async (req, res) => {

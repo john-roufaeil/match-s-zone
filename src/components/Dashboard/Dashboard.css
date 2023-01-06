@@ -141,7 +141,9 @@ tr {
     /* background-color: var(--row-odd); */
     color: var(--row-txt);
     text-align: center;
-    border-top: 1px solid var(--row-border);
+    /* border-top: 1px solid var(--row-border); */
+    /* border-bottom: 1px solid var(--row-border); */
+    height:55px;
 }
 /* 
 tr:nth-of-type(even) {

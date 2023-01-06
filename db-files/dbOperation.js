@@ -181,6 +181,48 @@ const delMatch = async (host, guest, startTime, endTime) => {
     }
 }
 
+const viewAllMatches = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SAM_viewAllMatches`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const viewUpcomingMatches = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SAM_viewUpcomingMatches`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const viewPreviousMatches = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SAM_viewPreviousMatches`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const viewClubsNotScheduledTogether = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC viewClubsNotScheduledTogether`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
 // Club Representative //
 const addNewCR = async (name, username, password, club) => {
     try {
@@ -241,6 +283,10 @@ module.exports = {
     addNewSAM,
     addNewMatch,
     delMatch,
+    viewAllMatches,
+    viewUpcomingMatches,
+    viewPreviousMatches,
+    viewClubsNotScheduledTogether,
 
     addNewCR,
 

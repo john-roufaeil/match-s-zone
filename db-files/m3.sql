@@ -232,12 +232,15 @@ CREATE PROCEDURE SAM_deleteMatch @hostClubName VARCHAR(20), @guestClubName VARCH
     WHERE match.hostClub_id = @host_id AND match.guestClub_id = @guest_id AND match.startTime = @startTime AND match.endTime = @endTime;
 GO;
 
-CREATE PROCEDURE SAM_viewAllMatches AS 
-    SELECT * FROM match;
+CREATE PROCEDURE SAM_viewAllMatches AS  
+    SELECT DISTINCT HC.name host, GC.name guest, M.startTime, M.endTime 
+    FROM match M
+    INNER JOIN club HC ON M.hostClub_id = HC.id
+    INNER JOIN club GC ON M.guestClub_id = GC.id;
 GO;
 
-CREATE PROCEDURE SAM_viewUpcomingMatches AS 
-    SELECT HC.name, GC.name, M.startTime, M.endTime
+CREATE PROCEDURE SAM_viewUpcomingMatches AS  
+    SELECT DISTINCT HC.name host, GC.name guest, M.startTime, M.endTime
     FROM match M
     INNER JOIN club HC ON M.hostClub_id = HC.id
     INNER JOIN club GC ON M.guestClub_id = GC.id
@@ -245,15 +248,28 @@ CREATE PROCEDURE SAM_viewUpcomingMatches AS
 GO;
 
 CREATE PROCEDURE SAM_viewPreviousMatches AS 
-    SELECT HC.name, GC.name, M.startTime, M.endTime
+    SELECT DISTINCT HC.name host, GC.name guest, M.startTime, M.endTime
     FROM match M
     INNER JOIN club HC ON M.hostClub_id = HC.id
     INNER JOIN club GC ON M.guestClub_id = GC.id
     WHERE CURRENT_TIMESTAMP > M.startTime;
 GO;
 
---CREATE PROCEDURE viewClubsNotScheduledTogether --TODO
-
+CREATE PROCEDURE viewClubsNotScheduledTogether AS
+    (SELECT DISTINCT C1.name AS name1, C2.name AS name2
+    FROM club C1, club C2
+    WHERE C1.name != C2.name AND C1.id < C2.id)
+    EXCEPT
+    (SELECT DISTINCT C1.name AS name1, C2.name AS name2 
+    FROM match M
+    INNER JOIN club C1 ON M.hostClub_id = C1.id
+    INNER JOIN club C2 ON M.guestClub_id = C2.id)
+    EXCEPT 
+    (SELECT DISTINCT C1.name AS name1, C2.name AS name2 
+    FROM match M
+    INNER JOIN club C1 ON M.guestClub_id = C1.id
+    INNER JOIN club C2 ON M.hostClub_id = C2.id)
+GO;
 
 
 --/ Club Representative /-- 

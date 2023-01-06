@@ -22,6 +22,32 @@ const List = props => {
         .then(res => setFans(res.data))
     }, [fans]);
 
+    const [allMatches, setAllMatches] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewAllMatches')
+        .then(res => setAllMatches(res.data))
+    }, [allMatches]);
+
+    const [previousMatches, setPreviousMatches] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewPreviousMatches')
+        .then(res => setPreviousMatches(res.data))
+    }, [previousMatches]);
+
+    const [upcomingMatches, setUpcomingMatches] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewUpcomingMatches')
+        .then(res => setUpcomingMatches(res.data))
+    }, [upcomingMatches]);
+
+    const [clubsNeverTogether, setClubsNeverTogether] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewClubsNotScheduledTogether')
+        .then(res => setClubsNeverTogether(res.data))
+    }, [clubsNeverTogether]);
+
+
+
     const viewStadiums = () => {
         const data = stadiums.map((stadium) => {
             const name = stadium.name;
@@ -104,7 +130,6 @@ const List = props => {
 
     const viewFans = () => {
         const data = fans.map((fan) => {
-            const bdate = fan.birthDate.toString().slice(0,10);
             return  <tr key={fan.national_id}>
                         <td>{fan.username}</td>
                         <td>{fan.password}</td>
@@ -136,22 +161,38 @@ const List = props => {
     }
 
     const viewMatches = () => {
+        const data = allMatches.map((match) => {
+            return  <tr>
+                        <td>{match.host}</td>
+                        <td>{match.guest}</td>
+                        <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
+                    </tr>
+        });
         return  <table>
                 <thead>
                     <tr>
                         <th>Host Club</th>
                         <th>Guest Club</th>
-                        <th>Stadium</th>
-                        <th>Location</th>
-                        <th></th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {data}
                 </tbody>
             </table>
     }
 
     const viewUpcoming = () => {
+        const data = upcomingMatches.map((match) => {
+            return  <tr>
+                        <td>{match.host}</td>
+                        <td>{match.guest}</td>
+                        <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
+                    </tr>
+        });
         return  <table>
                 <thead>
                     <tr>
@@ -162,11 +203,20 @@ const List = props => {
                     </tr>
                 </thead>
                 <tbody>
+                    {data}
                 </tbody>
             </table>
     }
 
     const viewPrevious = () => {
+        const data = previousMatches.map((match) => {
+            return  <tr>
+                        <td>{match.host}</td>
+                        <td>{match.guest}</td>
+                        <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
+                    </tr>
+        });
         return  <table>
                 <thead>
                     <tr>
@@ -177,19 +227,27 @@ const List = props => {
                     </tr>
                 </thead>
                 <tbody>
+                    {data}
                 </tbody>
             </table>
     }
 
     const neverTogether = () => {
+        const data = clubsNeverTogether.map((entry) => {
+            return  <tr>
+                        <td>{entry.name1}</td>
+                        <td>{entry.name2}</td>
+                    </tr>
+        });
         return  <table>
                 <thead>
                     <tr>
-                        <th>Host Club</th>
-                        <th>Guest Club</th>
+                        <th>Club 1</th>
+                        <th>Club 2</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {data}
                 </tbody>
             </table>
     }
