@@ -18,7 +18,8 @@ app.use(
 );
 
 app.get('/getUsers', jsonParser, async(req, res) => {
-    res.send(await dbOperation.getUsers());
+    const result = await dbOperation.getUsers();
+    res.send(JSON.stringify(result.recordset));
 })
  
 // Admin //

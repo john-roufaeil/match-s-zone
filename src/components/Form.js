@@ -1,9 +1,10 @@
+import axios, * as others from 'axios';
 import '../App.css'; 
 import FadeIn from 'react-fade-in';
-import {useState} from "react"; 
-import {validateEmail} from "../utils"; 
-import { Routes, Route, Link } from "react-router-dom";
-const cors = require('cors');
+import { useState, useEffect, useContext} from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from '../UserContext';
+
 
 const Form = props => { 
     const [name, setName] = useState("");
@@ -15,6 +16,14 @@ const Form = props => {
     const [phone, setPhone] = useState("");
     const [clubName, setClubName] = useState("");
     const [stadiumName, setStadiumName] = useState("");
+    const [users, setUsers] = useState([]);
+
+    const {loggedInUser, setLoggedInUser} = useContext(UserContext);
+
+    useEffect(() => {
+        axios.get('http://localhost:5000/getUsers')
+            .then(res => setUsers(res.data))
+    }, []);
 
     const getIsFormValid = type => {
         if (!(username && password))
@@ -410,25 +419,33 @@ const Form = props => {
                 </FadeIn>
     };
 
-    const logIn = async (e) => {
-        e.preventDefault(); 
-        // alert("You have succesfully logged in");
-        clearForm();
-        const users = await fetch('http://localhost:5000/getUsers', {
-            method: 'GET', 
-            url: 'http://localhost:5000',
-            mode: "no-cors",
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
+    const navigate = useNavigate();
+
+    const logIn = () => {
+        users.forEach(user => {
+            if (user.username === username) {
+                if (user.password === password) {
+                    switch(user.type) {
+                        case 0: navigate("/admin-dashboard"); break;
+                        case 2: navigate("/manager-dashboard"); break;
+                        case 3: navigate("/club-representative-dashboard"); break;
+                        case 4: navigate("/stadium-manager-dashboard"); break;
+                        default: navigate("/fan-dashboard"); break;
+                    }
+                    setLoggedInUser(username);
+                }
+                else {
+                    console.log("Incorrect password")
+                }
             }
-        })
-        .then(res => console.log(res.json()))
-        .catch(console.log("CATCH"))
-        console.log(users);
+            else {
+                console.log("No such user");
+            }
+        });
     };
     const logInForm = () => {
-        return  <FadeIn><div><form  className="logInForm" onSubmit={logIn} method="GET" action="/getUsers"> 
+        console.log(users);
+        return  <FadeIn><div><form  className="logInForm" onSubmit={logIn}> 
                     <div className="field">
                         <label htmlFor="username">
                             Username

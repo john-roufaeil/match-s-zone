@@ -272,7 +272,7 @@ const List = props => {
         return  <table>
                     <thead>
                         <tr>
-                            <th>Club Representative</th>
+                            <th>Host Club Representative</th>
                             <th>Host Club</th>
                             <th>Guest Club</th>
                             <th>Start Time</th>

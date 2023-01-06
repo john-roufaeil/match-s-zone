@@ -19,12 +19,12 @@
     --body-background   : #15202B;
     --main-background   : #192734;
     --button-bg         : #FFF;
-    --button-selected   : #4d9de3;
+    --button-selected   : #fca311;
     --button-txt        : #000;
     --txt               : #FFFFFF;
     --cp-txt            : rgba(255, 255, 255, 0.7);
     --special1          : #22303C;
-    --special2          : #4d9de3;
+    --special2          : #fca311;
     --head-row          : #FFF;
     --head-txt          : #000000;
     --row-border        : #EEEEEE;
@@ -33,7 +33,13 @@
 }
 
 .title {
-    margin: 50px 0 30px;
+    margin: 50px 0 0;
+    text-align: center;
+    color: var(--txt);
+}
+
+.greetingUser {
+    margin: 5px 0 30px 0;
     text-align: center;
     color: var(--txt);
 }
@@ -72,6 +78,7 @@ body {
 
 .selectedButton {
     background-color: var(--button-selected);
+    color: white;
 }
 
 .dashboardMain {
