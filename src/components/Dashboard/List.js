@@ -1,36 +1,69 @@
 import axios, * as others from 'axios';
-// import trash from "../../assets/icons/actions/trash.png"
 import { useState, useEffect } from "react";
-const cors = require('cors');
-// const axios = require('axios');
-
-
-
+import open from "../../assets/icons/actions/open.png"
+import close from "../../assets/icons/actions/close.png"
 
 const List = props => {
-    const [stadiums, setStadiums] = useState(() => {
-        axios.get('http://localhost:5000/viewStadiums')
-        .then(res => setStadiums(res.data))
-    });
-    const [clubs, setClubs] = useState([]);
-
-    const fetchStadiums = async () => {
-        axios.get('http://localhost:5000/viewStadiums')
-        .then(res => setStadiums(res.data))
-    }
-
+    const [stadiums, setStadiums] = useState([]);
     useEffect(() => {
-        fetchStadiums()
+        axios.get('http://localhost:5000/viewStadiums')
+        .then(res => setStadiums(res.data))
     }, [stadiums]);
 
-    
+    const [clubs, setClubs] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewClubs')
+        .then(res => setClubs(res.data))
+    }, [clubs]);
+
+    const [fans, setFans] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewFans')
+        .then(res => setFans(res.data))
+    }, [fans]);
+
     const viewStadiums = () => {
-        // fetchStadiums();
         const data = stadiums.map((stadium) => {
+            const name = stadium.name;
+            const openStadium = async (e) => {
+                e.preventDefault();
+                const newData = await fetch(`http://localhost:5000/openStadium`, {
+                    method: 'POST', 
+                    url: 'http://localhost:5000',
+                    header : {
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: {name}
+                    })
+                })
+                .then(res => console.log(res.json()))
+            }
+            const closeStadium = async (e) => {
+                e.preventDefault();
+                const newData = await fetch(`http://localhost:5000/closeStadium`, {
+                    method: 'POST', 
+                    url: 'http://localhost:5000',
+                    header : {
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: {name}
+                    })
+                })
+                .then(res => console.log(res.json()))
+            }
             return  <tr key={stadium.name}>
                         <td>{stadium.name}</td>
                         <td>{stadium.location}</td>
                         <td>{stadium.capacity}</td>
+                        <td>{stadium.status?'Available':'Unavailable'}</td>
+                        <td>{stadium.status
+                            ?<form onSubmit={closeStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} /></button></form>
+                            :<form onSubmit={openStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} /></button></form>}
+                        </td>
                     </tr>
         });
         return  <table>
@@ -39,6 +72,8 @@ const List = props => {
                             <th>Name</th>
                             <th>Location</th>
                             <th>Capacity</th>
+                            <th>Status</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,42 +82,40 @@ const List = props => {
                 </table>
     }
 
-    const fetchClubs = async () => {
-        // e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/viewClubs`, {
-            method: "GET",
-            url: 'http://localhost:5000',
-            mode: "no-cors",
-            headers : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body : undefined
-        })
-        
-        
-    }
     const viewClubs = () => {
-        // {const result = fetchClubs();}
-        // {const result=fetchClubs();
-        // console.log(result.then)}
-        // console.log("hi");}
-        // return  <form method="POST" action="/viewClubs" onLoad={fetchClubs}>
+        const data = clubs.map((club) => {
+            return  <tr key={club.name}>
+                        <td>{club.name}</td>
+                        <td>{club.location}</td>
+                    </tr>
+        });
         return  <table>
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Location</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
-                // </form>
     }
 
     const viewFans = () => {
+        const data = fans.map((fan) => {
+            const bdate = fan.birthDate.toString().slice(0,10);
+            return  <tr key={fan.national_id}>
+                        <td>{fan.username}</td>
+                        <td>{fan.password}</td>
+                        <td>{fan.name}</td>
+                        <td>{fan.national_id}</td>
+                        <td>{fan.birthDate.substring(0,10)}</td>
+                        <td>{fan.address}</td>
+                        <td>{fan.phoneNumber}</td>
+                        <td>{fan.status?'Unblocked':'Blocked'}</td>
+                    </tr>
+        });
         return  <table>
                     <thead>
                         <tr>
@@ -91,10 +124,13 @@ const List = props => {
                             <th>Name</th>
                             <th>National ID</th>
                             <th>Birth Date</th>
-                            <th></th>
+                            <th>Address</th>
+                            <th>Phone</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
     }

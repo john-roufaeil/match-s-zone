@@ -92,6 +92,36 @@ const viewClubs = async () => {
     }
 }
 
+const viewFans = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SA_viewFans`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const openStadium = async (name) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SA_openStadium ${name}`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const closeStadium = async (name) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SA_closeStadium ${name}`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // Sports Association Manager //
 const addNewSAM = async (name, username, password) => {
     try {
@@ -204,6 +234,9 @@ module.exports = {
     unblockFan,
     viewStadiums,
     viewClubs,
+    viewFans,
+    openStadium,
+    closeStadium,
 
     addNewSAM,
     addNewMatch,

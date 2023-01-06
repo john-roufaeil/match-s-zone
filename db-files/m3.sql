@@ -178,8 +178,8 @@ CREATE PROCEDURE SA_unblockFan @n_id VARCHAR(20) AS
     WHERE fan.national_id = @n_id;
 GO;
 
-CREATE PROCEDURE SA_viewStadiums AS 
-    SELECT DISTINCT S.name, S.location, S.capacity
+CREATE PROCEDURE SA_viewStadiums AS  
+    SELECT DISTINCT S.name, S.location, S.capacity, S.status
     FROM stadium S;
 GO;
 
@@ -187,6 +187,26 @@ CREATE PROCEDURE SA_viewClubs AS
     SELECT DISTINCT C.name, C.location
     FROM club C;
 GO;
+
+CREATE PROCEDURE SA_viewFans AS  
+    SELECT DISTINCT F.username, SU.password, F.name, F.national_id, F.birthDate, F.address, F.phoneNumber, F.[status]
+    FROM fan F
+    INNER JOIN systemUser SU ON F.username = SU.username;
+GO;
+
+CREATE PROCEDURE SA_openStadium @name VARCHAR(20) AS
+    UPDATE stadium
+    SET stadium.status = 1
+    WHERE stadium.name = @name
+GO;
+
+CREATE PROCEDURE SA_closeStadium @name VARCHAR(20) AS
+    UPDATE stadium
+    SET stadium.status = 0
+    WHERE stadium.name = @name
+GO;
+
+
 
 --/ Sports Association Manager /--
 CREATE PROCEDURE SAM_addAssociationManager @name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS

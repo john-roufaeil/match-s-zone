@@ -56,6 +56,11 @@ app.get('/viewClubs', jsonParser, async (req, res) => {
     return res.send(result.recordset);
 })
 
+app.get('/viewFans', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewFans();
+    return res.send(result.recordset);
+})
+
 // Sports Association Manager //
 app.post('/newSAM', jsonParser, async (req, res) => {
     const a = await dbOperation.addNewSAM(req.body.name, req.body.username, req.body.password);
@@ -68,6 +73,14 @@ app.post('/newMatch', jsonParser, async(req, res) => {
 
 app.post('/delMatch', jsonParser, async(req, res) => {
     return await dbOperation.delMatch(req.body.host, req.body.guest, req.body.startTime, req.body.endTime);
+})
+
+app.post('/openStadium', jsonParser, async (req, res) => {
+    return await dbOperation.openStadium(req.body.name.name);
+})
+
+app.post('/closeStadium', jsonParser, async (req, res) => {
+    return await dbOperation.closeStadium(req.body.name.name);
 })
 
 // Club Representative //
