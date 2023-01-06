@@ -3,7 +3,6 @@ CREATE TABLE systemUser (
 	username VARCHAR(20),
 	password VARCHAR(20) NOT NULL,
     type INT NOT NULL,
---	CHECK(LEN(password) >= 8)
 	PRIMARY KEY(username)
 );  
 CREATE TABLE fan (
@@ -25,15 +24,15 @@ CREATE TABLE stadium (
 	capacity INT NOT NULL,
 	status BIT NOT NULL DEFAULT 1,
 	PRIMARY KEY (id)
-);
+); 
 CREATE TABLE stadiumManager (
 	id INT IDENTITY,
 	name VARCHAR(20) NOT NULL,
-	stadium_id INT UNIQUE, -- each stadium managed by one and only one manager and each manager manages one and only one stadium
+	stadium_id INT UNIQUE NONCLUSTERED NOT NULL, -- each stadium managed by one and only one manager and each manager manages one and only one stadium
 	username VARCHAR(20) NOT NULL UNIQUE NONCLUSTERED,
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE CASCADE ON UPDATE CASCADE
 ); 
 CREATE TABLE club (
 	id INT IDENTITY (1,1),
@@ -44,11 +43,11 @@ CREATE TABLE club (
 CREATE TABLE clubRepresentative (
 	id INT IDENTITY,
 	name VARCHAR(20) NOT NULL,
-	club_id INT UNIQUE, -- each club represented by one and only one rep and each rep represents one and only one club
+	club_id INT UNIQUE NONCLUSTERED NOT NULL, -- each club represented by one and only one rep and each rep represents one and only one club
 	username VARCHAR(20) NOT NULL UNIQUE NONCLUSTERED,
 	PRIMARY KEY (id),
 	FOREIGN KEY	(username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY	(club_id) REFERENCES club ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY	(club_id) REFERENCES club ON DELETE CASCADE ON UPDATE CASCADE
 ); 
 CREATE TABLE sportsAssociationManager (
 	id INT IDENTITY,
@@ -105,6 +104,10 @@ CREATE TABLE hostRequest (
 );
 GO;
 
+EXEC dropAllTables;
+EXEC createAllTables;
+GO;
+
 CREATE PROCEDURE dropAllTables AS
     DROP TABLE hostRequest;
     DROP TABLE ticketBuyingTransaction;
@@ -134,6 +137,8 @@ CREATE PROCEDURE clearAllTables AS
     DELETE club;
     DELETE systemUser;
 GO;
+
+exec SA_deleteStadium 'stadium1'
 
 EXEC createAllTables;
 GO;

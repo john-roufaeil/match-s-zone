@@ -48,7 +48,6 @@ app.post('/unblockFan', jsonParser, async (req, res) => {
 
 app.get('/viewStadiums', jsonParser, async (req, res) => {
     const result = await dbOperation.viewStadiums();
-    // console.log(`result.recordset: ${JSON.stringify(result.recordset)}`);
     res.send(JSON.stringify(result.recordset));
 })
 

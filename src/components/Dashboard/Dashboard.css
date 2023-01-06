@@ -12,6 +12,7 @@
     --head-txt          : #FFFFFF;
     --row-border        : #777;
     --row-txt           : #000000;
+    --error             : #FF7900;
 }
 
 [data-theme='dark'] {
@@ -28,6 +29,7 @@
     --head-txt          : #000000;
     --row-border        : #EEEEEE;
     --row-txt           : #FFFFFF;
+    --error             : #FF3333;
 }
 
 .title {

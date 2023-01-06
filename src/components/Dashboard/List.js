@@ -1,6 +1,6 @@
 import axios, * as others from 'axios';
 // import trash from "../../assets/icons/actions/trash.png"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 const cors = require('cors');
 // const axios = require('axios');
 
@@ -8,17 +8,24 @@ const cors = require('cors');
 
 
 const List = props => {
-    const [stadiums, setStadiums] = useState([]);
+    const [stadiums, setStadiums] = useState(() => {
+        axios.get('http://localhost:5000/viewStadiums')
+        .then(res => setStadiums(res.data))
+    });
     const [clubs, setClubs] = useState([]);
 
     const fetchStadiums = async () => {
-        axios.get('http://localhost:5000/viewStadiums', {
-        })
+        axios.get('http://localhost:5000/viewStadiums')
         .then(res => setStadiums(res.data))
     }
+
+    useEffect(() => {
+        fetchStadiums()
+    }, [stadiums]);
+
+    
     const viewStadiums = () => {
-        fetchStadiums();
-        console.log(stadiums)
+        // fetchStadiums();
         const data = stadiums.map((stadium) => {
             return  <tr key={stadium.name}>
                         <td>{stadium.name}</td>
