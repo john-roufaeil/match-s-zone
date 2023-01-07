@@ -26,9 +26,8 @@ const Manipulate = props => {
     }; 
 
     const clickAddStadium = async (e) => {
-        console.log();
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/addStadium`, {
+        await fetch(`http://localhost:5000/addStadium`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -41,7 +40,7 @@ const Manipulate = props => {
                 capacity: parseInt({capacity}.capacity)
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
     }
     const addStadium = () => {
         return <form  method="POST" action="/addStadium" onSubmit={clickAddStadium}>
@@ -52,27 +51,24 @@ const Manipulate = props => {
                         <input 
                             type="text" 
                             placeholder= "Name" 
-                            onChange={(e) => {
-                                setName(e.target.value);
-                            }}
+                            autoComplete="off"
+                            onChange={(e) => {setName(e.target.value)}}
                         />
                         </div>
                         <div className="newEntryInput">
                             <input 
                                 type="location" 
                                 placeholder= "Location"
-                                onChange={(e) => {
-                                    setLocation(e.target.value);
-                                }}
+                                autoComplete="off"
+                                onChange={(e) => {setLocation(e.target.value)}}
                             />
                         </div>
                         <div className="newEntryInput">
                             <input 
                                 type="number" 
                                 placeholder= "Capacity"
-                                onChange={(e) => {
-                                    setCapacity(e.target.value);
-                                }}
+                                autoComplete="off"
+                                onChange={(e) => {setCapacity(e.target.value)}}
                             />
                         </div>
                     </div>
@@ -84,7 +80,7 @@ const Manipulate = props => {
 
     const clickDelStadium = async (e) => {
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/delStadium`, {
+        await fetch(`http://localhost:5000/delStadium`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -95,7 +91,7 @@ const Manipulate = props => {
                 name: {name}.name
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
         .then(clear());
     }
     const deleteStadium = () => {
@@ -107,20 +103,18 @@ const Manipulate = props => {
                             <input 
                                 type="text" 
                                 placeholder= "Name"
-                                onChange={(e) => {
-                                    setName(e.target.value);
-                                }}
+                                autoComplete="off"
+                                onChange={(e) => {setName(e.target.value)}}
                             />
                         </div>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={minus} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="plus-sign" /></button>
                 </div></form>
     }
 
     const clickAddClub = async (e) => {
-        console.log();
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/addClub`, {
+        await fetch(`http://localhost:5000/addClub`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -132,28 +126,26 @@ const Manipulate = props => {
                 location: {location}.location.toString()
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
     }
     const addClub = () => {
         return <form method="POST" action="/addClub" onSubmit={clickAddClub}><div className="newEntry">
                     <div className="newEntryField">
                         <p>Add a new Club</p>
                         <div className="newEntryInput">
-                        <input 
+                        <input
                             type="text" 
                             placeholder= "Name" 
-                            onChange={(e) => {
-                                setName(e.target.value);
-                            }}
+                            autoComplete="off"
+                            onChange={(e) => {setName(e.target.value)}}
                         />
                         </div>
                         <div className="newEntryInput">
                             <input 
                                 type="location" 
                                 placeholder= "Location" 
-                                onChange={(e) => {
-                                    setLocation(e.target.value);
-                                }}
+                                autoComplete="off"
+                                onChange={(e) => {setLocation(e.target.value)}}
                             />
                         </div>
                     </div>
@@ -163,7 +155,7 @@ const Manipulate = props => {
 
     const clickDelClub = async (e) => {
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/delClub`, {
+        await fetch(`http://localhost:5000/delClub`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -174,7 +166,7 @@ const Manipulate = props => {
                 name: {name}.name.toString()
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
     }
     const deleteClub = () => {
         return <form method="POST" action="/delClub" onSubmit={clickDelClub}>
@@ -185,9 +177,8 @@ const Manipulate = props => {
                             <input 
                                 type="text" 
                                 placeholder= "Name" 
-                                onChange={(e) => {
-                                    setName(e.target.value);
-                                }}
+                                autoComplete="off"
+                                onChange={(e) => {setName(e.target.value)}}
                             />
                         </div>
                     </div>
@@ -196,9 +187,8 @@ const Manipulate = props => {
     }
 
     const clickBlockFan = async (e) => {
-        console.log();
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/blockFan`, {
+        await fetch(`http://localhost:5000/blockFan`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -209,7 +199,7 @@ const Manipulate = props => {
                 nat_id: {nat_id}.nat_id.toString()
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
     }
     const blockFan = () => {
         return  <form action="/blockFan" method="POST" onSubmit={clickBlockFan}>
@@ -220,20 +210,18 @@ const Manipulate = props => {
                         <input 
                             type="text" 
                             placeholder= "National ID" 
-                            onChange={(e) => {
-                                setNat_id(e.target.value);
-                            }}
+                            autoComplete="off"
+                            onChange={(e) => {setNat_id(e.target.value)}}
                         />
                         </div>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={block} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={block} alt="plus-sign" /></button>
                 </div></form>
     }
 
     const clickUnblockFan = async (e) => {
-        console.log();
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/unblockFan`, {
+        await fetch(`http://localhost:5000/unblockFan`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -244,7 +232,7 @@ const Manipulate = props => {
                 nat_id: {nat_id}.nat_id.toString()
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
     }
     const unblockFan = () => {
         return  <form method="POST" action="/unblockFan" onSubmit={clickUnblockFan}>
@@ -255,20 +243,19 @@ const Manipulate = props => {
                         <input 
                             type="text" 
                             placeholder= "National ID" 
-                            onChange={(e) => {
-                                setNat_id(e.target.value);
-                            }}
+                            autoComplete="off"
+                            onChange={(e) => {setNat_id(e.target.value)}}
                         />
                         </div>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={unblock} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={unblock} alt="plus-sign" /></button>
                 </div>
                 </form>
     }
 
     const clickAddMatch = async (e) => {
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/newMatch`, {
+        await fetch(`http://localhost:5000/newMatch`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -282,7 +269,7 @@ const Manipulate = props => {
                 endTime: {endTime}.endTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
     }
     const addMatch = () => {
         return <form method="POST" action="/newMatch" onSubmit={clickAddMatch}>
@@ -293,18 +280,16 @@ const Manipulate = props => {
                         <input 
                             type="text" 
                             placeholder= "Host Club" 
-                            onChange={(e) => {
-                                setHost(e.target.value);
-                            }}
+                            autoComplete="off"
+                            onChange={(e) => {setHost(e.target.value)}}
                         />
                         </div>
                         <div className="newEntryInput">
                         <input 
                             type="text" 
                             placeholder= "Guest Club" 
-                            onChange={(e) => {
-                                setGuest(e.target.value);
-                            }}
+                            autoComplete="off"
+                            onChange={(e) => {setGuest(e.target.value)}}
                         />
                         </div>
                         <div className="newEntryInput">
@@ -320,9 +305,8 @@ const Manipulate = props => {
                             <input 
                                 type="datetime-local" 
                                 placeholder= "End Time" 
-                                onChange={(e) => {
-                                    setEndTime(e.target.value);
-                                }}
+                                autoComplete="off"
+                                onChange={(e) => {setEndTime(e.target.value)}}
                             />
                         </div>
                     </div>
@@ -332,9 +316,8 @@ const Manipulate = props => {
     }
 
     const clickDelMatch = async (e) => {
-        console.log();
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/delMatch`, {
+        await fetch(`http://localhost:5000/delMatch`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -348,7 +331,7 @@ const Manipulate = props => {
                 endTime: {endTime}.endTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
     }
     const deleteMatch = () => {
         return <form method="POST" action="/delMatch" onSubmit={clickDelMatch}>
@@ -359,36 +342,32 @@ const Manipulate = props => {
                         <input 
                             type="text" 
                             placeholder= "Host Club" 
-                            onChange={(e) => {
-                                setHost(e.target.value);
-                            }}
+                            autoComplete="off"
+                            onChange={(e) => {setHost(e.target.value)}}
                         />
                         </div>
                         <div className="newEntryInput">
                         <input 
                             type="text" 
                             placeholder= "Guest Club" 
-                            onChange={(e) => {
-                                setGuest(e.target.value);
-                            }}
+                            autoComplete="off"
+                            onChange={(e) => {setGuest(e.target.value)}}
                         />
                         </div>
                         <div className="newEntryInput">
                             <input 
                                 type="datetime-local" 
                                 placeholder= "Start Time" 
-                                onChange={(e) => {
-                                    setStartTime(e.target.value);
-                                }}
+                                autoComplete="off"
+                                onChange={(e) => {setStartTime(e.target.value)}}
                             />
                         </div>
                         <div className="newEntryInput">
                             <input 
                                 type="datetime-local" 
                                 placeholder= "End Time" 
-                                onChange={(e) => {
-                                    setEndTime(e.target.value);
-                                }}
+                                autoComplete="off"
+                                onChange={(e) => {setEndTime(e.target.value)}}
                             />
                         </div>
                     </div>
@@ -399,7 +378,7 @@ const Manipulate = props => {
 
     const openStadium = async (e) => {
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/openStadium`, {
+        await fetch(`http://localhost:5000/openStadium`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -410,7 +389,7 @@ const Manipulate = props => {
                 name: {props}.props.stadium
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
         return <div className="newEntry">
                     <div className="newEntryField">
                         <p>Set Stadium as Available</p>
@@ -421,7 +400,7 @@ const Manipulate = props => {
 
     const closeStadium = async (e) => {
         e.preventDefault();
-        const newData = await fetch(`http://localhost:5000/closeStadium`, {
+        await fetch(`http://localhost:5000/closeStadium`, {
             method: 'POST', 
             url: 'http://localhost:5000',
             header : {
@@ -432,7 +411,7 @@ const Manipulate = props => {
                 name: {props}.props.stadium
             })
         })
-        .then(res => console.log(res.json()))
+        .then(res => res.json())
         return <div className="newEntry">
                     <div className="newEntryField">
                         <p>Set Stadium as Unavailable</p>
