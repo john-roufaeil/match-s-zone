@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Yeon+Sung&display=swap');
+
 [data-theme='light'] {
     --body-background   : #FFFFFF;
     --main-background   : #F7F7F7;
@@ -12,27 +14,30 @@
     --head-txt          : #FFFFFF;
     --row-border        : #777;
     --row-txt           : #000000;
-    --error             : #FF7900;
+    --error             : #b22222;
+    --error-bg          : #ffb6c1;
 }
 
 [data-theme='dark'] {
     --body-background   : #15202B;
     --main-background   : #192734;
-    --button-bg         : #FFF;
-    --button-selected   : #fca311;
-    --button-txt        : #000;
+    --button-bg         : #FFFFFF;
+    --button-selected   : #FCA311;
+    --button-txt        : #000000;
     --txt               : #FFFFFF;
     --cp-txt            : rgba(255, 255, 255, 0.7);
     --special1          : #22303C;
-    --special2          : #fca311;
-    --head-row          : #FFF;
+    --special2          : #FCA311;
+    --head-row          : #FFFFFF;
     --head-txt          : #000000;
     --row-border        : #EEEEEE;
     --row-txt           : #FFFFFF;
-    --error             : #FF3333;
+    --error             : #b22222;
+    --error-bg          : #ffb6c1;
 }
 
 .title {
+    font-family: 'yeon-sung', 'Courier New', Courier, monospace;
     margin: 50px 0 0;
     text-align: center;
     color: var(--txt);
@@ -184,4 +189,34 @@ th {
 .choose:hover {
     transform: scale(1.05);
     cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.offscreen {
+    position: absolute;
+    left: -9999px;
+}
+
+.errMsg {
+    background-color: var(--error-bg);
+    color: var(--error);
+    font-weight: bold;
+    width: 97%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    font-size: smaller;
+    font-style: italic;
 }

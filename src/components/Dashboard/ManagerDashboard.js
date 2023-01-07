@@ -18,7 +18,7 @@ const Dashboard = props => {
 
     return <div>
         <NavBar barComponents = {barComponents} />
-        <h1 className="title">SPORTS ASSOCIATION MANAGER</h1>
+        <h1 className="title">Sports Association Manager</h1>
         <h3 className="greetingUser">{timeGreet()} @{loggedInUser}</h3>
         <div className="dashboardMenu">
             <button 

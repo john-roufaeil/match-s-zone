@@ -157,12 +157,11 @@ const Manipulate = props => {
                             />
                         </div>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={plus} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={plus} alt="plus-sign" /></button>
                 </div></form>
     }
 
     const clickDelClub = async (e) => {
-        console.log();
         e.preventDefault();
         const newData = await fetch(`http://localhost:5000/delClub`, {
             method: 'POST', 
@@ -178,7 +177,7 @@ const Manipulate = props => {
         .then(res => console.log(res.json()))
     }
     const deleteClub = () => {
-        return <form method="POST" action="/delClub" onClick={clickDelClub}>
+        return <form method="POST" action="/delClub" onSubmit={clickDelClub}>
                     <div className="newEntry">
                     <div className="newEntryField">
                         <p>Delete a Club</p>
@@ -192,7 +191,7 @@ const Manipulate = props => {
                             />
                         </div>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={minus} alt="minus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="minus-sign" /></button>
                 </div></form>
     }
 
@@ -398,7 +397,20 @@ const Manipulate = props => {
                 </form>
     }
 
-    const openStadium = () => {
+    const openStadium = async (e) => {
+        e.preventDefault();
+        const newData = await fetch(`http://localhost:5000/openStadium`, {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {props}.props.stadium
+            })
+        })
+        .then(res => console.log(res.json()))
         return <div className="newEntry">
                     <div className="newEntryField">
                         <p>Set Stadium as Available</p>
@@ -407,7 +419,20 @@ const Manipulate = props => {
                 </div>
     }
 
-    const closeStadium = () => {
+    const closeStadium = async (e) => {
+        e.preventDefault();
+        const newData = await fetch(`http://localhost:5000/closeStadium`, {
+            method: 'POST', 
+            url: 'http://localhost:5000',
+            header : {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: {props}.props.stadium
+            })
+        })
+        .then(res => console.log(res.json()))
         return <div className="newEntry">
                     <div className="newEntryField">
                         <p>Set Stadium as Unavailable</p>

@@ -1,24 +1,21 @@
+import axios, * as others from 'axios';
 import NavBar from "../NavBar";
 import "./Dashboard.css";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Manipulate from "./Manipulate";
 import List from "./List";
 import Footer from "../Footer"
 import { UserContext } from '../../UserContext';
 import { timeGreet } from "../../utils";
 
-
-
 const Dashboard = props => {
+    const {loggedInUser, setLoggedInUser} = useContext(UserContext);
     const barComponents = {left: null, right: "logout"};
     const [selected, setSelected] = useState("myStadium");
 
-    const {loggedInUser, setLoggedInUser} = useContext(UserContext);
-
-
     return <div>
         <NavBar barComponents = {barComponents} />
-        <h1 className="title">STADIUM MANAGER</h1>
+        <h1 className="title">Stadium Manager</h1>
         <h3 className="greetingUser">{timeGreet()} @{loggedInUser}</h3>
         <div className="dashboardMenu">
             <button 
@@ -33,8 +30,11 @@ const Dashboard = props => {
             </button>
         </div>
         <main className="dashboardMain">
-            <Manipulate object={selected} action="add" />
-            <Manipulate object={selected} action="delete" />
+            
+            {/* {console.log(myStadiumInfo[0].status)} */}
+            {/* {(myStadium[0].status)?console.log("Available"):console.log("Unavailable")} */}
+            {/* {myStadiumInfo[0].status?<Manipulate object={selected} action="delete" stadium={myStadiumInfo[0].name}/>
+                             :<Manipulate object={selected} action="add" stadium={myStadiumInfo[0].name} />} */}
             <List object={selected} />
         </main>
         <Footer />

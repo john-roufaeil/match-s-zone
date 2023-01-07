@@ -123,6 +123,13 @@ CREATE PROCEDURE dropAllTables AS
     DROP TABLE systemUser;  
 GO;
 
+select * from systemuser
+exec f_viewmytickets 'fan1'
+exec CR_viewMyClub 'cr1'
+select * from stadiumManager
+select * from clubRepresentative
+
+
 CREATE PROCEDURE clearAllTables AS
     DELETE hostRequest;
     DELETE ticketBuyingTransaction;
@@ -272,16 +279,18 @@ CREATE PROCEDURE viewClubsNotScheduledTogether AS
 GO;
 
 
+
 --/ Club Representative /-- 
 CREATE PROCEDURE CR_addRepresentative @name VARCHAR(20), @c_name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20) AS
     DECLARE @club_id INT;
     SELECT @club_id=C.id FROM club C WHERE C.name = @c_name;
     IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
     BEGIN 
-    INSERT INTO systemUser VALUES (@user, @pw, 4);
+    INSERT INTO systemUser VALUES (@user, @pw, 3);
     INSERT INTO clubRepresentative VALUES (@name, @club_id, @user);
     END
 GO;
+
 
 CREATE PROCEDURE CR_viewClubInfo @clubRepresentative_id INT AS
     DECLARE @club_id INT;
@@ -291,15 +300,24 @@ CREATE PROCEDURE CR_viewClubInfo @clubRepresentative_id INT AS
     WHERE C.id = @club_id;
 GO;
 
-CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@clubName VARCHAR(20)) AS
-	SELECT HC.name club, GC.name competent, M.startTime, M.endTime, S.name
+CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@username VARCHAR(20)) AS
+	(SELECT HC.name club, GC.name competent, M.startTime, M.endTime, S.name
 	FROM match M
 	INNER JOIN club HC ON M.hostClub_id	 = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
+    INNER JOIN clubRepresentative CR ON HC.id = CR.club_id
 	LEFT JOIN stadium S ON S.id = M.stadium_id
-	WHERE (HC.name = @clubName OR GC.name = @clubName) AND M.startTime > CURRENT_TIMESTAMP 
+	WHERE (CR.username = @username) AND M.startTime > CURRENT_TIMESTAMP) 
+    UNION
+    (SELECT HC.name club, GC.name competent, M.startTime, M.endTime, S.name
+	FROM match M
+	INNER JOIN club HC ON M.hostClub_id	 = HC.id
+	INNER JOIN club GC ON M.guestClub_id = GC.id
+    INNER JOIN clubRepresentative CR ON GC.id = CR.club_id
+	LEFT JOIN stadium S ON S.id = M.stadium_id
+	WHERE (CR.username = @username) AND M.startTime > CURRENT_TIMESTAMP) 
 GO;
-
+drop proc CR_viewUpcomingMatchesOfClub
 --View all available stadiums starting at a certain date (in a form of stadium name, location andcapacity).
 CREATE PROCEDURE CR_viewAvailableStadiumsFrom (@date DATETIME) AS
 	SELECT DISTINCT SA.name, SA.location, SA.capacity
@@ -310,14 +328,29 @@ GO;
 -- CREATE PROCEDURE sendRequest  representative_id INT NOT NULL, TODO
 --         manager_id INT NOT NULL,
 --         match_id INT NOT NULL,
+select * from stadiummanager
+select * from stadium
+exec CR_viewmyclub 'cr1'
+CREATE PROCEDURE CR_viewMyClub (@username VARCHAR(20)) AS
+    -- DECLARE @club_id INT;
+    -- SELECT @club_id=CR.club_id FROM clubRepresentative CR WHERE CR.id = @clubRepresentative_id;
 
---/ Stadium Manager /--
+    SELECT C.id, C.name, C.location
+    FROM club C
+    INNER JOIN clubRepresentative CR ON C.id = CR.club_id AND CR.username = @username
+    -- WHERE CR.username = @username;
+GO;
+select * from systemuser
+exec CR_viewmyclub 'cr1'
+exec SM_viewmystadium 'stadiummgr1'
+
+--/ Stadium Manager /-- 
 CREATE PROCEDURE SM_addStadiumManager(@name VARCHAR(20), @stadiumName VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)) AS
     DECLARE @stadium_id INT;
     SELECT @stadium_id=S.id FROM stadium S WHERE @stadiumName = S.name;
     IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
     BEGIN 
-    INSERT INTO systemUser VALUES (@user, @pw, 3); 
+    INSERT INTO systemUser VALUES (@user, @pw, 4); 
     INSERT INTO stadiumManager VALUES (@name, @stadium_id, @user);
     END;
 GO;
@@ -358,9 +391,13 @@ CREATE PROCEDURE SM_acceptRequest(@SM_user VARCHAR(20), @HC_name VARCHAR(20), @G
     DECLARE @i INT = 0, @tickets INT = (SELECT S.capacity FROM stadium S WHERE @S_id = S.id);
     WHILE @i < @tickets
     BEGIN
-    EXEC addTicket @HC_name, @GC_name, @startTime;
+    EXEC addTicket @M_id;
     SET @i = @i + 1;
     END;
+GO; 
+
+CREATE PROCEDURE addTicket @match_id INT AS
+INSERT INTO ticket (match_id) VALUES (@match_id);
 GO;
 
 CREATE PROCEDURE SM_rejectRequest (@SM_user VARCHAR(20), @HC_name VARCHAR(20), @GC_name VARCHAR(20), @startTime DATETIME) AS
@@ -380,6 +417,14 @@ DELETE FROM ticket
 WHERE ticket.match_id = @M_id;
 GO;
 
+CREATE PROCEDURE SM_viewMyStadium (@username VARCHAR(20)) AS
+    SELECT S.id, S.name, S.location, S.capacity, S.status
+    FROM stadium S
+    INNER JOIN stadiumManager SM ON S.id = SM.stadium_id
+    WHERE SM.username = @username;
+GO;
+
+
 
 exec SAM_addAssociationManager 'b', 'b', 'b'
 --/ Fan /-- 
@@ -391,6 +436,9 @@ CREATE PROCEDURE F_addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)
     END
 GO;
 
+
+
+
 CREATE PROCEDURE F_availableMatchesToAttend (@DT DATETIME) AS
 	SELECT DISTINCT HC.name hostClubName, GC.name guestClubName, S.name, S.location
 	FROM match M
@@ -398,7 +446,7 @@ CREATE PROCEDURE F_availableMatchesToAttend (@DT DATETIME) AS
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	INNER JOIN stadium S ON M.stadium_id = S.id
 	INNER JOIN ticket T ON M.id = T.match_id
-	WHERE M.startTime >= @DT and T.status=1;
+	WHERE M.startTime = @DT and T.status=1;
 GO;
 
 CREATE PROCEDURE F_purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN VARCHAR(20), @start DATETIME) AS
@@ -417,3 +465,22 @@ CREATE PROCEDURE F_purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN V
     END
 GO;
 
+CREATE PROCEDURE F_viewMyTickets (@username VARCHAR(20)) AS
+    SELECT T.id, HC.name AS host, GC.name AS guest, M.startTime, M.endTime, S.name, S.location
+    FROM ticketBuyingTransaction TBT
+    INNER JOIN fan F ON TBT.fanNational_id = F.national_id
+    INNER JOIN  ticket T ON TBT.ticket_id = T.id
+    INNER JOIN match M ON T.match_id = M.id
+    INNER JOIN club HC ON M.hostClub_id = HC.id
+    INNER JOIN club GC ON M.guestClub_id = GC.id
+    INNER JOIN stadium S ON M.stadium_id = S.id
+    WHERE F.username = @username
+GO;
+
+@startTime DATETIME) AS
+
+select * from stadiumManager
+insert into hostRequest values (3,4 , 7, 'unhandled')
+exec SM_acceptRequest 'sm1', 'c1', 'c2', '2001-11-11 12:00:00.000'
+
+select CURRENT_TIMESTAMP

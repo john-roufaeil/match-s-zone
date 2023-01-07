@@ -1,9 +1,14 @@
 import axios, * as others from 'axios';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import open from "../../assets/icons/actions/open.png"
 import close from "../../assets/icons/actions/close.png"
+import request from "../../assets/icons/actions/request.png"
+import { UserContext } from '../../UserContext';
+
 
 const List = props => {
+    const {loggedInUser, setLoggedInUser} = useContext(UserContext);
+
     const [stadiums, setStadiums] = useState([]);
     useEffect(() => {
         axios.get('http://localhost:5000/viewStadiums')
@@ -46,8 +51,50 @@ const List = props => {
         .then(res => setClubsNeverTogether(res.data))
     }, [clubsNeverTogether]);
 
+    const [myTickets, setMyTickets] = useState([]);
+    useEffect(() => {
+        axios.post('http://localhost:5000/viewMyTickets', {username: loggedInUser}, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          })
+        .then(res => setMyTickets(res.data))
+    }, [myTickets]);
 
+    const [myStadium, setMyStadium] = useState([]);
+    useEffect(() => {
+        axios.post('http://localhost:5000/viewMyStadium', {username: loggedInUser}, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+        })
+        .then(res => setMyStadium(res.data))
+    }, [myStadium]);
 
+    const [myClub, setMyClub] = useState([]);
+    useEffect(() => {
+        axios.post('http://localhost:5000/viewMyClub', {username: loggedInUser}, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+        })
+        .then(res => setMyClub(res.data))
+    }, [myClub]);
+
+    const [myUpcomingMatches, setMyUpcomingMatches] = useState([]);
+    useEffect(() => {
+        axios.post('http://localhost:5000/myUpcomingMatches', {username: loggedInUser}, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          })
+        .then(res => setMyUpcomingMatches(res.data))
+    }, [myUpcomingMatches]);
+    
     const viewStadiums = () => {
         const data = stadiums.map((stadium) => {
             const name = stadium.name;
@@ -61,10 +108,10 @@ const List = props => {
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        name: {name}
+                        name: {name}.name
                     })
                 })
-                .then(res => console.log(res.json()))
+                .then(res => res.json())
             }
             const closeStadium = async (e) => {
                 e.preventDefault();
@@ -76,10 +123,10 @@ const List = props => {
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        name: {name}
+                        name: {name}.name
                     })
                 })
-                .then(res => console.log(res.json()))
+                .then(res => res.json())
             }
             return  <tr key={stadium.name}>
                         <td>{stadium.name}</td>
@@ -253,6 +300,50 @@ const List = props => {
     }
 
     const viewMyStadium = () => {
+        const data = myStadium.map((stadium) => {
+            const name = stadium.name;
+            const openMyStadium = async (e) => {
+                e.preventDefault();
+                const newData = await fetch(`http://localhost:5000/openStadium`, {
+                    method: 'POST', 
+                    url: 'http://localhost:5000',
+                    header : {
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: {name}.name
+                    })
+                })
+                .then(res => res.json())
+            }
+            const closeMyStadium = async (e) => {
+                e.preventDefault();
+                const newData = await fetch(`http://localhost:5000/closeStadium`, {
+                    method: 'POST', 
+                    url: 'http://localhost:5000',
+                    header : {
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: {stadium}.stadium.name
+                    })
+                })
+                .then(res => res.json())
+            }
+            return  <tr key = {stadium.id}>
+                        <td>{stadium.id}</td>
+                        <td>{stadium.name}</td>
+                        <td>{stadium.location}</td>
+                        <td>{stadium.capacity}</td>
+                        <td>{stadium.status?'Available':'Unavailable'}</td>
+                        <td>{stadium.status
+                            ?<form onSubmit={closeMyStadium}><button type="submit" onClick={closeMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} /></button></form>
+                            :<form onSubmit={openMyStadium}><button type="submit" onClick={openMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} /></button></form>}
+                        </td>
+                    </tr>
+        });
         return  <table>
                     <thead>
                         <tr>
@@ -261,9 +352,11 @@ const List = props => {
                             <th>Location</th>
                             <th>Capacity</th>
                             <th>Status</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
     }
@@ -288,6 +381,13 @@ const List = props => {
     }
 
     const viewMyClub = () => {
+        const data = myClub.map((club) => {
+            return  <tr key={club.id}>
+                        <td>{club.id}</td>
+                        <td>{club.name}</td>
+                        <td>{club.LOCATION}</td>
+                    </tr>
+        });
         return  <table>
                     <thead>
                         <tr>
@@ -297,11 +397,21 @@ const List = props => {
                         </tr>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
     }
 
-    const viewMatchesForStadium = () => {
+    const viewMatchesForClub = () => {
+        const data = myUpcomingMatches.map((match) => {
+            return  <tr>
+                        <td>{match.club}</td>
+                        <td>{match.competent}</td>
+                        <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{match.name?match.name:<img width="49px" src={request}/>}</td>
+                    </tr>
+        });
         return  <table>
                     <thead>
                         <tr>
@@ -313,6 +423,7 @@ const List = props => {
                         </tr>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
     }
@@ -332,6 +443,17 @@ const List = props => {
     }
 
     const viewMyTickets = () => {
+        const data = myTickets.map((ticket) => {
+            return  <tr>
+                        <td>{ticket.id}</td>
+                        <td>{ticket.host}</td>
+                        <td>{ticket.guest}</td>
+                        <td>{ticket.startTime}</td>
+                        <td>{ticket.endTime}</td>
+                        <td>{ticket.name}</td>
+                        <td>{ticket.location}</td>
+                    </tr>
+        });
         return  <table>
                     <thead>
                         <tr>
@@ -339,9 +461,13 @@ const List = props => {
                             <th>Host Club</th>
                             <th>Guest Club</th>
                             <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Stadium</th>
+                            <th>Location</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
     }
@@ -385,7 +511,7 @@ const List = props => {
         case "myClub":
             return viewMyClub();
         case "matchesForStadium":
-            return viewMatchesForStadium();
+            return viewMatchesForClub();
         case "availableStadiums":
             return viewAvailableStadiums();
         case "myTickets":

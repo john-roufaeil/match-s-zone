@@ -18,7 +18,7 @@ const Dashboard = props => {
 
     return <div>
         <NavBar barComponents = {barComponents} />
-        <h1 className="title">CLUB REPRESENTATIVE</h1>
+        <h1 className="title">Club Representative</h1>
         <h3 className="greetingUser">{timeGreet()} @{loggedInUser}</h3>
         <div className="dashboardMenu">
             <button 
@@ -27,14 +27,14 @@ const Dashboard = props => {
                 My Club
             </button>
             <button 
-                className={`dashboardMenuButton ${selected === "matchesForStadium" ? "selectedButton" : ""}`}
-                onClick={() => {setSelected("matchesForStadium")}}>
-                Upcoming Matches
-            </button>
-            <button 
                 className={`dashboardMenuButton ${selected === "availableStadiums" ? "selectedButton" : ""}`}
                 onClick={() => {setSelected("availableStadiums")}}>
                 Available Stadiums
+            </button>
+            <button 
+                className={`dashboardMenuButton ${selected === "matchesForStadium" ? "selectedButton" : ""}`}
+                onClick={() => {setSelected("matchesForStadium")}}>
+                Upcoming Matches
             </button>
         </div>
         <main className="dashboardMain">

@@ -234,6 +234,19 @@ const addNewCR = async (name, username, password, club) => {
     }
 }
 
+const viewMyClub = async (username) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC CR_viewMyClub ${username}`);
+        // console.log(exec);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
 // Stadium Manager //
 const addNewSM = async (name, username, password, stadium) => {
     try {
@@ -244,6 +257,27 @@ const addNewSM = async (name, username, password, stadium) => {
         console.log(error);
     }
 }
+
+const viewMyStadium = async (username) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SM_viewMyStadium ${username}`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const myUpcomingMatches = async (username) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC CR_viewUpcomingMatchesOfClub ${username}`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 // Fan //
 const addNewF = async (name, username, password, nat_id, birthdate, address, phone) => {
@@ -258,6 +292,28 @@ const addNewF = async (name, username, password, nat_id, birthdate, address, pho
         let exec = await pool.request().query(
             `EXEC F_addFan ${name}, ${username}, ${password},
             ${nat_id}, '${year}-${month}-${day}', ${address}, ${phone}`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const viewMyTickets = async (username) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC F_viewMyTickets ${username}`);
+        // console.log(exec);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const viewAvailableTickets = async (time) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC F_availableMatchesToAttend ${time}`);
+        // console.log(exec);
         return exec;
     } catch (error) {
         console.log(error);
@@ -289,8 +345,13 @@ module.exports = {
     viewClubsNotScheduledTogether,
 
     addNewCR,
+    viewMyClub,
+    myUpcomingMatches,
 
     addNewSM,
+    viewMyStadium,
     
     addNewF,
+    viewMyTickets,
+    viewAvailableTickets
 }

@@ -63,11 +63,11 @@ app.get('/viewFans', jsonParser, async (req, res) => {
 })
 
 app.post('/openStadium', jsonParser, async (req, res) => {
-    return await dbOperation.openStadium(req.body.name.name);
+    return await dbOperation.openStadium(req.body.name);
 })
 
 app.post('/closeStadium', jsonParser, async (req, res) => {
-    return await dbOperation.closeStadium(req.body.name.name);
+    return await dbOperation.closeStadium(req.body.name);
 })
 
 
@@ -78,7 +78,7 @@ app.post('/newSAM', jsonParser, async (req, res) => {
 })
 
 app.post('/newMatch', jsonParser, async(req, res) => {
-    console.log(req.body.startTime)
+    // console.log(req.body.startTime)
     return await dbOperation.addNewMatch(req.body.host, req.body.guest, req.body.startTime, req.body.endTime);
 })
 
@@ -118,6 +118,18 @@ app.post('/newCR', jsonParser, async (req, res) => {
     );
 })
 
+app.post('/viewMyClub', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewMyClub(req.body.username);
+    return res.send(result.recordset);
+})
+
+app.post('/myUpcomingMatches', jsonParser, async (req, res) => {
+    const result = await dbOperation.myUpcomingMatches(req.body.username);
+    return res.send(result.recordset);
+})
+
+
+
 // Stadium Manager //
 app.post('/newSM', jsonParser, async (req, res) => {
     return await dbOperation.addNewSM(
@@ -127,6 +139,13 @@ app.post('/newSM', jsonParser, async (req, res) => {
         req.body.stadium
     );
 })
+
+app.post('/viewMyStadium', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewMyStadium(req.body.username);
+    return res.send(result.recordset);
+})
+
+
 
 // Fan //
 app.post('/newF', jsonParser, async (req, res) => {
@@ -140,5 +159,11 @@ app.post('/newF', jsonParser, async (req, res) => {
         req.body.phone
     );
 })
+
+app.post('/viewMyTickets', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewMyTickets(req.body.username);
+    return res.send(result.recordset);
+})
+
 
 app.listen(API_PORT, () => console.log(`listening on port ${API_PORT}`));
