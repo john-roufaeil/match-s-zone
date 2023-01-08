@@ -156,7 +156,7 @@ const List = props => {
                 })
                 .then(res => res.json())
             }
-            return  <tr key={stadium.name}>
+            return  <tr key={stadium.name} className="fade-in">
                         <td>{stadium.name}</td>
                         <td>{stadium.location.toUpperCase()}</td>
                         <td>{stadium.capacity}</td>
@@ -185,7 +185,7 @@ const List = props => {
 
     const viewClubs = () => {
         const data = clubs.map((club) => {
-            return  <tr key={club.name}>
+            return  <tr key={club.name} className="fade-in">
                         <td>{club.name}</td>
                         <td>{club.location.toUpperCase()}</td>
                     </tr>
@@ -205,7 +205,7 @@ const List = props => {
 
     const viewFans = () => {
         const data = fans.map((fan) => {
-            return  <tr key={fan.national_id}>
+            return  <tr key={fan.national_id} className="fade-in">
                         <td>{fan.username}</td>
                         <td>{fan.password}</td>
                         <td>{fan.name}</td>
@@ -237,7 +237,7 @@ const List = props => {
 
     const viewMatches = () => {
         const data = allMatches.map((match) => {
-            return  <tr key={`${match.host}, ${match.guest}, ${match.startTime}`}>
+            return  <tr key={`${match.host}, ${match.guest}, ${match.startTime}`} className="fade-in">
                         <td>{match.host}</td>
                         <td>{match.guest}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
@@ -261,7 +261,7 @@ const List = props => {
 
     const viewUpcoming = () => {
         const data = upcomingMatches.map((match) => {
-            return  <tr key={`${match.host}, ${match.guest}, ${match.startTime}`}>
+            return  <tr key={`${match.host}, ${match.guest}, ${match.startTime}`} className="fade-in">
                         <td>{match.host}</td>
                         <td>{match.guest}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
@@ -285,7 +285,7 @@ const List = props => {
 
     const viewPrevious = () => {
         const data = previousMatches.map((match) => {
-            return  <tr key = {`${match.host}, ${match.guest}, ${match.startTime}`}>
+            return  <tr key = {`${match.host}, ${match.guest}, ${match.startTime}`} className="fade-in">
                         <td>{match.host}</td>
                         <td>{match.guest}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
@@ -309,7 +309,7 @@ const List = props => {
 
     const neverTogether = () => {
         const data = clubsNeverTogether.map((entry) => {
-            return  <tr key = {`${entry.name1}, ${entry.name2}`}>
+            return  <tr key = {`${entry.name1}, ${entry.name2}`} className="fade-in">
                         <td>{entry.name1}</td>
                         <td>{entry.name2}</td>
                     </tr>
@@ -360,7 +360,7 @@ const List = props => {
                 })
                 .then(res => res.json())
             }
-            return  <tr key = {stadium.id}>
+            return  <tr key = {stadium.id} className="fade-in">
                         <td>{stadium.id}</td>
                         <td>{stadium.name}</td>
                         <td>{stadium.location.toUpperCase()}</td>
@@ -429,7 +429,7 @@ const List = props => {
                 })
                 .then(res => res.json())
             }
-            return  <tr key={`${i}`}>
+            return  <tr key={`${i}`} className="fade-in">
                         <td>{request.clubRepresentative}</td>
                         <td>{request.name}</td>
                         <td>{request.guestClub}</td>
@@ -470,7 +470,7 @@ const List = props => {
 
     const viewMyClub = () => {
         const data = myClub.map((club) => {
-            return  <tr key={club.id}>
+            return  <tr key={club.id} className="fade-in">
                         <td>{club.id}</td>
                         <td>{club.name}</td>
                         <td>{club.LOCATION.toUpperCase()}</td>
@@ -492,7 +492,7 @@ const List = props => {
 
     const viewMatchesForClub = () => {
         const data = myUpcomingMatches.map((match) => {
-            return  <tr key = {`${match.club}, ${match.competent}, ${match.startTime}`}>
+            return  <tr key = {`${match.club}, ${match.competent}, ${match.startTime}`} className="fade-in">
                         <td>{match.club}</td>
                         <td>{match.competent}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
@@ -532,7 +532,7 @@ const List = props => {
 
     const viewMyTickets = () => {
         const data = myTickets.map((ticket) => {
-            return  <tr key = {ticket.id}>
+            return  <tr key = {ticket.id} className="fade-in">
                         <td>{ticket.id}</td>
                         <td>{ticket.host}</td>
                         <td>{ticket.guest}</td>
@@ -578,7 +578,7 @@ const List = props => {
                 })
                 .then(res => res.json())
             }
-            return  <tr key={ticket.id}>
+            return  <tr key={ticket.id} className="fade-in">
                         <td>{ticket.host}</td>
                         <td>{ticket.guest}</td>
                         <td>{ticket.stadium}</td>

@@ -163,6 +163,7 @@ table {
     box-shadow: var(--table-shadow);
 }
 
+
 tr {
     /* background-color: var(--row-odd); */
     color: var(--row-txt);
@@ -178,7 +179,14 @@ tr:nth-of-type(even) {
 /* tr:last-of-type {
     border-bottom: 2px solid #14213D;
 } */
+/* 
+tr:active {
+    background-color: white;
+}
 
+tr:enabled {
+    background-color: white;
+} */
 th, td {
     padding: 12px 15px;
 }
@@ -245,3 +253,40 @@ th {
     font-size: smaller;
     font-style: italic;
 }
+
+
+
+
+/* .fade-in {
+    animation: fadeIn 1s;
+    animation: fadeOut 1s;
+    -webkit-animation: fadeIn 1s;
+    -moz-animation: fadeIn 1s;
+    -o-animation: fadeIn 1s;
+    -ms-animation: fadeIn 1s;
+  }
+  
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @-moz-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @-webkit-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @-o-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @-ms-keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  } */

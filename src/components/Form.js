@@ -18,6 +18,7 @@ const Form = props => {
     const [clubName, setClubName] = useState("");
     const [stadiumName, setStadiumName] = useState("");
     const [users, setUsers] = useState([]);
+    const [fans, setFans] = useState([]);
     const [stadiumManagers, setStadiumManagers] = useState([]);
     const [clubRepresentatives, setClubRepresentatives] = useState([]);
     const [stadiums, setStadiums] = useState([]);
@@ -31,6 +32,11 @@ const Form = props => {
         axios.get('http://localhost:5000/viewClubs')
         .then(res => setClubs(res.data))
     }, [clubs]);
+
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewFans')
+        .then(res => setFans(res.data))
+    }, [fans]);
     
     const [errMsg, setErrMsg] = useState("");
     const errorRef = useRef();
@@ -74,12 +80,15 @@ const Form = props => {
         setStadiumName(""); 
     }; 
 
+
+
+
     const submitNewF = async (e) => {
         e.preventDefault(); 
         var exisitingUsername = false;
         users.forEach(user => {
             if (user.username == username) {
-                exisitingUsername = true;
+                exisitingUsername = true;   
             }
         });
         if (exisitingUsername) setErrMsg("This username is unavailable")
@@ -106,7 +115,6 @@ const Form = props => {
             .then(setSuccessMsg("You have successfully registered."))
         }
     };
-    
     const fanForm = () => {
         return  <FadeIn>
                     <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
@@ -512,6 +520,7 @@ const Form = props => {
         e.preventDefault();
         var foundUsr = false;
         var foundPw = false;
+        var blockedFan = false;
         var type = "";
         users.forEach(user => {
             if (user.username == username) {
@@ -522,8 +531,15 @@ const Form = props => {
                 }
             }
         });
+        fans.forEach(fan => {
+            if (fan.username == username && fan.status == 0) {
+                blockedFan = true;
+            }
+        });
         if (!foundUsr || !foundPw) {
             setErrMsg("Invalid username or password")
+        } else if (blockedFan) {
+            setErrMsg("Sorry, your account is blocked")
         } else {
             switch(type) {
                 case 0: navigate("/admin-dashboard"); break;
