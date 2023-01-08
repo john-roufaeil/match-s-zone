@@ -442,15 +442,29 @@ GO;
 
 
 
-CREATE PROCEDURE F_availableMatchesToAttend (@DT DATETIME) AS
-	SELECT DISTINCT HC.name hostClubName, GC.name guestClubName, S.name, S.location
+CREATE PROCEDURE F_availableMatchesToAttend (@username VARCHAR(20)) AS
+	(SELECT DISTINCT M.id, HC.name host, GC.name guest, S.name stadium, S.location, M.startTime
 	FROM match M
 	INNER JOIN club HC ON M.hostClub_id = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	INNER JOIN stadium S ON M.stadium_id = S.id
-	INNER JOIN ticket T ON M.id = T.match_id
-	WHERE M.startTime = @DT and T.status=1;
+	INNER JOIN ticket T ON M.id = T.match_id 
+	WHERE M.startTime >= CURRENT_TIMESTAMP AND T.status=1)
+    EXCEPT 
+    (SELECT DISTINCT M.id, HC.name host, GC.name guest, S.name stadium, S.location, M.startTime
+    FROM match M
+    INNER JOIN club HC ON M.hostClub_id = HC.id
+	INNER JOIN club GC ON M.guestClub_id = GC.id
+	INNER JOIN stadium S ON M.stadium_id = S.id
+	INNER JOIN ticket T ON M.id = T.match_id 
+    INNER JOIN systemUser SU ON SU.username = @username
+    INNER JOIN fan F ON F.username = @username
+    INNER JOIN ticketBuyingTransaction TBT ON TBT.fanNational_id = F.national_id AND TBT.ticket_id = T.id
+    WHERE M.startTime >= CURRENT_TIMESTAMP AND T.status=0 
+    )
 GO;
+
+exec F_availableMatchesToAttend 'fan1'
 
 CREATE PROCEDURE F_purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN VARCHAR(20), @start DATETIME) AS
     DECLARE @T_id INT, @M_id INT, @HC_id INT, @GC_id INT;
@@ -504,7 +518,7 @@ select * from hostrequest
 
 insert into hostRequest values (2, 2 , 3, 'unhandled')
 exec SM_acceptRequest 'sm2', 'c1', 'c2', '2000-05-05 17:00:00.000'
-exec F_purchaseTicket 'fan1', 'c1', 'c2', '2000-05-05 17:00:00.000'
+exec F_purchaseTicket 'fan1', 'club2', 'club3', '2023-02-01 12:00:00.000'
 
 representative, manager, match
 

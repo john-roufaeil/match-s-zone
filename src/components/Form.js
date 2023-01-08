@@ -88,7 +88,7 @@ const Form = props => {
                     nat_id: {nationalId}.nationalId,
                     birthdate: {birthDate}.birthDate.replaceAll('-', ''),
                     address: {address}.address,
-                    phone: parseInt({phone}.phone)
+                    phone: {phone}.phone
                 })
             })
             .then(res => console.log(res.json()))

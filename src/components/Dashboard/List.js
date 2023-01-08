@@ -8,6 +8,7 @@ import accept from "../../assets/icons/actions/accept.png"
 import acceptDisabled from "../../assets/icons/actions/accept-disabled.png"
 import refuse from "../../assets/icons/actions/refuse.png"
 import refuseDisabled from "../../assets/icons/actions/refuse-disabled.png"
+import tct from "../../assets/icons/actions/tct.png"
 
 
 const List = props => {
@@ -109,6 +110,17 @@ const List = props => {
           })
         .then(res => setMyRequests(res.data))
     }, [myRequests]);
+
+    const [availableTickets, setAvailableTickets] = useState([]);
+    useEffect(() => {
+        axios.post('http://localhost:5000/viewAvailableTickets', {username: {loggedInUser}.loggedInUser}, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          })
+        .then(res => setAvailableTickets(res.data))
+    }, [availableTickets]);
     
     const viewStadiums = () => {
         const data = stadiums.map((stadium) => {
@@ -546,6 +558,27 @@ const List = props => {
     }
 
     const viewAvailableTickets = () => {
+        const data = availableTickets.map((ticket) => {
+            const purchaseTicket = (e) => {
+                e.preventDefault();
+            }
+            console.log(ticket)
+            return  <tr key={ticket.id}>
+                        <td>{ticket.host}</td>
+                        <td>{ticket.guest}</td>
+                        <td>{ticket.stadium}</td>
+                        <td>{ticket.location.toUpperCase()}</td>
+                        <td>{ticket.startTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>
+                            <form onSubmit={purchaseTicket}>
+                                <button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'auto'}}>
+                                    <img width="30px" src={tct} alt="" />
+                                </button>
+                            </form>
+                        </td>
+
+                    </tr>
+        });
         return  <table>
                     <thead>
                         <tr>
@@ -558,6 +591,7 @@ const List = props => {
                         </tr>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
     }

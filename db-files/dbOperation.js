@@ -376,11 +376,10 @@ const viewMyTickets = async (username) => {
     }
 }
 
-const viewAvailableTickets = async (time) => {
+const viewAvailableTickets = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC F_availableMatchesToAttend ${time}`);
-        // console.log(exec);
+        let exec = await pool.request().query(`EXEC F_availableMatchesToAttend ${username}`);
         return exec;
     } catch (error) {
         console.log(error);

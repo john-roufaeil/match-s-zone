@@ -166,7 +166,6 @@ app.post('/acceptRequest', jsonParser, async (req, res) => {
 })
 
 app.post('/rejectRequest', jsonParser, async (req, res) => {
-    console.log(`HEREEEE ${JSON.stringify(req.body)}`)
     const result = await dbOperation.rejectRequest(req.body.username, req.body.host, req.body.guest, req.body.startTime);
     return res.send(result.recordset);
 })
@@ -188,6 +187,11 @@ app.post('/newF', jsonParser, async (req, res) => {
 
 app.post('/viewMyTickets', jsonParser, async (req, res) => {
     const result = await dbOperation.viewMyTickets(req.body.username);
+    return res.send(result.recordset);
+})
+
+app.post('/viewAvailableTickets', jsonParser, async(req, res) => {
+    const result = await dbOperation.viewAvailableTickets(req.body.username);
     return res.send(result.recordset);
 })
 

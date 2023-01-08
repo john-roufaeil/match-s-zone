@@ -33,7 +33,6 @@ const Dashboard = props => {
             </button>    
         </div>
         <main className="dashboardMain">
-            <Choose object={selected} />
             <List object={selected} />
         </main>
         <Footer />
