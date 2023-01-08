@@ -386,6 +386,16 @@ const viewAvailableTickets = async (username) => {
     }
 }
 
+const purchaseTicket = async(username, id) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC F_purchaseTicket ${username}, ${id}`)
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 module.exports = {
     getUsers,
@@ -424,5 +434,6 @@ module.exports = {
     
     addNewF,
     viewMyTickets,
-    viewAvailableTickets
+    viewAvailableTickets,
+    purchaseTicket
 }

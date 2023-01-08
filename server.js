@@ -88,7 +88,6 @@ app.post('/newSAM', jsonParser, async (req, res) => {
 })
 
 app.post('/newMatch', jsonParser, async(req, res) => {
-    // console.log(req.body.startTime)
     return await dbOperation.addNewMatch(req.body.host, req.body.guest, req.body.startTime, req.body.endTime);
 })
 
@@ -195,5 +194,8 @@ app.post('/viewAvailableTickets', jsonParser, async(req, res) => {
     return res.send(result.recordset);
 })
 
+app.post('/purchaseTicket', jsonParser, async(req, res) => {
+    return await dbOperation.purchaseTicket(req.body.username, req.body.id);
+})
 
 app.listen(API_PORT, () => console.log(`listening on port ${API_PORT}`));

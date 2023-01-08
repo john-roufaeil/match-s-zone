@@ -13,6 +13,7 @@ import tct from "../../assets/icons/actions/tct.png"
 
 const List = props => {
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
+    // const {errMsg, setErrMsg} = useContext(false);
 
     const [stadiums, setStadiums] = useState([]);
     useEffect(() => {
@@ -389,7 +390,9 @@ const List = props => {
     }
 
     const viewRequests = () => {
+        var i = 0;
         const data = myRequests.map((request) => {
+            i++;
             const acceptRequest = async (e) => {
                 e.preventDefault();
                 await fetch(`http://localhost:5000/acceptRequest`, {
@@ -426,7 +429,7 @@ const List = props => {
                 })
                 .then(res => res.json())
             }
-            return  <tr key={`${request.host}, ${request.guest}, ${request.startTime}`}>
+            return  <tr key={`${i}`}>
                         <td>{request.clubRepresentative}</td>
                         <td>{request.name}</td>
                         <td>{request.guestClub}</td>
@@ -559,10 +562,24 @@ const List = props => {
 
     const viewAvailableTickets = () => {
         const data = availableTickets.map((ticket) => {
-            const purchaseTicket = (e) => {
+            const purchaseTicket = async (e) => {
+                console.log({loggedInUser}.loggedInUser);
+                console.log(parseInt({ticket}.ticket.id));
                 e.preventDefault();
+                await fetch(`http://localhost:5000/purchaseTicket`, {
+                    method: 'POST', 
+                    url: 'http://localhost:5000',
+                    header : {
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: {loggedInUser}.loggedInUser,
+                        id: {ticket}.ticket.id,
+                    })
+                })
+                .then(res => res.json())
             }
-            console.log(ticket)
             return  <tr key={ticket.id}>
                         <td>{ticket.host}</td>
                         <td>{ticket.guest}</td>

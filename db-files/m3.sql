@@ -123,11 +123,6 @@ CREATE PROCEDURE dropAllTables AS
     DROP TABLE systemUser;  
 GO;
 
-select * from systemuser
-exec f_viewmytickets 'fan1'
-exec CR_viewMyClub 'cr1'
-select * from stadiumManager
-select * from clubRepresentative
 
 
 CREATE PROCEDURE clearAllTables AS
@@ -149,7 +144,7 @@ exec SA_deleteStadium 'stadium1'
 
 EXEC createAllTables;
 GO;
-select * from systemuser
+
 --/ System Admin /--
 CREATE PROCEDURE SA_addClub @name VARCHAR(20), @location VARCHAR(20) AS
     INSERT INTO club VALUES (@name, @location);
@@ -320,7 +315,6 @@ CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@username VARCHAR(20)) AS
 	LEFT JOIN stadium S ON S.id = M.stadium_id
 	WHERE (CR.username = @username) AND M.startTime > CURRENT_TIMESTAMP) 
 GO;
-drop proc CR_viewUpcomingMatchesOfClub
 --View all available stadiums starting at a certain date (in a form of stadium name, location andcapacity).
 CREATE PROCEDURE CR_viewAvailableStadiumsFrom (@date DATETIME) AS
 	SELECT DISTINCT SA.name, SA.location, SA.capacity
@@ -328,12 +322,7 @@ CREATE PROCEDURE CR_viewAvailableStadiumsFrom (@date DATETIME) AS
 	WHERE SA.status = 1 AND CURRENT_TIMESTAMP >= @date;
 GO;
 
--- CREATE PROCEDURE sendRequest  representative_id INT NOT NULL, TODO
---         manager_id INT NOT NULL,
---         match_id INT NOT NULL,
-select * from stadiummanager
-select * from stadium
-exec CR_viewmyclub 'cr1'
+
 CREATE PROCEDURE CR_viewMyClub (@username VARCHAR(20)) AS
     -- DECLARE @club_id INT;
     -- SELECT @club_id=CR.club_id FROM clubRepresentative CR WHERE CR.id = @clubRepresentative_id;
@@ -343,9 +332,6 @@ CREATE PROCEDURE CR_viewMyClub (@username VARCHAR(20)) AS
     INNER JOIN clubRepresentative CR ON C.id = CR.club_id AND CR.username = @username
     -- WHERE CR.username = @username;
 GO;
-select * from systemuser
-exec CR_viewmyclub 'cr1'
-exec SM_viewmystadium 'stadiummgr1'
 
 --/ Stadium Manager /-- 
 CREATE PROCEDURE SM_addStadiumManager(@name VARCHAR(20), @stadiumName VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)) AS
@@ -429,7 +415,6 @@ GO;
 
 
 
-exec SAM_addAssociationManager 'b', 'b', 'b'
 --/ Fan /-- 
 CREATE PROCEDURE F_addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20), @nat_id VARCHAR(20), @bdate DATETIME, @address VARCHAR(20), @phone INT) AS
     IF NOT EXISTS (SELECT 1 FROM systemUser SU WHERE SU.username=@user)
@@ -438,7 +423,6 @@ CREATE PROCEDURE F_addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)
     INSERT INTO fan VALUES (@nat_id, @name, @bdate, @address, @phone, 1, @user);
     END
 GO;
-
 
 
 
@@ -460,27 +444,26 @@ CREATE PROCEDURE F_availableMatchesToAttend (@username VARCHAR(20)) AS
     INNER JOIN systemUser SU ON SU.username = @username
     INNER JOIN fan F ON F.username = @username
     INNER JOIN ticketBuyingTransaction TBT ON TBT.fanNational_id = F.national_id AND TBT.ticket_id = T.id
-    WHERE M.startTime >= CURRENT_TIMESTAMP AND T.status=0 
+    WHERE M.startTime >= CURRENT_TIMESTAMP AND T.status=0
     )
 GO;
 
-exec F_availableMatchesToAttend 'fan1'
-
-CREATE PROCEDURE F_purchaseTicket (@nat_id VARCHAR(20), @HCN VARCHAR(20), @GCN VARCHAR(20), @start DATETIME) AS
-    DECLARE @T_id INT, @M_id INT, @HC_id INT, @GC_id INT;
-    SELECT @HC_id=HC.id FROM club HC WHERE HC.name = @HCN;
-    SELECT @GC_id=GC.id FROM club GC WHERE GC.name = @GCN;
-    SELECT @M_id=M.id FROM match M WHERE M.startTime = @start AND M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id;
-    SELECT @T_id=T.id FROM ticket T WHERE T.match_id = @M_id AND T.status = 1;
-    IF EXISTS (SELECT 1 FROM fan, ticket WHERE fan.status = 1 AND fan.national_id = @nat_id AND ticket.status = 1 AND ticket.id = @T_id)
-    AND NOT EXISTS (SELECT 1 FROM ticketBuyingTransaction TBT INNER JOIN ticket T ON TBT.ticket_id = T.id WHERE TBT.fanNational_id = @nat_id AND T.match_id = @M_id)
+exec F_purchaseTicket 'fan3', 5 
+CREATE PROCEDURE F_purchaseTicket (@username VARCHAR(20), @m_id INT) AS
+    DECLARE @nat_id VARCHAR(20), @t_id INT;
+    SELECT @nat_id=F.national_id FROM fan F WHERE F.username = @username;
+    SELECT @t_id=T.id FROM ticket T WHERE T.match_id = @m_id;
+    IF EXISTS (SELECT 1 FROM fan, ticket WHERE fan.status = 1 AND fan.national_id = @nat_id AND ticket.status = 1 AND ticket.match_id = @m_id)
+    AND NOT EXISTS (SELECT 1 FROM ticketBuyingTransaction TBT INNER JOIN ticket T ON TBT.ticket_id = @t_id WHERE TBT.fanNational_id = @nat_id)
     BEGIN 
     UPDATE ticket 
     SET ticket.status = 0
-    WHERE ticket.id = @T_id AND ticket.status = 1;
-    INSERT INTO ticketBuyingTransaction (ticket_id, fanNational_id) VALUES (@T_id, @nat_id)
+    WHERE ticket.id = @t_id;
+    INSERT INTO ticketBuyingTransaction (ticket_id, fanNational_id) VALUES (@t_id, @nat_id)
     END
 GO;
+
+
 
 CREATE PROCEDURE F_viewMyTickets (@username VARCHAR(20)) AS
     SELECT T.id, HC.name AS host, GC.name AS guest, M.startTime, M.endTime, S.name, S.location
@@ -507,7 +490,6 @@ CREATE PROCEDURE viewClubRepresentatives AS
 GO;
 
 
-@startTime DATETIME) AS
 
 select * from fan
 select * from match
@@ -520,6 +502,5 @@ insert into hostRequest values (2, 2 , 3, 'unhandled')
 exec SM_acceptRequest 'sm2', 'c1', 'c2', '2000-05-05 17:00:00.000'
 exec F_purchaseTicket 'fan1', 'club2', 'club3', '2023-02-01 12:00:00.000'
 
-representative, manager, match
 
 exec dropalltables

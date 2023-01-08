@@ -40,6 +40,10 @@
     --success-bg        : #b6ffc1;
 }
 
+*{
+    transition: background-color .8s;
+}
+
 .title {
     font-family: 'yeon-sung', 'Courier New', Courier, monospace;
     margin: 50px 0 0;
