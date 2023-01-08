@@ -33,7 +33,7 @@ CREATE TABLE stadiumManager (
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE CASCADE ON UPDATE CASCADE
-); 
+);  
 CREATE TABLE club (
 	id INT IDENTITY (1,1),
 	name VARCHAR(20) UNIQUE NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE systemAdmin (
 	username VARCHAR(20) NOT NULL UNIQUE,
 	PRIMARY KEY (id),
 	FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE
-);
+); 
 CREATE TABLE match (
 	id INT IDENTITY,
 	startTime DATETIME,
@@ -72,7 +72,7 @@ CREATE TABLE match (
 	stadium_id INT,
 	CHECK (endTime > startTime),
 --	CHECK (hostclub_id != guestclub_id),
-	PRIMARY KEY (id),
+	PRIMARY KEY (id, hostClub_id, guestClub_id, startTime, endTime),
 	FOREIGN KEY (hostClub_id) REFERENCES club ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (guestClub_id) REFERENCES club, -- cannot cascade on two foreign keys referencing same attribute >> manual override in 2.3viii
 	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE CASCADE ON UPDATE CASCADE
@@ -479,8 +479,15 @@ GO;
 
 @startTime DATETIME) AS
 
-select * from stadiumManager
-insert into hostRequest values (3,4 , 7, 'unhandled')
-exec SM_acceptRequest 'sm1', 'c1', 'c2', '2001-11-11 12:00:00.000'
 
-select CURRENT_TIMESTAMP
+select * from match
+select * from club
+select * from clubrepresentative
+select * from stadiummanager
+select * from hostrequest
+
+insert into hostRequest values (3,4 , 32, 'unhandled')
+exec SM_acceptRequest 'sm2', 'c1', 'c2', '2000-05-05 17:00:00.000'
+exec F_purchaseTicket 'fan1', 'c1', 'c2', '2000-05-05 17:00:00.000'
+
+representative, manager, match

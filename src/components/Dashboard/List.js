@@ -1,9 +1,13 @@
-import axios, * as others from 'axios';
+import axios from 'axios';
 import { useState, useEffect, useContext } from "react";
 import open from "../../assets/icons/actions/open.png"
 import close from "../../assets/icons/actions/close.png"
 import request from "../../assets/icons/actions/request.png"
 import { UserContext } from '../../UserContext';
+import accept from "../../assets/icons/actions/accept.png"
+import acceptDisabled from "../../assets/icons/actions/accept-disabled.png"
+import refuse from "../../assets/icons/actions/refuse.png"
+import refuseDisabled from "../../assets/icons/actions/refuse-disabled.png"
 
 
 const List = props => {
@@ -94,13 +98,24 @@ const List = props => {
           })
         .then(res => setMyUpcomingMatches(res.data))
     }, [myUpcomingMatches]);
+
+    const [myRequests, setMyRequests] = useState([]);
+    useEffect(() => {
+        axios.post('http://localhost:5000/viewMyRequests', {username: loggedInUser}, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          })
+        .then(res => setMyRequests(res.data))
+    }, [myRequests]);
     
     const viewStadiums = () => {
         const data = stadiums.map((stadium) => {
             const name = stadium.name;
             const openStadium = async (e) => {
                 e.preventDefault();
-                const newData = await fetch(`http://localhost:5000/openStadium`, {
+                await fetch(`http://localhost:5000/openStadium`, {
                     method: 'POST', 
                     url: 'http://localhost:5000',
                     header : {
@@ -115,7 +130,7 @@ const List = props => {
             }
             const closeStadium = async (e) => {
                 e.preventDefault();
-                const newData = await fetch(`http://localhost:5000/closeStadium`, {
+                await fetch(`http://localhost:5000/closeStadium`, {
                     method: 'POST', 
                     url: 'http://localhost:5000',
                     header : {
@@ -130,12 +145,12 @@ const List = props => {
             }
             return  <tr key={stadium.name}>
                         <td>{stadium.name}</td>
-                        <td>{stadium.location}</td>
+                        <td>{stadium.location.toUpperCase()}</td>
                         <td>{stadium.capacity}</td>
                         <td>{stadium.status?'Available':'Unavailable'}</td>
                         <td>{stadium.status
-                            ?<form onSubmit={closeStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} /></button></form>
-                            :<form onSubmit={openStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} /></button></form>}
+                            ?<form onSubmit={closeStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} alt="" /></button></form>
+                            :<form onSubmit={openStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} alt="" /></button></form>}
                         </td>
                     </tr>
         });
@@ -159,7 +174,7 @@ const List = props => {
         const data = clubs.map((club) => {
             return  <tr key={club.name}>
                         <td>{club.name}</td>
-                        <td>{club.location}</td>
+                        <td>{club.location.toUpperCase()}</td>
                     </tr>
         });
         return  <table>
@@ -209,7 +224,7 @@ const List = props => {
 
     const viewMatches = () => {
         const data = allMatches.map((match) => {
-            return  <tr>
+            return  <tr key={`${match.host}, ${match.guest}, ${match.startTime}`}>
                         <td>{match.host}</td>
                         <td>{match.guest}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
@@ -233,7 +248,7 @@ const List = props => {
 
     const viewUpcoming = () => {
         const data = upcomingMatches.map((match) => {
-            return  <tr>
+            return  <tr key={`${match.host}, ${match.guest}, ${match.startTime}`}>
                         <td>{match.host}</td>
                         <td>{match.guest}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
@@ -257,7 +272,7 @@ const List = props => {
 
     const viewPrevious = () => {
         const data = previousMatches.map((match) => {
-            return  <tr>
+            return  <tr key = {`${match.host}, ${match.guest}, ${match.startTime}`}>
                         <td>{match.host}</td>
                         <td>{match.guest}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
@@ -281,7 +296,7 @@ const List = props => {
 
     const neverTogether = () => {
         const data = clubsNeverTogether.map((entry) => {
-            return  <tr>
+            return  <tr key = {`${entry.name1}, ${entry.name2}`}>
                         <td>{entry.name1}</td>
                         <td>{entry.name2}</td>
                     </tr>
@@ -304,7 +319,7 @@ const List = props => {
             const name = stadium.name;
             const openMyStadium = async (e) => {
                 e.preventDefault();
-                const newData = await fetch(`http://localhost:5000/openStadium`, {
+                await fetch(`http://localhost:5000/openStadium`, {
                     method: 'POST', 
                     url: 'http://localhost:5000',
                     header : {
@@ -319,7 +334,7 @@ const List = props => {
             }
             const closeMyStadium = async (e) => {
                 e.preventDefault();
-                const newData = await fetch(`http://localhost:5000/closeStadium`, {
+                await fetch(`http://localhost:5000/closeStadium`, {
                     method: 'POST', 
                     url: 'http://localhost:5000',
                     header : {
@@ -335,12 +350,12 @@ const List = props => {
             return  <tr key = {stadium.id}>
                         <td>{stadium.id}</td>
                         <td>{stadium.name}</td>
-                        <td>{stadium.location}</td>
+                        <td>{stadium.location.toUpperCase()}</td>
                         <td>{stadium.capacity}</td>
                         <td>{stadium.status?'Available':'Unavailable'}</td>
                         <td>{stadium.status
-                            ?<form onSubmit={closeMyStadium}><button type="submit" onClick={closeMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} /></button></form>
-                            :<form onSubmit={openMyStadium}><button type="submit" onClick={openMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} /></button></form>}
+                            ?<button onClick={closeMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} alt="" /></button>
+                            :<button onClick={openMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} alt="" /></button>}
                         </td>
                     </tr>
         });
@@ -362,6 +377,63 @@ const List = props => {
     }
 
     const viewRequests = () => {
+        const data = myRequests.map((request) => {
+            const acceptRequest = async (e) => {
+                e.preventDefault();
+                await fetch(`http://localhost:5000/acceptRequest`, {
+                    method: 'POST', 
+                    url: 'http://localhost:5000',
+                    header : {
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: {loggedInUser}.loggedInUser,
+                        host: {request}.request.name,
+                        guest: {request}.request.guestClub,
+                        startTime: {request}.request.startTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', '').replaceAll('Z', '').replaceAll(".", "")
+                    })
+                })
+                .then(res => res.json())
+            }
+            const rejectRequest = async (e) => {
+                e.preventDefault();
+                await fetch(`http://localhost:5000/rejectRequest`, {
+                    method: 'POST', 
+                    url: 'http://localhost:5000',
+                    header : {
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: {loggedInUser}.loggedInUser,
+                        host: {request}.request.name,
+                        guest: {request}.request.guestClub,
+                        startTime: {request}.request.startTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', '').replaceAll('Z', '').replaceAll(".", "")
+                    })
+                })
+                .then(res => res.json())
+            }
+            return  <tr key={`${request.host}, ${request.guest}, ${request.startTime}`}>
+                        <td>{request.clubRepresentative}</td>
+                        <td>{request.name}</td>
+                        <td>{request.guestClub}</td>
+                        <td>{request.startTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{request.endTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{request.status}</td>
+                        <td>{request.status === "unhandled" 
+                            ? <button onClick={acceptRequest} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}>
+                                <img width="30px" style={{"borderRadius":"5px"}} alt="" src={accept} />
+                              </button>
+                            : <img width="30px" style={{"borderRadius":"5px"}} alt="" src={acceptDisabled} />}</td>
+                        <td>{request.status === "unhandled" 
+                            ? <button onClick={rejectRequest} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}>
+                                <img width="30px" style={{"borderRadius":"5px"}} alt="" src={refuse} />
+                              </button>
+                            : <img width="30px" style={{"borderRadius":"5px"}} alt="" src={refuseDisabled} />}</td>
+                    </tr>
+
+        });
         return  <table>
                     <thead>
                         <tr>
@@ -376,6 +448,7 @@ const List = props => {
                         </tr>
                     </thead>
                     <tbody>
+                        {data}
                     </tbody>
                 </table>
     }
@@ -385,7 +458,7 @@ const List = props => {
             return  <tr key={club.id}>
                         <td>{club.id}</td>
                         <td>{club.name}</td>
-                        <td>{club.LOCATION}</td>
+                        <td>{club.LOCATION.toUpperCase()}</td>
                     </tr>
         });
         return  <table>
@@ -404,12 +477,12 @@ const List = props => {
 
     const viewMatchesForClub = () => {
         const data = myUpcomingMatches.map((match) => {
-            return  <tr>
+            return  <tr key = {`${match.club}, ${match.competent}, ${match.startTime}`}>
                         <td>{match.club}</td>
                         <td>{match.competent}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
                         <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
-                        <td>{match.name?match.name:<img width="49px" src={request}/>}</td>
+                        <td>{match.name?match.name:<img width="49px" alt="" src={request}/>}</td>
                     </tr>
         });
         return  <table>
@@ -444,14 +517,14 @@ const List = props => {
 
     const viewMyTickets = () => {
         const data = myTickets.map((ticket) => {
-            return  <tr>
+            return  <tr key = {ticket.id}>
                         <td>{ticket.id}</td>
                         <td>{ticket.host}</td>
                         <td>{ticket.guest}</td>
-                        <td>{ticket.startTime}</td>
-                        <td>{ticket.endTime}</td>
+                        <td>{ticket.startTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{ticket.endTime.replace('T', ' ').substring(0,16)}</td>
                         <td>{ticket.name}</td>
-                        <td>{ticket.location}</td>
+                        <td>{ticket.location.toUpperCase()}</td>
                     </tr>
         });
         return  <table>

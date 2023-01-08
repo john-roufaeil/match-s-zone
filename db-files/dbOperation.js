@@ -1,6 +1,7 @@
 const config = require('./dbConfig');
 const sql = require('mssql');
 
+// General //
 const getUsers = async() => {
     try {
         let pool = await sql.connect(config);
@@ -10,6 +11,8 @@ const getUsers = async() => {
         console.log(error);
     }
 }
+
+
 
 // Admin //
 const addClub = async (name, location) => {
@@ -121,6 +124,8 @@ const closeStadium = async (name) => {
         console.log(error);
     }
 }
+
+
 
 // Sports Association Manager //
 const addNewSAM = async (name, username, password) => {
@@ -245,6 +250,16 @@ const viewMyClub = async (username) => {
     }
 }
 
+const myUpcomingMatches = async (username) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC CR_viewUpcomingMatchesOfClub ${username}`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 // Stadium Manager //
@@ -268,10 +283,42 @@ const viewMyStadium = async (username) => {
     }
 }
 
-const myUpcomingMatches = async (username) => {
+const viewMyRequests = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC CR_viewUpcomingMatchesOfClub ${username}`);
+        let exec = await pool.request().query(`EXEC SM_viewAllRequests ${username}`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const acceptRequest = async (username, host, guest, startTime) => {
+    try {
+        year = parseInt(startTime).toString().slice(0,4);
+        month = parseInt(startTime).toString().slice(4,6);
+        day = parseInt(startTime).toString().slice(6,8);
+        hour = parseInt(startTime).toString().slice(8,10);
+        min = parseInt(startTime).toString().slice(10,12);
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SM_acceptRequest ${username}, ${host}, ${guest}, 
+        '${year}-${month}-${day} ${hour}:${min}'`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const rejectRequest = async (username, host, guest, startTime) => {
+    try {
+        year = parseInt(startTime).toString().slice(0,4);
+        month = parseInt(startTime).toString().slice(4,6);
+        day = parseInt(startTime).toString().slice(6,8);
+        hour = parseInt(startTime).toString().slice(8,10);
+        min = parseInt(startTime).toString().slice(10,12);
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SM_rejectRequest ${username}, ${host}, ${guest}, '${year}-${month}-${day} ${hour}:${min}'`);
+        console.log(JSON.stringify(`${year}-${month}-${day} ${hour}:${min}`));
         return exec;
     } catch (error) {
         console.log(error);
@@ -350,6 +397,9 @@ module.exports = {
 
     addNewSM,
     viewMyStadium,
+    viewMyRequests,
+    acceptRequest,
+    rejectRequest,
     
     addNewF,
     viewMyTickets,

@@ -145,6 +145,22 @@ app.post('/viewMyStadium', jsonParser, async (req, res) => {
     return res.send(result.recordset);
 })
 
+app.post('/viewMyRequests', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewMyRequests(req.body.username);
+    return res.send(result.recordset);
+})
+
+app.post('/acceptRequest', jsonParser, async (req, res) => {
+    const result = await dbOperation.acceptRequest(req.body.username, req.body.host, req.body.guest, req.body.startTime);
+    return res.send(result.recordset);
+})
+
+app.post('/rejectRequest', jsonParser, async (req, res) => {
+    console.log(`HEREEEE ${JSON.stringify(req.body)}`)
+    const result = await dbOperation.rejectRequest(req.body.username, req.body.host, req.body.guest, req.body.startTime);
+    return res.send(result.recordset);
+})
+
 
 
 // Fan //
