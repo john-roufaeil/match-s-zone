@@ -16,6 +16,8 @@
     --row-txt           : #000000;
     --error             : #b22222;
     --error-bg          : #ffb6c1;
+    --success           : #169716;
+    --success-bg        : #b6ffc1;
 }
 
 [data-theme='dark'] {
@@ -34,6 +36,8 @@
     --row-txt           : #FFFFFF;
     --error             : #b22222;
     --error-bg          : #ffb6c1;
+    --success           : #169716;
+    --success-bg        : #b6ffc1;
 }
 
 .title {
@@ -212,6 +216,18 @@ th {
 .errMsg {
     background-color: var(--error-bg);
     color: var(--error);
+    font-weight: bold;
+    width: 97%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    font-size: smaller;
+    font-style: italic;
+}
+
+.successMsg {
+    background-color: var(--success-bg);
+    color: var(--success);
     font-weight: bold;
     width: 97%;
     padding: 1rem;

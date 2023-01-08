@@ -18,9 +18,18 @@ const Form = props => {
     const [clubName, setClubName] = useState("");
     const [stadiumName, setStadiumName] = useState("");
     const [users, setUsers] = useState([]);
+    const [changed, setChanged] = useState("");
     
     const [errMsg, setErrMsg] = useState("");
     const errorRef = useRef();
+
+    const [successMsg, setSuccessMsg] = useState("");
+    const successRef = useRef();
+
+    useEffect(() => {
+        setSuccessMsg("") 
+        setErrMsg("")
+    }, [props.type])
 
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
 
@@ -54,34 +63,45 @@ const Form = props => {
 
     const submitNewF = async (e) => {
         e.preventDefault(); 
-        const newData = await fetch('http://localhost:5000/newF', {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json',  
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name,
-                username: {username}.username,
-                password: {password}.password,
-                nat_id: {nationalId}.nationalId,
-                birthdate: {birthDate}.birthDate.replaceAll('-', ''),
-                address: {address}.address,
-                phone: parseInt({phone}.phone)
+        var exisitingUsername = false;
+        users.forEach(user => {
+            if (user.username === username) {
+                exisitingUsername = true;
+            }
+        });
+        if (exisitingUsername) setErrMsg("This username is unavailable")
+        else {
+            const newData = await fetch('http://localhost:5000/newF', {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json',  
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: {name}.name,
+                    username: {username}.username,
+                    password: {password}.password,
+                    nat_id: {nationalId}.nationalId,
+                    birthdate: {birthDate}.birthDate.replaceAll('-', ''),
+                    address: {address}.address,
+                    phone: parseInt({phone}.phone)
+                })
             })
-        })
-        .then(res => console.log(res.json()))
-        .then(clearForm())
-        .catch(console.log("i failed"))
+            .then(res => console.log(res.json()))
+            .then(clearForm())
+            .then(setSuccessMsg("You have successfully registered."))
+        }
     };
+    
     const fanForm = () => {
         return  <FadeIn>
+                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
                     <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
                     <form  method="POST" action="/newF" className="fanForm" onSubmit={submitNewF}> 
                         <div className="field">
                             <label htmlFor="name">
-                                Name <sup>*</sup>
+                                Name
                             </label><br />
                             <input
                                 type = "text"
@@ -94,7 +114,7 @@ const Form = props => {
                         </div>
                         <div className="field">
                             <label htmlFor="username">
-                                Username <sup>*</sup>
+                                Username
                             </label><br />
                             <input
                                 type= "text"
@@ -107,7 +127,7 @@ const Form = props => {
                         </div>
                         <div className="field">
                             <label htmlFor="password">
-                                Password <sup>*</sup>
+                                Password
                             </label><br />
                             <input
                                 type="password"
@@ -121,7 +141,7 @@ const Form = props => {
                         </div>
                         <div className="field">
                             <label htmlFor="nationalId">
-                                National ID Number <sup>*</sup>
+                                National ID Number 
                             </label><br />
                             <input
                                 type= "text"
@@ -177,30 +197,40 @@ const Form = props => {
 
     const submitNewSAM = async (e) => {
         e.preventDefault(); 
-        clearForm();
-        const newData = await fetch('http://localhost:5000/newSAM', {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name,
-                username: {username}.username,
-                password: {password}.password
+        var exisitingUsername = false;
+        users.forEach(user => {
+            if (user.username === username) {
+                exisitingUsername = true;
+            }
+        });
+        if (exisitingUsername) setErrMsg("This username is unavailable")
+        else {
+            const newData = await fetch('http://localhost:5000/newSAM', {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: {name}.name,
+                    username: {username}.username,
+                    password: {password}.password
+                })
             })
-        })
-        .then(res => console.log(res.json()))
-        console.log(newData);
+            .then(res => console.log(res.json()))
+            .then(clearForm())
+            .then(setSuccessMsg("You have successfully registered."))
+        }
     };
     const managerForm = () => {
         return <FadeIn>
+                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
                     <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
                     <form method="POST" action="/newSAM" className="managerForm" onSubmit={submitNewSAM}> 
                         <div className="field">
                             <label htmlFor="name">
-                                Name <sup>*</sup>
+                                Name 
                             </label><br />
                             <input
                                 type="text"
@@ -213,7 +243,7 @@ const Form = props => {
                         </div>
                         <div className="field">
                             <label htmlFor="username">
-                                Username <sup>*</sup>
+                                Username 
                             </label><br />
                             <input
                                 type="text"
@@ -226,7 +256,7 @@ const Form = props => {
                         </div>
                         <div className="field">
                             <label htmlFor="password">
-                                Password <sup>*</sup>
+                                Password 
                             </label><br />
                             <input
                                 required
@@ -249,30 +279,41 @@ const Form = props => {
    
     const submitNewCR = async (e) => {
         e.preventDefault(); 
-        clearForm();
-        const newData = await fetch('http://localhost:5000/newCR', {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name,
-                username: {username}.username,
-                password: {password}.password,
-                club: {clubName}.clubName
+        var exisitingUsername = false;
+        users.forEach(user => {
+            if (user.username === username) {
+                exisitingUsername = true;
+            }
+        });
+        if (exisitingUsername) setErrMsg("This username is unavailable")
+        else {
+            const newData = await fetch('http://localhost:5000/newCR', {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: {name}.name,
+                    username: {username}.username,
+                    password: {password}.password,
+                    club: {clubName}.clubName
+                })
             })
-        })
-        .then(res => console.log(res.json()))
+            .then(res => console.log(res.json()))
+            .then(clearForm())
+            .then(setSuccessMsg("You have successfully registered."))
+        }
     };
     const clubRepresentativeForm = () => {
         return <FadeIn>
+                <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
                 <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
                 <form  method="POST" action="/newCR" className="clubRepresentativeForm" onSubmit={submitNewCR}> 
                     <div className="field">
                         <label htmlFor="name">
-                            Name <sup>*</sup>
+                            Name 
                         </label><br />
                         <input
                             type= "text"
@@ -285,7 +326,7 @@ const Form = props => {
                     </div>
                     <div className="field">
                         <label htmlFor="username">
-                            Username <sup>*</sup>
+                            Username 
                         </label><br />
                         <input
                             type= "text"
@@ -298,7 +339,7 @@ const Form = props => {
                     </div>
                     <div className="field">
                         <label htmlFor="password">
-                            Password <sup>*</sup>
+                            Password 
                         </label><br />
                         <input
                             type="password"
@@ -312,7 +353,7 @@ const Form = props => {
                     </div>
                     <div className="field">
                         <label htmlFor="clubName">
-                            Club to Represent <sup>*</sup>
+                            Club to Represent 
                         </label><br />
                         <input
                             type= "text"
@@ -332,30 +373,41 @@ const Form = props => {
 
     const submitNewSM = async (e) => {
         e.preventDefault(); 
-        clearForm();
-        const newData = await fetch('http://localhost:5000/newSM', {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name,
-                username: {username}.username,
-                password: {password}.password,
-                stadium: {stadiumName}.stadiumName
+        var exisitingUsername = false;
+        users.forEach(user => {
+            if (user.username === username) {
+                exisitingUsername = true;
+            }
+        });
+        if (exisitingUsername) setErrMsg("This username is unavailable")
+        else {
+            const newData = await fetch('http://localhost:5000/newSM', {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: {name}.name,
+                    username: {username}.username,
+                    password: {password}.password,
+                    stadium: {stadiumName}.stadiumName
+                })
             })
-        })
-        .then(res => console.log(res.json()))
+            .then(res => console.log(res.json()))
+            .then(clearForm())
+            .then(setSuccessMsg("You have successfully registered."))
+        }
     };
     const stadiumManagerForm = () => {
         return  <FadeIn>
+                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
                     <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
                     <form  method="POST" action="/newSM" className="stadiumManagerForm" onSubmit={submitNewSM}> 
                         <div className="field">
                             <label htmlFor="name">
-                                Name <sup>*</sup>
+                                Name 
                             </label><br />
                             <input
                                 type= "text"
@@ -368,7 +420,7 @@ const Form = props => {
                         </div>
                         <div className="field">
                             <label htmlFor="username">
-                                Username <sup>*</sup>
+                                Username 
                             </label><br />
                             <input
                                 type= "text"
@@ -381,7 +433,7 @@ const Form = props => {
                         </div>
                         <div className="field">
                             <label htmlFor="password">
-                                Password <sup>*</sup>
+                                Password 
                             </label><br />
                             <input
                                 type= "password"
@@ -395,7 +447,7 @@ const Form = props => {
                         </div>
                         <div className="field">
                             <label htmlFor="stadiumName">
-                                Stadium to Manage <sup>*</sup>
+                                Stadium to Manage 
                             </label><br />
                             <input
                                 type= "text"
@@ -417,7 +469,6 @@ const Form = props => {
 
     const logIn = (e) => {
         e.preventDefault();
-        var success = false;
         var foundUsr = false;
         var foundPw = false;
         var type = "";

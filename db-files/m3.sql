@@ -72,11 +72,11 @@ CREATE TABLE match (
 	stadium_id INT,
 	CHECK (endTime > startTime),
 --	CHECK (hostclub_id != guestclub_id),
-	PRIMARY KEY (id, hostClub_id, guestClub_id, startTime, endTime),
+	PRIMARY KEY (id),
 	FOREIGN KEY (hostClub_id) REFERENCES club ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (guestClub_id) REFERENCES club, -- cannot cascade on two foreign keys referencing same attribute >> manual override in 2.3viii
-	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE CASCADE ON UPDATE CASCADE
-);
+	FOREIGN KEY (stadium_id) REFERENCES stadium ON DELETE CASCADE ON UPDATE CASCADE,
+);  
 CREATE TABLE ticket (
 	id INT IDENTITY,
 	status BIT NOT NULL DEFAULT 1,
@@ -228,7 +228,10 @@ CREATE PROCEDURE SAM_addNewMatch @hostClubName VARCHAR(20), @guestClubName VARCH
     DECLARE @host_id INT, @guest_id INT;
     SELECT @host_id=C1.id FROM club C1 WHERE C1.name = @hostClubName;
     SELECT @guest_id=C2.id FROM club C2 WHERE C2.name = @guestClubName;
-    INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL);
+    IF NOT EXISTS (SELECT 1 FROM match M WHERE M.hostClub_id = @host_id AND M.guestClub_id = @guest_id AND M.startTime = @startTime AND M.endTime = @endTime)
+    BEGIN 
+        INSERT INTO match VALUES (@startTime, @endTime, @host_id, @guest_id, NULL)
+    END;
 GO;
 
 CREATE PROCEDURE SAM_deleteMatch @hostClubName VARCHAR(20), @guestClubName VARCHAR(20), @startTime DATETIME, @endTime DATETIME AS
@@ -479,15 +482,17 @@ GO;
 
 @startTime DATETIME) AS
 
-
+select * from fan
 select * from match
 select * from club
 select * from clubrepresentative
 select * from stadiummanager
 select * from hostrequest
 
-insert into hostRequest values (3,4 , 32, 'unhandled')
+insert into hostRequest values (2, 2 , 3, 'unhandled')
 exec SM_acceptRequest 'sm2', 'c1', 'c2', '2000-05-05 17:00:00.000'
 exec F_purchaseTicket 'fan1', 'c1', 'c2', '2000-05-05 17:00:00.000'
 
 representative, manager, match
+
+exec dropalltables
