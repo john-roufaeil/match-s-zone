@@ -448,11 +448,11 @@ CREATE PROCEDURE F_availableMatchesToAttend (@username VARCHAR(20)) AS
     )
 GO;
 
-exec F_purchaseTicket 'fan3', 5 
+-- exec F_purchaseTicket 'fan3', 5 
 CREATE PROCEDURE F_purchaseTicket (@username VARCHAR(20), @m_id INT) AS
     DECLARE @nat_id VARCHAR(20), @t_id INT;
     SELECT @nat_id=F.national_id FROM fan F WHERE F.username = @username;
-    SELECT @t_id=T.id FROM ticket T WHERE T.match_id = @m_id;
+    SELECT @t_id=T.id FROM ticket T WHERE T.match_id = @m_id AND T.status = 1;
     IF EXISTS (SELECT 1 FROM fan, ticket WHERE fan.status = 1 AND fan.national_id = @nat_id AND ticket.status = 1 AND ticket.match_id = @m_id)
     AND NOT EXISTS (SELECT 1 FROM ticketBuyingTransaction TBT INNER JOIN ticket T ON TBT.ticket_id = @t_id WHERE TBT.fanNational_id = @nat_id)
     BEGIN 
@@ -463,7 +463,7 @@ CREATE PROCEDURE F_purchaseTicket (@username VARCHAR(20), @m_id INT) AS
     END
 GO;
 
-
+select * from ticket
 
 CREATE PROCEDURE F_viewMyTickets (@username VARCHAR(20)) AS
     SELECT T.id, HC.name AS host, GC.name AS guest, M.startTime, M.endTime, S.name, S.location

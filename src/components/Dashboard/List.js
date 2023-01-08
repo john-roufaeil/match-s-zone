@@ -545,7 +545,7 @@ const List = props => {
         return  <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>Ticket ID</th>
                             <th>Host Club</th>
                             <th>Guest Club</th>
                             <th>Start Time</th>
@@ -563,8 +563,6 @@ const List = props => {
     const viewAvailableTickets = () => {
         const data = availableTickets.map((ticket) => {
             const purchaseTicket = async (e) => {
-                console.log({loggedInUser}.loggedInUser);
-                console.log(parseInt({ticket}.ticket.id));
                 e.preventDefault();
                 await fetch(`http://localhost:5000/purchaseTicket`, {
                     method: 'POST', 

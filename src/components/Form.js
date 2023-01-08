@@ -20,7 +20,17 @@ const Form = props => {
     const [users, setUsers] = useState([]);
     const [stadiumManagers, setStadiumManagers] = useState([]);
     const [clubRepresentatives, setClubRepresentatives] = useState([]);
-    const [changed, setChanged] = useState("");
+    const [stadiums, setStadiums] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewStadiums')
+        .then(res => setStadiums(res.data))
+    }, [stadiums]);
+
+    const [clubs, setClubs] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewClubs')
+        .then(res => setClubs(res.data))
+    }, [clubs]);
     
     const [errMsg, setErrMsg] = useState("");
     const errorRef = useRef();
@@ -283,19 +293,26 @@ const Form = props => {
     const submitNewCR = async (e) => {
         e.preventDefault(); 
         var exisitingUsername = false;
+        var takenClub = false;
+        var invalidClub = true;
         users.forEach(user => {
             if (user.username == username) {
                 exisitingUsername = true;
             }
         });
-        var takenClub = false;
         clubRepresentatives.forEach(rep => {
             if (rep.name == clubName) {
                 takenClub = true;
             }
         });
+        clubs.forEach(club => {
+            if (club.name == clubName) {
+                invalidClub = false;
+            }
+        });
         if (exisitingUsername) setErrMsg("This username is unavailable")
         else if (takenClub) setErrMsg("This club already has a representative")
+        else if (invalidClub) setErrMsg("This club does not exist")
         else {
             const newData = await fetch('http://localhost:5000/newCR', {
                 method: 'POST', 
@@ -384,19 +401,26 @@ const Form = props => {
     const submitNewSM = async (e) => {
         e.preventDefault(); 
         var exisitingUsername = false;
+        var takenStadium = false;
+        var invalidStadium = true;
         users.forEach(user => {
             if (user.username == username) {
                 exisitingUsername = true;
             }
         });
-        var takenStadium = false;
         stadiumManagers.forEach(manager => {
             if (manager.name == stadiumName) {
                 takenStadium = true;
             }
         });
+        stadiums.forEach(stadium => {
+            if (stadium.name == stadiumName) {
+                invalidStadium = false;
+            }
+        });
         if (exisitingUsername) setErrMsg("This username is unavailable")
         else if (takenStadium) setErrMsg("This stadium already has a manager")
+        else if (invalidStadium) setErrMsg("This stadium does not exist")
         else {
             const newData = await fetch('http://localhost:5000/newSM', {
                 method: 'POST', 
