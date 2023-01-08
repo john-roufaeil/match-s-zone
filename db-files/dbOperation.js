@@ -12,6 +12,26 @@ const getUsers = async() => {
     }
 }
 
+const getStadiumManagers = async() => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC viewStadiumManagers`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const getClubRepresentatives = async() => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC viewClubRepresentatives`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 // Admin //
@@ -370,6 +390,8 @@ const viewAvailableTickets = async (time) => {
 
 module.exports = {
     getUsers,
+    getStadiumManagers,
+    getClubRepresentatives,
 
     addClub,
     delClub,

@@ -18,6 +18,8 @@ const Form = props => {
     const [clubName, setClubName] = useState("");
     const [stadiumName, setStadiumName] = useState("");
     const [users, setUsers] = useState([]);
+    const [stadiumManagers, setStadiumManagers] = useState([]);
+    const [clubRepresentatives, setClubRepresentatives] = useState([]);
     const [changed, setChanged] = useState("");
     
     const [errMsg, setErrMsg] = useState("");
@@ -34,8 +36,9 @@ const Form = props => {
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/getUsers')
-            .then(res => setUsers(res.data))
+        axios.get('http://localhost:5000/getUsers').then(res => setUsers(res.data))
+        axios.get('http://localhost:5000/getStadiumManagers').then(res => setStadiumManagers(res.data))
+        axios.get('http://localhost:5000/getClubRepresentatives').then(res => setClubRepresentatives(res.data))
     }, []);
 
     const getIsFormValid = type => {
@@ -65,7 +68,7 @@ const Form = props => {
         e.preventDefault(); 
         var exisitingUsername = false;
         users.forEach(user => {
-            if (user.username === username) {
+            if (user.username == username) {
                 exisitingUsername = true;
             }
         });
@@ -199,7 +202,7 @@ const Form = props => {
         e.preventDefault(); 
         var exisitingUsername = false;
         users.forEach(user => {
-            if (user.username === username) {
+            if (user.username == username) {
                 exisitingUsername = true;
             }
         });
@@ -281,11 +284,18 @@ const Form = props => {
         e.preventDefault(); 
         var exisitingUsername = false;
         users.forEach(user => {
-            if (user.username === username) {
+            if (user.username == username) {
                 exisitingUsername = true;
             }
         });
+        var takenClub = false;
+        clubRepresentatives.forEach(rep => {
+            if (rep.name == clubName) {
+                takenClub = true;
+            }
+        });
         if (exisitingUsername) setErrMsg("This username is unavailable")
+        else if (takenClub) setErrMsg("This club already has a representative")
         else {
             const newData = await fetch('http://localhost:5000/newCR', {
                 method: 'POST', 
@@ -375,11 +385,18 @@ const Form = props => {
         e.preventDefault(); 
         var exisitingUsername = false;
         users.forEach(user => {
-            if (user.username === username) {
+            if (user.username == username) {
                 exisitingUsername = true;
             }
         });
+        var takenStadium = false;
+        stadiumManagers.forEach(manager => {
+            if (manager.name == stadiumName) {
+                takenStadium = true;
+            }
+        });
         if (exisitingUsername) setErrMsg("This username is unavailable")
+        else if (takenStadium) setErrMsg("This stadium already has a manager")
         else {
             const newData = await fetch('http://localhost:5000/newSM', {
                 method: 'POST', 
@@ -473,9 +490,9 @@ const Form = props => {
         var foundPw = false;
         var type = "";
         users.forEach(user => {
-            if (user.username === username) {
+            if (user.username == username) {
                 foundUsr = true;
-                if (user.password === password) {
+                if (user.password == password) {
                     foundPw = true;
                     type = user.type;
                 }

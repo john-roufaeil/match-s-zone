@@ -480,6 +480,19 @@ CREATE PROCEDURE F_viewMyTickets (@username VARCHAR(20)) AS
     WHERE F.username = @username
 GO;
 
+CREATE PROCEDURE viewStadiumManagers AS
+    SELECT SM.id, S.name
+    FROM stadiumManager SM
+    INNER JOIN stadium S ON SM.stadium_id = S.id
+GO;
+
+CREATE PROCEDURE viewClubRepresentatives AS
+    SELECT CR.id, C.name
+    FROM clubRepresentative CR
+    INNER JOIN club C ON CR.club_id = C.id
+GO;
+
+
 @startTime DATETIME) AS
 
 select * from fan

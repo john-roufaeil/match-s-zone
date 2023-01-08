@@ -21,6 +21,16 @@ app.get('/getUsers', jsonParser, async(req, res) => {
     const result = await dbOperation.getUsers();
     res.send(JSON.stringify(result.recordset));
 })
+
+app.get('/getStadiumManagers', jsonParser, async(req, res) => {
+    const result = await dbOperation.getStadiumManagers();
+    res.send(JSON.stringify(result.recordset));
+})
+
+app.get('/getClubRepresentatives', jsonParser, async(req, res) => {
+    const result = await dbOperation.getClubRepresentatives();
+    res.send(JSON.stringify(result.recordset));
+})
  
 // Admin //
 app.post('/addClub', jsonParser, async (req, res) => {
