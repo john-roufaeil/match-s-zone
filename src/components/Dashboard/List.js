@@ -3,6 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import open from "../../assets/icons/actions/open.png"
 import close from "../../assets/icons/actions/close.png"
 import request from "../../assets/icons/actions/request.png"
+import requestDisabled from "../../assets/icons/actions/request-disabled.png"
 import { UserContext } from '../../UserContext';
 import accept from "../../assets/icons/actions/accept.png"
 import acceptDisabled from "../../assets/icons/actions/accept-disabled.png"
@@ -13,7 +14,6 @@ import tct from "../../assets/icons/actions/tct.png"
 
 const List = props => {
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
-    // const {errMsg, setErrMsg} = useContext(false);
 
     const [stadiums, setStadiums] = useState([]);
     useEffect(() => {
@@ -122,7 +122,15 @@ const List = props => {
           })
         .then(res => setAvailableTickets(res.data))
     }, [availableTickets]);
+
+    const [clubRepresentatives, setClubRepresentatives] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/getClubRepresentatives').then(res => setClubRepresentatives(res.data))
+    }, []);
+
     
+
+
     const viewStadiums = () => {
         const data = stadiums.map((stadium) => {
             const name = stadium.name;
@@ -491,13 +499,28 @@ const List = props => {
     }
 
     const viewMatchesForClub = () => {
+        const clickRequest = (e) => {
+            e.preventDefault();
+        }
         const data = myUpcomingMatches.map((match) => {
+            var isHost = false;
+            clubRepresentatives.forEach(cr => {
+                if (cr.name == match.club && cr.username == loggedInUser) 
+                    isHost = true;
+            });
             return  <tr key = {`${match.club}, ${match.competent}, ${match.startTime}`} className="fade-in">
                         <td>{match.club}</td>
                         <td>{match.competent}</td>
                         <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
                         <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
-                        <td>{match.name?match.name:<img width="49px" alt="" src={request}/>}</td>
+                        <td>{match.name 
+                            ? match.name 
+                            : isHost 
+                            ? <button onClick={clickRequest} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'auto'}}>
+                                <img width="50px" src={request} alt="alternative text" title="Send a host request" /> 
+                              </button>
+                            : <img style={{cursor: 'not-allowed'}}width="50px" src={requestDisabled}  alt="alternative text" title={"You are not the hosting club,\n cannot send a host request"} />}
+                        </td>
                     </tr>
         });
         return  <table>

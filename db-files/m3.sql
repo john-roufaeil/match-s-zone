@@ -484,7 +484,7 @@ CREATE PROCEDURE viewStadiumManagers AS
 GO;
 
 CREATE PROCEDURE viewClubRepresentatives AS
-    SELECT CR.id, C.name
+    SELECT CR.id, C.name, CR.username
     FROM clubRepresentative CR
     INNER JOIN club C ON CR.club_id = C.id
 GO;
