@@ -40,7 +40,6 @@ const Dashboard = props => {
         <main className="dashboardMain">
             <Manipulate object={selected} action="add" />
             <Manipulate object={selected} action="delete" />
-            <Choose object={selected} />
             <List object={selected} />
         </main>
         <Footer />

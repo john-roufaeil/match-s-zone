@@ -169,6 +169,12 @@ app.post('/rejectRequest', jsonParser, async (req, res) => {
     return res.send(result.recordset);
 })
 
+app.post('/viewMatchesOnStadium', jsonParser, async (req, res) => {
+    const result = await dbOperation.viewMatchesOnStadium(req.body.username);
+    return res.send(result.recordset);
+})
+
+
 
 
 // Fan //

@@ -34,8 +34,13 @@ const Form = props => {
     }, [clubs]);
 
     useEffect(() => {
+        try {
         axios.get('http://localhost:5000/viewFans')
         .then(res => setFans(res.data))
+        } catch(e) {
+            console.log(e);
+            setErrMsg("Server Error")
+        }
     }, [fans]);
     
     const [errMsg, setErrMsg] = useState("");
@@ -84,6 +89,7 @@ const Form = props => {
 
 
     const submitNewF = async (e) => {
+        try {
         e.preventDefault(); 
         var exisitingUsername = false;
         users.forEach(user => {
@@ -113,6 +119,10 @@ const Form = props => {
             .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
+        }
+        } catch(e) {
+            console.log(e);
+            setErrMsg("Server Error");
         }
     };
     const fanForm = () => {
@@ -517,6 +527,7 @@ const Form = props => {
     const navigate = useNavigate();
 
     const logIn = (e) => {
+        try {
         e.preventDefault();
         var foundUsr = false;
         var foundPw = false;
@@ -550,6 +561,10 @@ const Form = props => {
             }
             setLoggedInUser(username);
         }
+        } catch (e) {
+            console.log(e);
+            setErrMsg("Server Error")
+        }      
     };
     const logInForm = () => {
         return  <FadeIn><div>

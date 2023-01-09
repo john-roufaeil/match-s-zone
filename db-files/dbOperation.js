@@ -345,6 +345,17 @@ const rejectRequest = async (username, host, guest, startTime) => {
     }
 }
 
+const viewMatchesOnStadium = async (username) => {
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC SM_viewMatchesOnStadium ${username}`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 
 // Fan //
 const addNewF = async (name, username, password, nat_id, birthdate, address, phone) => {
@@ -431,6 +442,7 @@ module.exports = {
     viewMyRequests,
     acceptRequest,
     rejectRequest,
+    viewMatchesOnStadium,
     
     addNewF,
     viewMyTickets,

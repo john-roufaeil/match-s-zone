@@ -315,7 +315,10 @@ CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@username VARCHAR(20)) AS
 	LEFT JOIN stadium S ON S.id = M.stadium_id
 	WHERE (CR.username = @username) AND M.startTime > CURRENT_TIMESTAMP) 
 GO;
---View all available stadiums starting at a certain date (in a form of stadium name, location andcapacity).
+
+exec CR_viewAvailableStadiumsFrom '2000-05-05 17:00:00.000'
+
+-- CHECK THAT THIS STADIUM DOES NOT HOST A MATCH DURING THE SELECTED TIMES
 CREATE PROCEDURE CR_viewAvailableStadiumsFrom (@date DATETIME) AS
 	SELECT DISTINCT SA.name, SA.location, SA.capacity
 	FROM Stadium SA
@@ -324,13 +327,9 @@ GO;
 
 
 CREATE PROCEDURE CR_viewMyClub (@username VARCHAR(20)) AS
-    -- DECLARE @club_id INT;
-    -- SELECT @club_id=CR.club_id FROM clubRepresentative CR WHERE CR.id = @clubRepresentative_id;
-
     SELECT C.id, C.name, C.location
     FROM club C
     INNER JOIN clubRepresentative CR ON C.id = CR.club_id AND CR.username = @username
-    -- WHERE CR.username = @username;
 GO;
 
 --/ Stadium Manager /-- 
@@ -411,6 +410,17 @@ CREATE PROCEDURE SM_viewMyStadium (@username VARCHAR(20)) AS
     FROM stadium S
     INNER JOIN stadiumManager SM ON S.id = SM.stadium_id
     WHERE SM.username = @username;
+GO;
+
+CREATE PROCEDURE SM_viewMatchesOnStadium (@userStadiumManager VARCHAR(20)) AS
+	SELECT CR.name clubRepresentative, HC.name, GC.name guestClub, M.startTime, M.endTime, M.id
+	FROM hostRequest HR 
+	INNER JOIN clubRepresentative CR ON HR.representative_id = CR.id
+	INNER JOIN match M ON HR.match_id = M.id
+    INNER JOIN club HC ON M.hostClub_id = HC.id
+	INNER JOIN club GC ON M.guestClub_id = GC.id
+	INNER JOIN stadiumManager SM ON HR.manager_id = SM.id
+	WHERE @userStadiumManager = SM.username AND HR.status = 'accepted';
 GO;
 
 

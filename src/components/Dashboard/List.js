@@ -15,6 +15,8 @@ import tct from "../../assets/icons/actions/tct.png"
 const List = props => {
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
 
+    const [selectTime, setSelectTime] = useState("");
+
     const [stadiums, setStadiums] = useState([]);
     useEffect(() => {
         axios.get('http://localhost:5000/viewStadiums')
@@ -112,6 +114,17 @@ const List = props => {
         .then(res => setMyRequests(res.data))
     }, [myRequests]);
 
+    const [matchesOnStadium, setMatchesOnStadium] = useState([]);
+    useEffect(() => {
+        axios.post('http://localhost:5000/viewMatchesOnStadium', {username: loggedInUser}, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          })
+        .then(res => setMatchesOnStadium(res.data))
+    }, [matchesOnStadium]);
+
     const [availableTickets, setAvailableTickets] = useState([]);
     useEffect(() => {
         axios.post('http://localhost:5000/viewAvailableTickets', {username: {loggedInUser}.loggedInUser}, {
@@ -170,8 +183,8 @@ const List = props => {
                         <td>{stadium.capacity}</td>
                         <td>{stadium.status?'Available':'Unavailable'}</td>
                         <td>{stadium.status
-                            ?<form onSubmit={closeStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} alt="" /></button></form>
-                            :<form onSubmit={openStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} alt="" /></button></form>}
+                            ?<form onSubmit={closeStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} alt="alternative text" title="Set stadium as unavailable" /></button></form>
+                            :<form onSubmit={openStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} alt="alternative text" title="Set stadium as available" /></button></form>}
                         </td>
                     </tr>
         });
@@ -446,14 +459,14 @@ const List = props => {
                         <td>{request.status}</td>
                         <td>{request.status === "unhandled" 
                             ? <button onClick={acceptRequest} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}>
-                                <img width="30px" style={{"borderRadius":"5px"}} alt="" src={accept} />
+                                <img width="30px" style={{"borderRadius":"5px"}} alt="alternative text" title="Accept this host request" src={accept} />
                               </button>
-                            : <img width="30px" style={{"borderRadius":"5px"}} alt="" src={acceptDisabled} />}</td>
+                            : <img width="30px" style={{"borderRadius":"5px"}} alt="alternative text" title={"You already responded\n to this request"} src={acceptDisabled} />}</td>
                         <td>{request.status === "unhandled" 
                             ? <button onClick={rejectRequest} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}>
-                                <img width="30px" style={{"borderRadius":"5px"}} alt="" src={refuse} />
+                                <img width="30px" style={{"borderRadius":"5px"}} src={refuse} alt="alternative text" title="Reject this host request" />
                               </button>
-                            : <img width="30px" style={{"borderRadius":"5px"}} alt="" src={refuseDisabled} />}</td>
+                            : <img width="30px" style={{"borderRadius":"5px"}} alt="alternative text" title={"You already responded\n to this request"} src={refuseDisabled} />}</td>
                     </tr>
 
         });
@@ -468,6 +481,37 @@ const List = props => {
                             <th>Status</th>
                             <th className="actionColumn">Accept</th>
                             <th className="actionColumn">Refuse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data}
+                    </tbody>
+                </table>
+    }
+
+    const viewMatchesOnStadium = () => {
+        var i = 0;
+        const data = matchesOnStadium.map((match) => {
+            console.log(match);
+            i++;
+            return  <tr key={match.id} className="fade-in">
+                        <td>{match.id}</td>
+                        <td>{match.clubRepresentative}</td>
+                        <td>{match.name}</td>
+                        <td>{match.guestClub}</td>
+                        <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
+                        <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
+                    </tr>
+        });
+        return  <table>
+                    <thead>
+                        <tr>
+                            <th>Match ID</th>
+                            <th>Host Club Representative</th>
+                            <th>Host Club</th>
+                            <th>Guest Club</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -538,19 +582,25 @@ const List = props => {
                     </tbody>
                 </table>
     }
-
+    console.log(selectTime)
     const viewAvailableStadiums = () => {
-        return  <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Location</th>
-                            <th>Capacity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+        return  <>
+                    <div className="newEntry">
+                        <p>View Available Stadiums Starting From</p>
+                        <input className="choose" type="datetime-local" value={selectTime} onChange={(e) => {setSelectTime(e.target.value)}} />
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Capacity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </>
     }
 
     const viewMyTickets = () => {
@@ -610,7 +660,7 @@ const List = props => {
                         <td>
                             <form onSubmit={purchaseTicket}>
                                 <button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'auto'}}>
-                                    <img width="30px" src={tct} alt="" />
+                                    <img width="30px" src={tct} alt="alternative text" title="Purchase ticket" />
                                 </button>
                             </form>
                         </td>
@@ -653,6 +703,8 @@ const List = props => {
             return viewMyStadium();
         case "requests":
             return viewRequests();
+        case "matchesOnStadium":
+            return viewMatchesOnStadium();
         case "myClub":
             return viewMyClub();
         case "matchesForStadium":
