@@ -4,7 +4,6 @@ import FadeIn from 'react-fade-in';
 import { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from '../UserContext';
-import exc from "../assets/gifs/exclamation.gif"
 
 
 const Form = props => { 
@@ -97,7 +96,11 @@ const Form = props => {
                 exisitingUsername = true;   
             }
         });
-        if (exisitingUsername) setErrMsg("This username is unavailable")
+        if (exisitingUsername) setErrMsg("This username is unavailable.")
+        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces.")
+        else if (password.length < 8) setErrMsg("Password must be at least 8 characters long.")
+        else if (parseInt(birthDate.substring(0,4)) > parseInt((new Date().getFullYear()))) setErrMsg("Please enter a valid birth date.")
+        else if (parseInt(birthDate.substring(0,4)) + 16 >= parseInt((new Date().getFullYear()))) setErrMsg("You must be at least 16 years old to register.")
         else {
             const newData = await fetch('http://localhost:5000/newF', {
                 method: 'POST', 
@@ -234,7 +237,9 @@ const Form = props => {
                 exisitingUsername = true;
             }
         });
-        if (exisitingUsername) setErrMsg("This username is unavailable")
+        if (exisitingUsername) setErrMsg("This username is unavailable.")
+        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces.")
+        else if (password.length < 8) setErrMsg("Password must be at least 8 characters long.")
         else {
             const newData = await fetch('http://localhost:5000/newSAM', {
                 method: 'POST', 
@@ -328,9 +333,11 @@ const Form = props => {
                 invalidClub = false;
             }
         });
-        if (exisitingUsername) setErrMsg("This username is unavailable")
-        else if (takenClub) setErrMsg("This club already has a representative")
-        else if (invalidClub) setErrMsg("This club does not exist")
+        if (exisitingUsername) setErrMsg("This username is unavailable.")
+        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces.")
+        else if (password.length < 8) setErrMsg("Password must be at least 8 characters long.")
+        else if (invalidClub) setErrMsg("This club does not exist.")
+        else if (takenClub) setErrMsg("This club already has a representative.")
         else {
             const newData = await fetch('http://localhost:5000/newCR', {
                 method: 'POST', 
@@ -439,6 +446,7 @@ const Form = props => {
         if (exisitingUsername) setErrMsg("This username is unavailable")
         else if (takenStadium) setErrMsg("This stadium already has a manager")
         else if (invalidStadium) setErrMsg("This stadium does not exist")
+        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces")
         else {
             const newData = await fetch('http://localhost:5000/newSM', {
                 method: 'POST', 
@@ -568,7 +576,7 @@ const Form = props => {
     };
     const logInForm = () => {
         return  <FadeIn><div>
-                <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}<img width="13px" src={exc}/></p>
+                <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
                 <form autoComplete='new-password' className="logInForm" > 
                     <div className="field"> 
                         <label htmlFor="username">Username</label><br />
