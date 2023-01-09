@@ -226,8 +226,10 @@ th {
 
 
 .offscreen {
-    position: absolute;
-    left: -9999px;
+    /* position: absolute;
+    left: -9999px; */
+    color: transparent;
+    background-color: transparent;
 }
 
 .errMsg {

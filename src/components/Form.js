@@ -38,7 +38,8 @@ const Form = props => {
         .then(res => setFans(res.data))
         } catch(e) {
             console.log(e);
-            setErrMsg("Server Error")
+            setErrMsg("Server Error");
+            setSuccessMsg("");
         }
     }, [fans]);
     
@@ -96,11 +97,11 @@ const Form = props => {
                 exisitingUsername = true;   
             }
         });
-        if (exisitingUsername) setErrMsg("This username is unavailable.")
-        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces.")
-        else if (password.length < 8) setErrMsg("Password must be at least 8 characters long.")
-        else if (parseInt(birthDate.substring(0,4)) > parseInt((new Date().getFullYear()))) setErrMsg("Please enter a valid birth date.")
-        else if (parseInt(birthDate.substring(0,4)) + 16 >= parseInt((new Date().getFullYear()))) setErrMsg("You must be at least 16 years old to register.")
+        if (exisitingUsername) {setErrMsg("This username is unavailable."); setSuccessMsg("");}
+        else if (username.includes(" ")) {setErrMsg("Username cannot contain spaces."); setSuccessMsg("");}
+        else if (password.length < 8) {setErrMsg("Password must be at least 8 characters long."); setSuccessMsg("");}
+        else if (parseInt(birthDate.substring(0,4)) > parseInt((new Date().getFullYear()))) {setErrMsg("Please enter a valid birth date."); setSuccessMsg("");}
+        else if (parseInt(birthDate.substring(0,4)) + 16 >= parseInt((new Date().getFullYear()))) {setErrMsg("You must be at least 16 years old to register."); setSuccessMsg("");}
         else {
             const newData = await fetch('http://localhost:5000/newF', {
                 method: 'POST', 
@@ -122,10 +123,12 @@ const Form = props => {
             .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
+            .then(setErrMsg(""));
         }
         } catch(e) {
             console.log(e);
             setErrMsg("Server Error");
+            setSuccessMsg("");
         }
     };
     const fanForm = () => {
@@ -142,7 +145,7 @@ const Form = props => {
                                 id = "name" 
                                 name = "name"
                                 value = {name}
-                                onChange={(e) => {setName(e.target.value)}}
+                                onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("")}}
                                 required
                             />
                         </div>
@@ -155,7 +158,7 @@ const Form = props => {
                                 id = "username" 
                                 name = "username"
                                 value = {username}
-                                onChange={(e) => {setUsername(e.target.value)}}
+                                onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
@@ -168,7 +171,7 @@ const Form = props => {
                                 id = "password" 
                                 name = "password"
                                 value = {password}
-                                onChange={(e) => {setPassword(e.target.value)}}
+                                onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                                 autoComplete='new-password'
                             />
@@ -181,7 +184,7 @@ const Form = props => {
                                 type= "text"
                                 id = "nationalId" 
                                 name = "nationalId"
-                                onChange={(e) => {setNationalId(e.target.value)}}
+                                onChange={(e) => {setNationalId(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 value = {nationalId}
                                 required
                             />
@@ -195,7 +198,7 @@ const Form = props => {
                                 id = "birthDate" 
                                 name = "birthDate"
                                 value = {birthDate}
-                                onChange={(e) => {setBirthDate(e.target.value)}}
+                                onChange={(e) => {setBirthDate(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                         <div className="field">
@@ -207,7 +210,7 @@ const Form = props => {
                                 id = "address" 
                                 name = "address"
                                 value = {address}
-                                onChange={(e) => {setAddress(e.target.value)}}
+                                onChange={(e) => {setAddress(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                         <div className="field">
@@ -219,7 +222,7 @@ const Form = props => {
                                 id = "phone" 
                                 name = "phone"
                                 value = {phone}
-                                onChange={(e) => {setPhone(e.target.value)}}
+                                onChange={(e) => {setPhone(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                         <button type="submit" disabled={!getIsFormValid("fan")}> 
@@ -237,9 +240,9 @@ const Form = props => {
                 exisitingUsername = true;
             }
         });
-        if (exisitingUsername) setErrMsg("This username is unavailable.")
-        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces.")
-        else if (password.length < 8) setErrMsg("Password must be at least 8 characters long.")
+        if (exisitingUsername) {setErrMsg("This username is unavailable."); setSuccessMsg("");}
+        else if (username.includes(" ")) {setErrMsg("Username cannot contain spaces."); setSuccessMsg("");}
+        else if (password.length < 8) {setErrMsg("Password must be at least 8 characters long."); setSuccessMsg("");}
         else {
             const newData = await fetch('http://localhost:5000/newSAM', {
                 method: 'POST', 
@@ -257,6 +260,7 @@ const Form = props => {
             .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
+            .then(setErrMsg(""));
         }
     };
     const managerForm = () => {
@@ -273,7 +277,7 @@ const Form = props => {
                                 id ="name" 
                                 name = "name"
                                 value = {name}
-                                onChange={(e) => {setName(e.target.value);}}
+                                onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
@@ -286,7 +290,7 @@ const Form = props => {
                                 id ="username" 
                                 name="username"
                                 value = {username}
-                                onChange={(e) => {setUsername(e.target.value)}}
+                                onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
@@ -297,9 +301,7 @@ const Form = props => {
                             <input
                                 required
                                 value = {password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                }}
+                                onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 name="password"
                                 id ="password" 
                                 type="password"
@@ -333,11 +335,11 @@ const Form = props => {
                 invalidClub = false;
             }
         });
-        if (exisitingUsername) setErrMsg("This username is unavailable.")
-        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces.")
-        else if (password.length < 8) setErrMsg("Password must be at least 8 characters long.")
-        else if (invalidClub) setErrMsg("This club does not exist.")
-        else if (takenClub) setErrMsg("This club already has a representative.")
+        if (exisitingUsername) {setErrMsg("This username is unavailable."); setSuccessMsg("");}
+        else if (username.includes(" ")) {setErrMsg("Username cannot contain spaces."); setSuccessMsg("");}
+        else if (password.length < 8) {setErrMsg("Password must be at least 8 characters long."); setSuccessMsg("");}
+        else if (invalidClub) {setErrMsg("This club does not exist."); setSuccessMsg("");}
+        else if (takenClub) {setErrMsg("This club already has a representative."); setSuccessMsg("");}
         else {
             const newData = await fetch('http://localhost:5000/newCR', {
                 method: 'POST', 
@@ -356,6 +358,7 @@ const Form = props => {
             .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
+            .then(setErrMsg(""))
         }
     };
     const clubRepresentativeForm = () => {
@@ -372,7 +375,7 @@ const Form = props => {
                             id = "name"
                             name = "name" 
                             value = {name}
-                            onChange={(e) => {setName(e.target.value)}}
+                            onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                         />
                     </div>
@@ -385,7 +388,7 @@ const Form = props => {
                             id = "username" 
                             name = "username"
                             value = {username}
-                            onChange={(e) => {setUsername(e.target.value)}}
+                            onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                         />
                     </div>
@@ -398,7 +401,7 @@ const Form = props => {
                             id ="password" 
                             name = "password"
                             value = {password}
-                            onChange={(e) => {setPassword(e.target.value)}}
+                            onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             autoComplete="new-password"
                             required
                         />
@@ -412,7 +415,7 @@ const Form = props => {
                             id = "clubName" 
                             name = "name"
                             value = {clubName}
-                            onChange={(e) => {setClubName(e.target.value)}}
+                            onChange={(e) => {setClubName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                         />
                     </div>
@@ -443,11 +446,11 @@ const Form = props => {
                 invalidStadium = false;
             }
         });
-        if (exisitingUsername) setErrMsg("This username is unavailable.")
-        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces.")
-        else if (password.length < 8) setErrMsg("Password must be at least 8 characters long.")
-        else if (takenStadium) setErrMsg("This stadium already has a manager.")
-        else if (invalidStadium) setErrMsg("This stadium does not exist.")
+        if (exisitingUsername) {setErrMsg("This username is unavailable."); setSuccessMsg("");}
+        else if (username.includes(" ")) {setErrMsg("Username cannot contain spaces."); setSuccessMsg("");}
+        else if (password.length < 8) {setErrMsg("Password must be at least 8 characters long."); setSuccessMsg("");}
+        else if (takenStadium) {setErrMsg("This stadium already has a manager."); setSuccessMsg("");}
+        else if (invalidStadium) {setErrMsg("This stadium does not exist."); setSuccessMsg("");}
         else {
             const newData = await fetch('http://localhost:5000/newSM', {
                 method: 'POST', 
@@ -466,6 +469,7 @@ const Form = props => {
             .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
+            .then(setErrMsg(""))
         }
     };
     const stadiumManagerForm = () => {
@@ -482,7 +486,7 @@ const Form = props => {
                                 id = "name" 
                                 name = "name"
                                 value = {name}
-                                onChange={(e) => {setName(e.target.value)}}
+                                onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
@@ -495,7 +499,7 @@ const Form = props => {
                                 id = "username" 
                                 name = "username"
                                 value = {username}
-                                onChange={(e) => {setUsername(e.target.value)}}
+                                onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
@@ -508,7 +512,7 @@ const Form = props => {
                                 id = "password" 
                                 name = "password"
                                 value = {password}
-                                onChange={(e) => {setPassword(e.target.value)}}
+                                onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 autoComplete='new-password'
                                 required
                             />
@@ -522,7 +526,7 @@ const Form = props => {
                                 id = "stadiumName" 
                                 name = "stadiumName"
                                 value = {stadiumName}
-                                onChange={(e) => {setStadiumName(e.target.value)}}
+                                onChange={(e) => {setStadiumName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
@@ -557,9 +561,11 @@ const Form = props => {
             }
         });
         if (!foundUsr || !foundPw) {
-            setErrMsg("Invalid username or password")
+            setErrMsg("Invalid username or password.");
+            setSuccessMsg("");
         } else if (blockedFan) {
-            setErrMsg("Sorry, your account is blocked")
+            setErrMsg("Sorry, your account is blocked.");
+            setSuccessMsg("");
         } else {
             switch(type) {
                 case 0: navigate("/admin-dashboard"); break;
@@ -572,7 +578,8 @@ const Form = props => {
         }
         } catch (e) {
             console.log(e);
-            setErrMsg("Server Error")
+            setErrMsg("Server Error");
+            setSuccessMsg("");
         }      
     };
     const logInForm = () => {
@@ -587,7 +594,7 @@ const Form = props => {
                             value = {username}
                             autoComplete="new-password"
                             autoFocus="on"
-                            onChange={(e) => {setUsername(e.target.value);}}
+                            onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                         />
                     </div>
@@ -600,7 +607,7 @@ const Form = props => {
                             id ="password" 
                             value = {password}
                             autoComplete="new-password"
-                            onChange={(e) => {setPassword(e.target.value);}}
+                            onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                             
                         />
