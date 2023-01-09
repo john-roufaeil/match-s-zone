@@ -592,7 +592,6 @@ const List = props => {
                 </table>
     }
     const viewAvailableStadiums = () => {
-        console.log(`list: ${availableStadiums}`);
         const data = availableStadiums.map((stadium) => {
             return  <tr key = {stadium.id} className="fade-in">
                         <td>{stadium.name}</td>

@@ -38,7 +38,7 @@ const getClubRepresentatives = async() => {
 const addClub = async (name, location) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SA_addClub ${name}, ${location}`);
+        let exec = await pool.request().query(`EXEC SA_addClub [${name}], [${location}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -48,7 +48,7 @@ const addClub = async (name, location) => {
 const delClub = async (name) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SA_deleteClub ${name}`);
+        let exec = await pool.request().query(`EXEC SA_deleteClub [${name}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -58,7 +58,7 @@ const delClub = async (name) => {
 const addStadium = async (name, location, capacity) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SA_addStadium ${name}, ${location}, ${capacity}`);
+        let exec = await pool.request().query(`EXEC SA_addStadium [${name}], [${location}], [${capacity}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -68,7 +68,7 @@ const addStadium = async (name, location, capacity) => {
 const delStadium = async (name) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SA_deleteStadium ${name}`);
+        let exec = await pool.request().query(`EXEC SA_deleteStadium [${name}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -78,7 +78,7 @@ const delStadium = async (name) => {
 const blockFan = async (nat_id) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SA_blockFan ${nat_id}`);
+        let exec = await pool.request().query(`EXEC SA_blockFan [${nat_id}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -88,7 +88,7 @@ const blockFan = async (nat_id) => {
 const unblockFan = async (nat_id) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SA_unblockFan ${nat_id}`);
+        let exec = await pool.request().query(`EXEC SA_unblockFan[${nat_id}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -128,7 +128,7 @@ const viewFans = async () => {
 const openStadium = async (name) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SA_openStadium ${name}`);
+        let exec = await pool.request().query(`EXEC SA_openStadium[${name}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -138,7 +138,7 @@ const openStadium = async (name) => {
 const closeStadium = async (name) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SA_closeStadium ${name}`);
+        let exec = await pool.request().query(`EXEC SA_closeStadium[${name}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -151,7 +151,7 @@ const closeStadium = async (name) => {
 const addNewSAM = async (name, username, password) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SAM_addAssociationManager ${name}, ${username}, ${password}`);
+        let exec = await pool.request().query(`EXEC SAM_addAssociationManager[${name}],[${username}],[${password}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -172,7 +172,7 @@ const addNewMatch = async (host, guest, startTime, endTime) => {
         eMin = parseInt(endTime).toString().slice(10);
         let pool = await sql.connect(config);
         let exec = await pool.request().query(`EXEC SAM_addNewMatch 
-            ${host}, ${guest}, 
+           [${host}],[${guest}], 
             '${sYear}-${sMonth}-${sDay} ${sHour}:${sMin}', 
             '${eYear}-${eMonth}-${eDay} ${eHour}:${eMin}'
         `);
@@ -196,7 +196,7 @@ const delMatch = async (host, guest, startTime, endTime) => {
         eMin = parseInt(endTime).toString().slice(10);
         let pool = await sql.connect(config);
         let exec = await pool.request().query(`EXEC SAM_deleteMatch 
-            ${host}, ${guest}, 
+           [${host}],[${guest}], 
             '${sYear}-${sMonth}-${sDay} ${sHour}:${sMin}', 
             '${eYear}-${eMonth}-${eDay} ${eHour}:${eMin}'
         `);
@@ -252,7 +252,7 @@ const viewClubsNotScheduledTogether = async () => {
 const addNewCR = async (name, username, password, club) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC CR_addRepresentative ${name}, ${club}, ${username}, ${password}`);
+        let exec = await pool.request().query(`EXEC CR_addRepresentative[${name}],[${club}],[${username}],[${password}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -262,7 +262,7 @@ const addNewCR = async (name, username, password, club) => {
 const viewMyClub = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC CR_viewMyClub ${username}`);
+        let exec = await pool.request().query(`EXEC CR_viewMyClub[${username}]`);
         // console.log(exec);
         return exec;
     } catch (error) {
@@ -273,13 +273,12 @@ const viewMyClub = async (username) => {
 const myUpcomingMatches = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC CR_viewUpcomingMatchesOfClub ${username}`);
+        let exec = await pool.request().query(`EXEC CR_viewUpcomingMatchesOfClub[${username}]`);
         return exec;
     } catch (error) {
         console.log(error);
     }
 }
-
 const availableStadiumsOn = async (date) => {
     try {
         date = date.replaceAll('-', '').replaceAll(' ', '').replaceAll(':', '');
@@ -302,7 +301,7 @@ const availableStadiumsOn = async (date) => {
 const addNewSM = async (name, username, password, stadium) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SM_addStadiumManager ${name}, ${stadium}, ${username}, ${password}`);
+        let exec = await pool.request().query(`EXEC SM_addStadiumManager[${name}],[${stadium}],[${username}],[${password}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -312,7 +311,7 @@ const addNewSM = async (name, username, password, stadium) => {
 const viewMyStadium = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SM_viewMyStadium ${username}`);
+        let exec = await pool.request().query(`EXEC SM_viewMyStadium[${username}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -322,7 +321,7 @@ const viewMyStadium = async (username) => {
 const viewMyRequests = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SM_viewAllRequests ${username}`);
+        let exec = await pool.request().query(`EXEC SM_viewAllRequests[${username}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -337,7 +336,7 @@ const acceptRequest = async (username, host, guest, startTime) => {
         hour = parseInt(startTime).toString().slice(8,10);
         min = parseInt(startTime).toString().slice(10,12);
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SM_acceptRequest ${username}, ${host}, ${guest}, 
+        let exec = await pool.request().query(`EXEC SM_acceptRequest[${username}],[${host}],[${guest}], 
         '${year}-${month}-${day} ${hour}:${min}'`);
         return exec;
     } catch (error) {
@@ -353,8 +352,7 @@ const rejectRequest = async (username, host, guest, startTime) => {
         hour = parseInt(startTime).toString().slice(8,10);
         min = parseInt(startTime).toString().slice(10,12);
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SM_rejectRequest ${username}, ${host}, ${guest}, '${year}-${month}-${day} ${hour}:${min}'`);
-        console.log(JSON.stringify(`${year}-${month}-${day} ${hour}:${min}`));
+        let exec = await pool.request().query(`EXEC SM_rejectRequest[${username}],[${host}],[${guest}], '${year}-${month}-${day} ${hour}:${min}'`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -364,7 +362,7 @@ const rejectRequest = async (username, host, guest, startTime) => {
 const viewMatchesOnStadium = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC SM_viewMatchesOnStadium ${username}`);
+        let exec = await pool.request().query(`EXEC SM_viewMatchesOnStadium[${username}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -384,8 +382,8 @@ const addNewF = async (name, username, password, nat_id, birthdate, address, pho
         console.log(typeof(birthdate));
         let pool = await sql.connect(config);
         let exec = await pool.request().query(
-            `EXEC F_addFan ${name}, ${username}, ${password},
-            ${nat_id}, '${year}-${month}-${day}', ${address}, ${phone}`);
+            `EXEC F_addFan[${name}],[${username}],[${password}],
+           [${nat_id}], '${year}-${month}-${day}',[${address}],[${phone}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -395,7 +393,7 @@ const addNewF = async (name, username, password, nat_id, birthdate, address, pho
 const viewMyTickets = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC F_viewMyTickets ${username}`);
+        let exec = await pool.request().query(`EXEC F_viewMyTickets[${username}]`);
         // console.log(exec);
         return exec;
     } catch (error) {
@@ -406,7 +404,7 @@ const viewMyTickets = async (username) => {
 const viewAvailableTickets = async (username) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC F_availableMatchesToAttend ${username}`);
+        let exec = await pool.request().query(`EXEC F_availableMatchesToAttend[${username}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -416,7 +414,7 @@ const viewAvailableTickets = async (username) => {
 const purchaseTicket = async(username, id) => {
     try {
         let pool = await sql.connect(config);
-        let exec = await pool.request().query(`EXEC F_purchaseTicket ${username}, ${id}`)
+        let exec = await pool.request().query(`EXEC F_purchaseTicket[${username}],[${id}]`)
         return exec;
     } catch (error) {
         console.log(error);

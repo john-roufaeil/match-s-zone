@@ -149,7 +149,6 @@ GO;
 CREATE PROCEDURE SA_addClub @name VARCHAR(20), @location VARCHAR(20) AS
     INSERT INTO club VALUES (@name, @location);
 GO;
-
 CREATE PROCEDURE SA_deleteClub @name VARCHAR(20) AS -- cascade to delete representatives
     DECLARE @club_id INT;
     SELECT @club_id=C.id FROM club C WHERE C.name = @name;
@@ -315,7 +314,7 @@ CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@username VARCHAR(20)) AS
 	LEFT JOIN stadium S ON S.id = M.stadium_id
 	WHERE (CR.username = @username) AND M.startTime > CURRENT_TIMESTAMP) 
 GO;
-exec cr_viewavailablestadiumson '2023-02-01 12:00'
+exec cr_viewavailablestadiumson '2023-01-02 12:00'
 select * from match 
 -- exec CR_viewAvailableStadiumsFrom '2000-05-05 17:00:00.000'
 -- CHECK THAT THIS STADIUM DOES NOT HOST A MATCH DURING THE SELECTED TIMES
@@ -327,11 +326,10 @@ CREATE PROCEDURE CR_viewAvailableStadiumsOn (@date DATETIME) AS
     (
     SELECT DISTINCT S.id, S.name, S.location, S.capacity
 	FROM stadium S
-    INNER JOIN match M ON M.stadium_id = S.id AND M.startTime = @date
-	WHERE S.status = 1
+    INNER JOIN match M ON M.stadium_id = S.id
+    WHERE M.startTime = @date
     )
 GO;
-
 
 CREATE PROCEDURE CR_viewMyClub (@username VARCHAR(20)) AS
     SELECT C.id, C.name, C.location

@@ -122,8 +122,8 @@ const Manipulate = props => {
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                name: {name}.name.toString(),
-                location: {location}.location.toString()
+                name: {name}.name,
+                location: {location}.location
             })
         })
         .then(res => res.json())
