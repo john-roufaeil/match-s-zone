@@ -443,10 +443,11 @@ const Form = props => {
                 invalidStadium = false;
             }
         });
-        if (exisitingUsername) setErrMsg("This username is unavailable")
-        else if (takenStadium) setErrMsg("This stadium already has a manager")
-        else if (invalidStadium) setErrMsg("This stadium does not exist")
-        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces")
+        if (exisitingUsername) setErrMsg("This username is unavailable.")
+        else if (username.includes(" ")) setErrMsg("Username cannot contain spaces.")
+        else if (password.length < 8) setErrMsg("Password must be at least 8 characters long.")
+        else if (takenStadium) setErrMsg("This stadium already has a manager.")
+        else if (invalidStadium) setErrMsg("This stadium does not exist.")
         else {
             const newData = await fetch('http://localhost:5000/newSM', {
                 method: 'POST', 
