@@ -73,7 +73,7 @@ const Manipulate = props => {
                         </div>
                     </div>
                     <button type="submit" className="actionButton">
-                        <img className="actionIcon" src={plus} alt="plus-sign" />
+                        <img className="actionIcon" src={plus} alt="alternative text" title="Add Stadium" />
                     </button>
                 </div></form>
     }
@@ -108,7 +108,7 @@ const Manipulate = props => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="alternative text" title="Delete Stadium" /></button>
                 </div></form>
     }
 
@@ -149,7 +149,7 @@ const Manipulate = props => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="actionButton"><img className="actionIcon" src={plus} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={plus} alt="alternative text" title="Add Club" /></button>
                 </div></form>
     }
 
@@ -182,7 +182,7 @@ const Manipulate = props => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="minus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="alternative text" title="Delete Club" /></button>
                 </div></form>
     }
 
@@ -215,7 +215,7 @@ const Manipulate = props => {
                         />
                         </div>
                     </div>
-                    <button type="submit" className="actionButton"><img className="actionIcon" src={block} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={block} alt="alternative text" title="Block Fan" /></button>
                 </div></form>
     }
 
@@ -248,7 +248,7 @@ const Manipulate = props => {
                         />
                         </div>
                     </div>
-                    <button type="submit" className="actionButton"><img className="actionIcon" src={unblock} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={unblock} alt="alternative text" title="Unblock Fan" /></button>
                 </div>
                 </form>
     }
@@ -310,7 +310,7 @@ const Manipulate = props => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="actionButton"><img className="actionIcon" src={plus} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={plus} alt="alternative text" title="Add Match" /></button>
                 </div>
                 </form>
     }
@@ -371,7 +371,7 @@ const Manipulate = props => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="plus-sign" /></button>
+                    <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="alternative text" title="Delete Match" /></button>
                 </div>
                 </form>
     }
@@ -394,7 +394,7 @@ const Manipulate = props => {
                     <div className="newEntryField">
                         <p>Set Stadium as Available</p>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={open} alt="minus-sign" /></button>
+                    <button className="actionButton"><img className="actionIcon" src={open} alt="alternative text" title="Set Stadium as Available" /></button>
                 </div>
     }
 
@@ -416,7 +416,7 @@ const Manipulate = props => {
                     <div className="newEntryField">
                         <p>Set Stadium as Unavailable</p>
                     </div>
-                    <button className="actionButton"><img className="actionIcon" src={close} alt="minus-sign" /></button>
+                    <button className="actionButton"><img className="actionIcon" src={close} alt="alternative text" title="Set Stadium as Unavailable" /></button>
                 </div>
     }
 

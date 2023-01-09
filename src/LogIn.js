@@ -12,15 +12,16 @@ const LogIn = () => {
         <div>
             <NavBar barComponents = {barComponents} />
             <main>
-            <div className = "welcome">
+            <div className = "form">
+                <Form type={type} />
+            </div>
+            <div className = "welcome" style={{textAlign:"center"}}>
                 <h1>Welcome back! <br /> Log in to your account.</h1>
                 <div className = "greeting-gif">
                     <img src={greetingGif} alt="man waving" width="180px"/>
                 </div>
             </div>
-            <div className = "form">
-                <Form type={type} />
-            </div>
+            
         </main>
         <Footer />
     </div>

@@ -151,7 +151,11 @@ const List = props => {
         axios.get('http://localhost:5000/getClubRepresentatives').then(res => setClubRepresentatives(res.data))
     }, []);
 
-    
+    const [users, setUsers] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/getUsers').then(res => setUsers(res.data))
+    }, []);
+
 
 
     const viewStadiums = () => {
@@ -258,6 +262,34 @@ const List = props => {
                             <th>Address</th>
                             <th>Phone</th>
                             <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data}
+                    </tbody>
+                </table>
+    }
+
+    const viewUsers = () => {
+        const data = users.map((user) => {
+            return  <tr key={user.national_id} className="fade-in">
+                        <td>{user.username}</td>
+                        <td>{user.password}</td>
+                        <td>{
+                            user.type === 0 ? 'admin' 
+                            : user.type === 1 ? 'fan' 
+                            : user.type === 2 ? 'sports association manager'
+                            : user.type === 3 ? 'club reprsentative'
+                            : 'stadium manager'}
+                        </td>
+                    </tr>
+        });
+        return  <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Account Type</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -398,8 +430,8 @@ const List = props => {
                         <td>{stadium.capacity}</td>
                         <td>{stadium.status?'Available':'Unavailable'}</td>
                         <td>{stadium.status
-                            ?<button onClick={closeMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} alt="" /></button>
-                            :<button onClick={openMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} alt="" /></button>}
+                            ?<button onClick={closeMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} alt="alternative text" title="Set Stadium as Unavailable" /></button>
+                            :<button onClick={openMyStadium} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} alt="alternative text" title="Set Stadium as Available" /></button>}
                         </td>
                     </tr>
         });
@@ -591,6 +623,7 @@ const List = props => {
                     </tbody>
                 </table>
     }
+
     const viewAvailableStadiums = () => {
         const data = availableStadiums.map((stadium) => {
             return  <tr key = {stadium.id} className="fade-in">
@@ -601,7 +634,7 @@ const List = props => {
         });
         return  <>
                     <div className="newEntry">
-                        <p>View Available Stadiums for Your Match at</p>
+                        <p>Select Your Match's Start Time</p>
                         <input className="choose" type="datetime-local" value={selectTime} onChange={(e) => {setSelectTime(e.target.value.replace('T', ' ').substring(0,19))}} />
                     </div>
                     
@@ -708,6 +741,8 @@ const List = props => {
             return viewClubs();
         case "fans":
             return viewFans();
+        case "users":
+            return viewUsers();
         case "matches":
             return viewMatches();
         case "upcoming":

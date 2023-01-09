@@ -144,7 +144,7 @@ exec SA_deleteStadium 'stadium1'
 
 EXEC createAllTables;
 GO;
-
+select * from stadiummanager
 --/ System Admin /--
 CREATE PROCEDURE SA_addClub @name VARCHAR(20), @location VARCHAR(20) AS
     INSERT INTO club VALUES (@name, @location);

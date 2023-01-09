@@ -11,31 +11,37 @@ const Dashboard = props => {
     const greet = timeGreet;
     const barComponents = {left: null, right: "logout"};
     const [selected, setSelected] = useState("clubs");
-
+    const [description, setDescription] = useState("View and manage all clubs");
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
 
     return <div>
         <NavBar barComponents = {barComponents} />
         <h1 className="title">System Admin </h1>
         <h3 className="greetingUser"> {timeGreet()} @{loggedInUser}</h3>
-        <div className="dashboardMenu">
-            <button 
-                className={`dashboardMenuButton ${selected === "clubs" ? "selectedButton" : ""}`}
-                onClick={() => {setSelected("clubs")}}>
-                Clubs
-            </button>
-            <button 
-                className={`dashboardMenuButton ${selected === "stadiums" ? "selectedButton" : ""}`}
-                onClick={() => {setSelected("stadiums")}}>
-                Stadiums
-            </button>
-            <button 
-                className={`dashboardMenuButton ${selected === "fans" ? "selectedButton" : ""}`}
-                onClick={() => {setSelected("fans")}}>
-                Fans
-            </button>
-        </div>
         <main className="dashboardMain">
+            <div className="dashboardMenu">
+                <button
+                    className={`dashboardMenuButton ${selected === "clubs" ? "selectedButton" : ""}`}
+                    onClick={() => {setSelected("clubs"); setDescription("View and manage all clubs")}}>
+                    Clubs
+                </button>
+                <button
+                    className={`dashboardMenuButton ${selected === "stadiums" ? "selectedButton" : ""}`}
+                    onClick={() => {setSelected("stadiums"); setDescription("View and manage all stadiums")}}>
+                    Stadiums
+                </button>
+                <button
+                    className={`dashboardMenuButton ${selected === "fans" ? "selectedButton" : ""}`}
+                    onClick={() => {setSelected("fans"); setDescription("View and manage all fans")}}>
+                    Fans
+                </button>
+                <button
+                    className={`dashboardMenuButton ${selected === "users" ? "selectedButton" : ""}`}
+                    onClick={() => {setSelected("users"); setDescription("View all registered users")}}>
+                    Users
+                </button>
+            </div>
+            <p style={{textAlign:"center", fontWeight: "600", margin:"0", padding:"0"}}>{description}</p>
             <Manipulate object={selected} action="add" />
             <Manipulate object={selected} action="delete" />
             <List object={selected} />
