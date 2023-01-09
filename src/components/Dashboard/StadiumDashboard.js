@@ -26,12 +26,12 @@ const Dashboard = props => {
             <button 
                 className={`dashboardMenuButton ${selected === "requests" ? "selectedButton" : ""}`}
                 onClick={() => {setSelected("requests")}}>
-                Host Requests
+                My Received Requests
             </button>
             <button 
                 className={`dashboardMenuButton ${selected === "matchesOnStadium" ? "selectedButton" : ""}`}
                 onClick={() => {setSelected("matchesOnStadium")}}>
-                Matches on Stadium
+                Matches on My Stadium
             </button>
         </div>
         <main className="dashboardMain">

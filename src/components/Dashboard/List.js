@@ -7,15 +7,14 @@ import requestDisabled from "../../assets/icons/actions/request-disabled.png"
 import { UserContext } from '../../UserContext';
 import accept from "../../assets/icons/actions/accept.png"
 import acceptDisabled from "../../assets/icons/actions/accept-disabled.png"
-import refuse from "../../assets/icons/actions/refuse.png"
-import refuseDisabled from "../../assets/icons/actions/refuse-disabled.png"
+import reject from "../../assets/icons/actions/reject.png"
+import rejectDisabled from "../../assets/icons/actions/reject-disabled.png"
 import tct from "../../assets/icons/actions/tct.png"
 
 
 const List = props => {
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
-
-    const [selectTime, setSelectTime] = useState("");
+    const [selectTime, setSelectTime] = useState((new Date()).toISOString().replace('T', ' ').substring(0,19));
 
     const [stadiums, setStadiums] = useState([]);
     useEffect(() => {
@@ -113,6 +112,17 @@ const List = props => {
           })
         .then(res => setMyRequests(res.data))
     }, [myRequests]);
+
+    const [availableStadiums, setAvailableStadiums] = useState([]);
+    useEffect(() => {
+        axios.post('http://localhost:5000/availableStadiumsOn', {date: selectTime}, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          })
+        .then(res => setAvailableStadiums(res.data))
+    }, [availableStadiums]);
 
     const [matchesOnStadium, setMatchesOnStadium] = useState([]);
     useEffect(() => {
@@ -464,9 +474,9 @@ const List = props => {
                             : <img width="30px" style={{"borderRadius":"5px"}} alt="alternative text" title={"You already responded\n to this request"} src={acceptDisabled} />}</td>
                         <td>{request.status === "unhandled" 
                             ? <button onClick={rejectRequest} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}>
-                                <img width="30px" style={{"borderRadius":"5px"}} src={refuse} alt="alternative text" title="Reject this host request" />
+                                <img width="30px" style={{"borderRadius":"5px"}} src={reject} alt="alternative text" title="Reject this host request" />
                               </button>
-                            : <img width="30px" style={{"borderRadius":"5px"}} alt="alternative text" title={"You already responded\n to this request"} src={refuseDisabled} />}</td>
+                            : <img width="30px" style={{"borderRadius":"5px"}} alt="alternative text" title={"You already responded\n to this request"} src={rejectDisabled} />}</td>
                     </tr>
 
         });
@@ -480,7 +490,7 @@ const List = props => {
                             <th>End Time</th>
                             <th>Status</th>
                             <th className="actionColumn">Accept</th>
-                            <th className="actionColumn">Refuse</th>
+                            <th className="actionColumn">Reject</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -492,7 +502,6 @@ const List = props => {
     const viewMatchesOnStadium = () => {
         var i = 0;
         const data = matchesOnStadium.map((match) => {
-            console.log(match);
             i++;
             return  <tr key={match.id} className="fade-in">
                         <td>{match.id}</td>
@@ -582,13 +591,21 @@ const List = props => {
                     </tbody>
                 </table>
     }
-    console.log(selectTime)
     const viewAvailableStadiums = () => {
+        console.log(`list: ${availableStadiums}`);
+        const data = availableStadiums.map((stadium) => {
+            return  <tr key = {stadium.id} className="fade-in">
+                        <td>{stadium.name}</td>
+                        <td>{stadium.location}</td>
+                        <td>{stadium.capacity}</td>
+                    </tr>
+        });
         return  <>
                     <div className="newEntry">
-                        <p>View Available Stadiums Starting From</p>
-                        <input className="choose" type="datetime-local" value={selectTime} onChange={(e) => {setSelectTime(e.target.value)}} />
+                        <p>View Available Stadiums for Your Match at</p>
+                        <input className="choose" type="datetime-local" value={selectTime} onChange={(e) => {setSelectTime(e.target.value.replace('T', ' ').substring(0,19))}} />
                     </div>
+                    
                     <table>
                         <thead>
                             <tr>
@@ -598,6 +615,7 @@ const List = props => {
                             </tr>
                         </thead>
                         <tbody>
+                            {data}
                         </tbody>
                     </table>
                 </>

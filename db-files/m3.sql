@@ -315,14 +315,21 @@ CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@username VARCHAR(20)) AS
 	LEFT JOIN stadium S ON S.id = M.stadium_id
 	WHERE (CR.username = @username) AND M.startTime > CURRENT_TIMESTAMP) 
 GO;
-
-exec CR_viewAvailableStadiumsFrom '2000-05-05 17:00:00.000'
-
+exec cr_viewavailablestadiumson '2023-02-01 12:00'
+select * from match 
+-- exec CR_viewAvailableStadiumsFrom '2000-05-05 17:00:00.000'
 -- CHECK THAT THIS STADIUM DOES NOT HOST A MATCH DURING THE SELECTED TIMES
-CREATE PROCEDURE CR_viewAvailableStadiumsFrom (@date DATETIME) AS
-	SELECT DISTINCT SA.name, SA.location, SA.capacity
-	FROM Stadium SA
-	WHERE SA.status = 1 AND CURRENT_TIMESTAMP >= @date;
+CREATE PROCEDURE CR_viewAvailableStadiumsOn (@date DATETIME) AS
+	(SELECT DISTINCT S.id, S.name, S.location, S.capacity
+	FROM stadium S
+	WHERE S.status = 1)
+    EXCEPT 
+    (
+    SELECT DISTINCT S.id, S.name, S.location, S.capacity
+	FROM stadium S
+    INNER JOIN match M ON M.stadium_id = S.id AND M.startTime = @date
+	WHERE S.status = 1
+    )
 GO;
 
 
@@ -370,17 +377,20 @@ CREATE PROCEDURE SM_acceptRequest(@SM_user VARCHAR(20), @HC_name VARCHAR(20), @G
     SELECT @M_id=M.id FROM match M WHERE M.hostClub_id = @HC_id AND M.guestClub_id = @GC_id AND M.startTime = @startTime;
     SELECT @S_id=SM.stadium_id FROM stadiumManager SM WHERE SM.id = @SM_id;
     SELECT @HCR_id=CR.id FROM clubRepresentative CR INNER JOIN club C ON C.id=CR.club_id WHERE C.name=@HC_name;
-    UPDATE hostRequest
-    SET hostRequest.status = 'accepted'
-    WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id AND hostRequest.status='unhandled';
-    UPDATE match
-    SET match.stadium_id = @S_id
-    WHERE match.id = @M_id;
-    DECLARE @i INT = 0, @tickets INT = (SELECT S.capacity FROM stadium S WHERE @S_id = S.id);
-    WHILE @i < @tickets
+    IF NOT EXISTS (SELECT 1 FROM match M INNER JOIN stadium S ON M.stadium_id = S.id WHERE M.startTime = @startTime)
     BEGIN
-    EXEC addTicket @M_id;
-    SET @i = @i + 1;
+        UPDATE hostRequest
+        SET hostRequest.status = 'accepted'
+        WHERE hostRequest.manager_id = @SM_id AND hostRequest.match_id = @M_id AND hostRequest.representative_id = @HCR_id AND hostRequest.status='unhandled';
+        UPDATE match
+        SET match.stadium_id = @S_id
+        WHERE match.id = @M_id;
+        DECLARE @i INT = 0, @tickets INT = (SELECT S.capacity FROM stadium S WHERE @S_id = S.id);
+        WHILE @i < @tickets
+        BEGIN
+        EXEC addTicket @M_id;
+        SET @i = @i + 1;
+        END;
     END;
 GO; 
 
@@ -420,9 +430,9 @@ CREATE PROCEDURE SM_viewMatchesOnStadium (@userStadiumManager VARCHAR(20)) AS
     INNER JOIN club HC ON M.hostClub_id = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	INNER JOIN stadiumManager SM ON HR.manager_id = SM.id
-	WHERE @userStadiumManager = SM.username AND HR.status = 'accepted';
+	WHERE @userStadiumManager = SM.username AND HR.status = 'accepted'
+    ORDER BY M.startTime;
 GO;
-
 
 
 --/ Fan /-- 

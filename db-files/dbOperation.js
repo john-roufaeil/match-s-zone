@@ -280,6 +280,22 @@ const myUpcomingMatches = async (username) => {
     }
 }
 
+const availableStadiumsOn = async (date) => {
+    try {
+        date = date.replaceAll('-', '').replaceAll(' ', '').replaceAll(':', '');
+        year = parseInt(date).toString().slice(0,4);
+        month = parseInt(date).toString().slice(4,6);
+        day = parseInt(date).toString().slice(6,8);
+        hour = parseInt(date).toString().slice(8,10);
+        min = parseInt(date).toString().slice(10,12); 
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC CR_viewAvailableStadiumsOn '${year}-${month}-${day} ${hour}:${min}'`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 // Stadium Manager //
@@ -436,6 +452,7 @@ module.exports = {
     addNewCR,
     viewMyClub,
     myUpcomingMatches,
+    availableStadiumsOn,
 
     addNewSM,
     viewMyStadium,

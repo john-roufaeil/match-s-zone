@@ -137,6 +137,11 @@ app.post('/myUpcomingMatches', jsonParser, async (req, res) => {
     return res.send(result.recordset);
 })
 
+app.post('/availableStadiumsOn', jsonParser, async (req, res) => {
+    const result = await dbOperation.availableStadiumsOn(req.body.date);
+    return res.send(result.recordset);
+})
+
 
 
 // Stadium Manager //
