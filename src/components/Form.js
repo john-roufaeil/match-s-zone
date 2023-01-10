@@ -4,6 +4,7 @@ import FadeIn from 'react-fade-in';
 import { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from '../UserContext';
+import { BlockedUser } from "../BlockedContext"
 import error from "../assets/icons/actions/error.png"
 import success from "../assets/icons/actions/success.png"
 
@@ -57,6 +58,7 @@ const Form = props => {
     }, [props.type])
 
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
+    const {showBlocked, setShowBlocked} = useContext(BlockedUser);
 
     useEffect(() => {
         axios.get('http://localhost:5000/getUsers').then(res => setUsers(res.data))
@@ -568,6 +570,7 @@ const Form = props => {
         } else if (blockedFan) {
             setErrMsg("Sorry, your account is blocked.");
             setSuccessMsg("");
+            setShowBlocked(true)
         } else {
             switch(type) {
                 case 0: navigate("/admin-dashboard"); break;
@@ -596,7 +599,7 @@ const Form = props => {
                             value = {username}
                             autoComplete="new-password"
                             autoFocus="on"
-                            onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                            onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg(""); setShowBlocked(false);}}
                             required
                         />
                     </div>
@@ -609,7 +612,7 @@ const Form = props => {
                             id ="password" 
                             value = {password}
                             autoComplete="new-password"
-                            onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                            onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg(""); setShowBlocked(false);}}
                             required
                             
                         />

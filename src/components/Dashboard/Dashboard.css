@@ -178,7 +178,9 @@ th {
 
 
 
-
+.main img {
+        transition: background-color .8s;
+}
 
 
 
@@ -229,7 +231,8 @@ th {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    border-bottom: 3px solid var(--button-bg);
+    border-bottom: 4px solid var(--button-selected);
+    padding: 0;
     margin: 0 0 2rem 0;
 }
 

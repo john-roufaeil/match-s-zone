@@ -10,11 +10,85 @@ import acceptDisabled from "../../assets/icons/actions/accept-disabled.png"
 import reject from "../../assets/icons/actions/reject.png"
 import rejectDisabled from "../../assets/icons/actions/reject-disabled.png"
 import tct from "../../assets/icons/actions/tct.png"
+import styled from "styled-components";
+import Modal, { ModalProvider, BaseModalBackground } from "styled-react-modal";
+import DropdownButton from 'antd/es/dropdown/dropdown-button';
+import { Dropdown, Select } from 'antd';
+
+const StyledModal = Modal.styled`
+  width: 65rem;
+  height: 30rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #22303c;
+  opacity: ${(props) => props.opacity};
+  transition : all 0.3s ease-in-out;`;
+function FancyModalButton(props) {
+    const [selectedStadium, setSelectedStadium] = useState("");
+    const [availableStadiumsModal, setAvailableStadiumsModal] = useState([]);
+    const [selectTimeModal, setSelectTimeModal] = useState([]);
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [opacity, setOpacity] = useState(0);
+    function toggleModal(e) {
+      setOpacity(0);
+      setIsOpen(!isOpen);
+    }
+    function afterOpen() {
+      setTimeout(() => {
+        setOpacity(1);
+      }, 100);
+    }
+    function beforeClose() {
+      return new Promise((resolve) => {
+        setOpacity(0);
+        setTimeout(resolve, 300);
+      });
+    }
+    const data = props.availableStadiums.availableStadiums.map((stadium) => {
+        return {"value": stadium.name, "label": stadium.name}
+    });
+
+    return (
+      <div>
+        <button onClick={toggleModal}><img width="50px" src={request} alt="alternative text" title="Send a host request" /> </button>
+        <StyledModal isOpen={isOpen} afterOpen={afterOpen} beforeClose={beforeClose} onBackgroundClick={toggleModal} onEscapeKeydown={toggleModal} opacity={opacity} backgroundProps={{ opacity }}>
+            <h2>Choose a Stadium to Send a Request to Host Your Match on it</h2>
+            <h3>{props.host.toString().toUpperCase()} VS {props.guest.toString().toUpperCase()}  { }
+                AT {props.startTime.substring(11,13)}:{props.startTime.substring(14,16)} { }
+                ON {props.startTime.substring(8,10)}/{props.startTime.substring(5,7)}/{props.startTime.substring(0,4)}
+            </h3>
+            <Select defaultValue="" style={{width: 120,}} 
+                options= {data}
+                    
+                //     [
+                //     {
+                //     value: 'jack',
+                //     label: 'Jack',
+                //     },
+                //     {
+                //     value: 'lucy',
+                //     label: 'Lucy',
+                //     },
+                // ]}
+            />
+        </StyledModal>
+      </div>
+    );
+  }
+  const FadingBackground = styled(BaseModalBackground)`
+  opacity: ${(props) => props.opacity};
+  transition: all 0.3s ease-in-out;
+`;
+
 
 
 const List = props => {
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
     const [selectTime, setSelectTime] = useState((new Date()).toISOString().replace('T', ' ').substring(0,19));
+
 
     const [stadiums, setStadiums] = useState([]);
     useEffect(() => {
@@ -154,7 +228,7 @@ const List = props => {
     const [users, setUsers] = useState([]);
     useEffect(() => {
         axios.get('http://localhost:5000/getUsers').then(res => setUsers(res.data))
-    }, []);
+    }, [users]);
 
 
 
@@ -272,7 +346,7 @@ const List = props => {
 
     const viewUsers = () => {
         const data = users.map((user) => {
-            return  <tr key={user.national_id} className="fade-in">
+            return  <tr key={user.username} className="fade-in">
                         <td>{user.username}</td>
                         <td>{user.password}</td>
                         <td>{
@@ -584,29 +658,31 @@ const List = props => {
     }
 
     const viewMatchesForClub = () => {
-        const clickRequest = (e) => {
-            e.preventDefault();
-        }
         const data = myUpcomingMatches.map((match) => {
             var isHost = false;
             clubRepresentatives.forEach(cr => {
                 if (cr.name == match.club && cr.username == loggedInUser) 
                     isHost = true;
             });
-            return  <tr key = {`${match.club}, ${match.competent}, ${match.startTime}`} className="fade-in">
-                        <td>{match.club}</td>
-                        <td>{match.competent}</td>
-                        <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
-                        <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
-                        <td>{match.name 
-                            ? match.name 
-                            : isHost 
-                            ? <button onClick={clickRequest} style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'auto'}}>
-                                <img width="50px" src={request} alt="alternative text" title="Send a host request" /> 
-                              </button>
-                            : <img style={{cursor: 'not-allowed'}}width="50px" src={requestDisabled}  alt="alternative text" title={"You are not the hosting club,\n cannot send a host request"} />}
-                        </td>
-                    </tr>
+            return  <ModalProvider>
+                        <tr key = {`${match.club}, ${match.competent}, ${match.startTime}`} className="fade-in">
+                            <td>{match.club}</td>
+                            <td>{match.competent}</td>
+                            <td>{match.startTime.replace('T', ' ').substring(0,16)}</td>
+                            <td>{match.endTime.replace('T', ' ').substring(0,16)}</td>
+                            <td>{match.name 
+                                ? match.name 
+                                : isHost 
+                                ? <button onClick={(e) =>{e.preventDefault(); setSelectTime({match}.match.startTime.replace('Z', '').replace('T', '').substring(0,19))}}><FancyModalButton 
+                                    host = {{match}.match.club} 
+                                    guest = {{match}.match.competent} 
+                                    startTime = {{match}.match.startTime} 
+                                    availableStadiums = {{availableStadiums}}
+                                /></button>
+                                : <img style={{cursor: 'not-allowed'}}width="50px" src={requestDisabled}  alt="alternative text" title={"You are not the hosting club,\n cannot send a host request"} />}
+                            </td>
+                        </tr>
+                    </ModalProvider>
         });
         return  <table>
                     <thead>

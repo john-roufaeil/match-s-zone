@@ -4,7 +4,7 @@ CREATE PROCEDURE createAllTables AS
         password VARCHAR(20) NOT NULL,
         type INT NOT NULL,
         PRIMARY KEY(username)
-    );  
+    );   
     CREATE TABLE fan (
         national_id VARCHAR(20),
         name VARCHAR(20) NOT NULL,
@@ -269,7 +269,8 @@ CREATE PROCEDURE SAM_viewAllMatches AS
     SELECT DISTINCT HC.name host, GC.name guest, M.startTime, M.endTime 
     FROM match M
     INNER JOIN club HC ON M.hostClub_id = HC.id
-    INNER JOIN club GC ON M.guestClub_id = GC.id;
+    INNER JOIN club GC ON M.guestClub_id = GC.id
+    ORDER BY M.startTime DESC;
 GO;
 
 CREATE PROCEDURE SAM_viewUpcomingMatches AS  
@@ -277,7 +278,8 @@ CREATE PROCEDURE SAM_viewUpcomingMatches AS
     FROM match M
     INNER JOIN club HC ON M.hostClub_id = HC.id
     INNER JOIN club GC ON M.guestClub_id = GC.id
-    WHERE CURRENT_TIMESTAMP <= M.startTime;
+    WHERE CURRENT_TIMESTAMP <= M.startTime
+    ORDER BY M.startTime DESC;
 GO;
 
 CREATE PROCEDURE SAM_viewPreviousMatches AS 
@@ -285,7 +287,8 @@ CREATE PROCEDURE SAM_viewPreviousMatches AS
     FROM match M
     INNER JOIN club HC ON M.hostClub_id = HC.id
     INNER JOIN club GC ON M.guestClub_id = GC.id
-    WHERE CURRENT_TIMESTAMP > M.startTime;
+    WHERE CURRENT_TIMESTAMP > M.startTime
+    ORDER BY M.startTime DESC;
 GO;
 
 CREATE PROCEDURE viewClubsNotScheduledTogether AS
@@ -342,6 +345,7 @@ CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@username VARCHAR(20)) AS
     INNER JOIN clubRepresentative CR ON GC.id = CR.club_id
 	LEFT JOIN stadium S ON S.id = M.stadium_id
 	WHERE (CR.username = @username) AND M.startTime > CURRENT_TIMESTAMP) 
+    ORDER BY M.startTime DESC;
 GO;
 -- exec CR_viewAvailableStadiumsFrom '2000-05-05 17:00:00.000'
 -- CHECK THAT THIS STADIUM DOES NOT HOST A MATCH DURING THE SELECTED TIMES
@@ -456,7 +460,7 @@ CREATE PROCEDURE SM_viewMatchesOnStadium (@userStadiumManager VARCHAR(20)) AS
 	INNER JOIN club GC ON M.guestClub_id = GC.id
 	INNER JOIN stadiumManager SM ON HR.manager_id = SM.id
 	WHERE @userStadiumManager = SM.username AND HR.status = 'accepted'
-    ORDER BY M.startTime;
+    ORDER BY M.startTime DESC;
 GO;
 
 
@@ -468,7 +472,6 @@ CREATE PROCEDURE F_addFan (@name VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)
     INSERT INTO fan VALUES (@nat_id, @name, @bdate, @address, @phone, 1, @user);
     END
 GO;
-
 
 
 CREATE PROCEDURE F_availableMatchesToAttend (@username VARCHAR(20)) AS
@@ -489,8 +492,8 @@ CREATE PROCEDURE F_availableMatchesToAttend (@username VARCHAR(20)) AS
     INNER JOIN systemUser SU ON SU.username = @username
     INNER JOIN fan F ON F.username = @username
     INNER JOIN ticketBuyingTransaction TBT ON TBT.fanNational_id = F.national_id AND TBT.ticket_id = T.id
-    WHERE M.startTime >= CURRENT_TIMESTAMP AND T.status=0
-    )
+    WHERE M.startTime >= CURRENT_TIMESTAMP AND T.status=0)
+    ORDER BY M.startTime DESC
 GO;
 
 -- exec F_purchaseTicket 'fan3', 5 

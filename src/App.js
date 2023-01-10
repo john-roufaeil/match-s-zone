@@ -8,14 +8,17 @@ import ClubDashboard from "./components/Dashboard/ClubDashboard"
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from 'react-hook-theme';
 import { UserContext } from "./UserContext"
+import { BlockedUser } from "./BlockedContext"
 import { useState } from "react"
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState("");
+  const [showBlocked, setShowBlocked] = useState(false);
 
   return (
       <ThemeProvider options={{ theme: 'dark', save: true}}> 
         <UserContext.Provider value={{loggedInUser, setLoggedInUser}}>
+        <BlockedUser.Provider value={{showBlocked, setShowBlocked}}>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<LogIn />} exact />
@@ -28,6 +31,7 @@ function App() {
               <Route path="/club-representative-dashboard" element={<ClubDashboard />} />        
             </Routes>
         </BrowserRouter>
+        </BlockedUser.Provider>
       </UserContext.Provider>
     </ThemeProvider>
   );
