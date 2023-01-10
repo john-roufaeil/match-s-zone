@@ -330,7 +330,7 @@ CREATE PROCEDURE CR_viewClubInfo @clubRepresentative_id INT AS
 GO;
 
 CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@username VARCHAR(20)) AS
-	(SELECT HC.name club, GC.name competent, M.startTime, M.endTime, S.name
+	(SELECT HC.name club, GC.name competent, M.startTime, M.endTime, S.name, M.id m_id, CR.id cr_id
 	FROM match M
 	INNER JOIN club HC ON M.hostClub_id	 = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
@@ -338,7 +338,7 @@ CREATE PROCEDURE CR_viewUpcomingMatchesOfClub (@username VARCHAR(20)) AS
 	LEFT JOIN stadium S ON S.id = M.stadium_id
 	WHERE (CR.username = @username) AND M.startTime > CURRENT_TIMESTAMP) 
     UNION
-    (SELECT HC.name club, GC.name competent, M.startTime, M.endTime, S.name
+    (SELECT HC.name club, GC.name competent, M.startTime, M.endTime, S.name, M.id m_id, CR.id cr_id
 	FROM match M
 	INNER JOIN club HC ON M.hostClub_id	 = HC.id
 	INNER JOIN club GC ON M.guestClub_id = GC.id
@@ -350,13 +350,15 @@ GO;
 -- exec CR_viewAvailableStadiumsFrom '2000-05-05 17:00:00.000'
 -- CHECK THAT THIS STADIUM DOES NOT HOST A MATCH DURING THE SELECTED TIMES
 CREATE PROCEDURE CR_viewAvailableStadiumsOn (@date DATETIME) AS
-	(SELECT DISTINCT S.id, S.name, S.location, S.capacity
+	(SELECT DISTINCT S.id, S.name, S.location, S.capacity, SM.id sm_id
 	FROM stadium S
+    INNER JOIN stadiumManager SM ON SM.stadium_id = S.id
 	WHERE S.status = 1)
     EXCEPT 
     (
-    SELECT DISTINCT S.id, S.name, S.location, S.capacity
+    SELECT DISTINCT S.id, S.name, S.location, S.capacity, SM.id sm_id
 	FROM stadium S
+    INNER JOIN stadiumManager SM ON SM.stadium_id = S.id
     INNER JOIN match M ON M.stadium_id = S.id
     WHERE M.startTime = @date
     )
@@ -368,6 +370,11 @@ CREATE PROCEDURE CR_viewMyClub (@username VARCHAR(20)) AS
     INNER JOIN clubRepresentative CR ON C.id = CR.club_id AND CR.username = @username
 GO;
 
+CREATE PROCEDURE CR_addHostRequest @cr_id INT, @sm_id INT, @m_id INT AS
+    INSERT INTO hostRequest (representative_id, manager_id, match_id) VALUES (@cr_id, @sm_id, @m_id);
+GO;
+select * from hostrequest
+exec cr_addhostrequest 1, 1, 5
 --/ Stadium Manager /-- 
 CREATE PROCEDURE SM_addStadiumManager(@name VARCHAR(20), @stadiumName VARCHAR(20), @user VARCHAR(20), @pw VARCHAR(20)) AS
     DECLARE @stadium_id INT;

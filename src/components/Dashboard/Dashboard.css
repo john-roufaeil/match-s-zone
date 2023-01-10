@@ -268,3 +268,24 @@ th {
     min-height: 50%;
     padding: 0 3% 3%;
 }
+
+
+.sendRequestButton {
+    justify-self:"flex-end";
+    width: fit-content;
+    height: fit-content%; 
+    padding: 1rem;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    color: #FFF; 
+    background-color:#24a0ed;
+    cursor: pointer;
+}
+
+.sendRequestButton:hover {
+    transform: scale(1.1)
+}
+
+.sendRequestButton:active {
+    transform: scale(1)
+}

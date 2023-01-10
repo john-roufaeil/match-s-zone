@@ -14,6 +14,8 @@ import styled from "styled-components";
 import Modal, { ModalProvider, BaseModalBackground } from "styled-react-modal";
 import DropdownButton from 'antd/es/dropdown/dropdown-button';
 import { Dropdown, Select } from 'antd';
+import error from "../../assets/icons/actions/error.png"
+import success from "../../assets/icons/actions/success.png"
 
 const StyledModal = Modal.styled`
   width: 65rem;
@@ -21,14 +23,19 @@ const StyledModal = Modal.styled`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   background-color: #22303c;
   opacity: ${(props) => props.opacity};
   transition : all 0.3s ease-in-out;`;
 function FancyModalButton(props) {
-    const [selectedStadium, setSelectedStadium] = useState("");
-    const [availableStadiumsModal, setAvailableStadiumsModal] = useState([]);
-    const [selectTimeModal, setSelectTimeModal] = useState([]);
+    const [selectedStadium, setSelectedStadium] = useState("Choose a Stadium");
+
+    const [errMsg, setErrMsg] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
+    useEffect(() => {
+        setSuccessMsg("");
+        setErrMsg("");
+    }, [])
 
     const [isOpen, setIsOpen] = useState(false);
     const [opacity, setOpacity] = useState(0);
@@ -48,32 +55,51 @@ function FancyModalButton(props) {
       });
     }
     const data = props.availableStadiums.availableStadiums.map((stadium) => {
-        return {"value": stadium.name, "label": stadium.name}
+        return {"value": stadium.sm_id, "label": stadium.name}
     });
+
+    const clickAddHostRequest = async (e) => {
+        e.preventDefault();
+        if (selectedStadium != "Choose a Stadium") {
+            console.log(selectedStadium)
+            await fetch(`http://localhost:5000/addHostRequest`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    cr_id: parseInt({props}.props.cr_id),
+                    sm_id: parseInt({selectedStadium}.selectedStadium),
+                    m_id: parseInt({props}.props.m_id)
+                })
+            })
+            .then(res => res.json())
+            .then(setSuccessMsg(`A request to host your match on the stadium ${{props}.props.name} has been sent.`))
+            .then(setErrMsg(""))
+        }
+    }
 
     return (
       <div>
-        <button onClick={toggleModal}><img width="50px" src={request} alt="alternative text" title="Send a host request" /> </button>
+        <button  style={{backgroundColor: "transparent", cursor:"pointer"}} onClick={toggleModal}><img width="50px" src={request} alt="alternative text" style={{backgroundColor: "transparent"}} title="Send a host request" /> </button>
         <StyledModal isOpen={isOpen} afterOpen={afterOpen} beforeClose={beforeClose} onBackgroundClick={toggleModal} onEscapeKeydown={toggleModal} opacity={opacity} backgroundProps={{ opacity }}>
-            <h2>Choose a Stadium to Send a Request to Host Your Match on it</h2>
-            <h3>{props.host.toString().toUpperCase()} VS {props.guest.toString().toUpperCase()}  { }
-                AT {props.startTime.substring(11,13)}:{props.startTime.substring(14,16)} { }
-                ON {props.startTime.substring(8,10)}/{props.startTime.substring(5,7)}/{props.startTime.substring(0,4)}
-            </h3>
-            <Select defaultValue="" style={{width: 120,}} 
-                options= {data}
-                    
-                //     [
-                //     {
-                //     value: 'jack',
-                //     label: 'Jack',
-                //     },
-                //     {
-                //     value: 'lucy',
-                //     label: 'Lucy',
-                //     },
-                // ]}
-            />
+            <div style={{display: "flex", textAlign:"center", flexDirection:"column", gap:"20px"}}>
+                <div style={{color:'white'}}>
+                <h2>Choose a Stadium to Send a Request to Host Your Match on it</h2>
+                <h3>{props.host.toString().toUpperCase()} VS {props.guest.toString().toUpperCase()}  { }
+                    AT {props.startTime.substring(11,13)}:{props.startTime.substring(14,16)} { }
+                    ON {props.startTime.substring(8,10)}/{props.startTime.substring(5,7)}/{props.startTime.substring(0,4)}
+                </h3>
+                </div>
+                <Select value={selectedStadium} onChange={(value) => {setSelectedStadium(value)}} size="large" style={{width: "30%", alignSelf:"center"}} options= {data}/>
+            </div>
+            <div style={{display: "flex", textAlign:"center", flexDirection:"column", gap:"20px"}}>
+                <button style={{justifySelf:"center", alignSelf:"center"}} onClick={clickAddHostRequest} className="sendRequestButton">Send Request</button>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+            </div>
         </StyledModal>
       </div>
     );
@@ -673,11 +699,14 @@ const List = props => {
                             <td>{match.name 
                                 ? match.name 
                                 : isHost 
-                                ? <button onClick={(e) =>{e.preventDefault(); setSelectTime({match}.match.startTime.replace('Z', '').replace('T', '').substring(0,19))}}><FancyModalButton 
+                                ? <button style={{backgroundColor: "transparent"}} onClick={(e) =>{e.preventDefault(); setSelectTime({match}.match.startTime.replace('Z', '').replace('T', '').substring(0,19))}}><FancyModalButton
                                     host = {{match}.match.club} 
                                     guest = {{match}.match.competent} 
                                     startTime = {{match}.match.startTime} 
                                     availableStadiums = {{availableStadiums}}
+                                    sm_username = {{loggedInUser}.loggedInUser}
+                                    cr_id = {{match}.match.cr_id}
+                                    m_id = {{match}.match.m_id}
                                 /></button>
                                 : <img style={{cursor: 'not-allowed'}}width="50px" src={requestDisabled}  alt="alternative text" title={"You are not the hosting club,\n cannot send a host request"} />}
                             </td>

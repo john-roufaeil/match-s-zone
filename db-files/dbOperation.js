@@ -279,6 +279,7 @@ const myUpcomingMatches = async (username) => {
         console.log(error);
     }
 }
+
 const availableStadiumsOn = async (date) => {
     try {
         date = date.replaceAll('-', '').replaceAll(' ', '').replaceAll(':', '');
@@ -294,6 +295,19 @@ const availableStadiumsOn = async (date) => {
         console.log(error);
     }
 }
+
+const addHostRequest = async (cr_id, sm_id, m_id) => {
+    try {
+        console.log(`in dboperation: ${cr_id}, ${sm_id}, ${m_id}`)
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`EXEC CR_addHostRequest [${cr_id}], [${sm_id}], [${m_id}]`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 
 
 
@@ -451,6 +465,7 @@ module.exports = {
     viewMyClub,
     myUpcomingMatches,
     availableStadiumsOn,
+    addHostRequest,
 
     addNewSM,
     viewMyStadium,
