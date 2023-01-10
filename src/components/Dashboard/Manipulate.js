@@ -1,12 +1,13 @@
+import axios, * as others from 'axios';
 import plus from "../../assets/icons/actions/plus.png"
 import minus from "../../assets/icons/actions/minus.png"
 import block from "../../assets/icons/actions/block.png"
 import unblock from "../../assets/icons/actions/unblock.png"
-// import accept from "../../assets/icons/actions/accept.png"
-// import refuse from "../../assets/icons/actions/refuse.png"
 import open from "../../assets/icons/actions/open.png"
 import close from "../../assets/icons/actions/close.png"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import error from "../../assets/icons/actions/error.png"
+import success from "../../assets/icons/actions/success.png"
 
 const Manipulate = props => {
     const [name, setName] = useState("");
@@ -18,32 +19,70 @@ const Manipulate = props => {
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
 
-    const clear = () => { 
-        setName("");
-        setLocation("");
-        setCapacity(0);
-        setNat_id("");
-    }; 
+    const [errMsg, setErrMsg] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
+    useEffect(() => {
+        setSuccessMsg("");
+        setErrMsg("");
+    }, [props.action, props.object])
+
+    const [stadiums, setStadiums] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewStadiums')
+        .then(res => setStadiums(res.data))
+    }, [stadiums]);
+
+    const [clubs, setClubs] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewClubs')
+        .then(res => setClubs(res.data))
+    }, [clubs]);
+    
+    const [fans, setFans] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewFans')
+        .then(res => setFans(res.data))
+    }, [fans]);
+
+    const [allMatches, setAllMatches] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewAllMatches')
+        .then(res => setAllMatches(res.data))
+    }, [allMatches]);
 
     const clickAddStadium = async (e) => {
         e.preventDefault();
-        await fetch(`http://localhost:5000/addStadium`, {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name.toString(),
-                location: {location}.location.toString(),
-                capacity: parseInt({capacity}.capacity)
-            })
+        var existingStadium = false;
+        stadiums.forEach(stadium => {
+            console.log(stadium)
+            if (stadium.name === name) {
+                console.log(stadium.name === name)
+                existingStadium = true;   
+            }
         })
-        .then(res => res.json())
+        if (existingStadium) {setErrMsg("This stadium name already exists."); setSuccessMsg("")}
+        else {
+            e.preventDefault();
+            await fetch(`http://localhost:5000/addStadium`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: {name}.name.toString(),
+                    location: {location}.location.toString(),
+                    capacity: parseInt({capacity}.capacity)
+                })
+            })
+            .then(res => res.json())
+            .then(setSuccessMsg(`The stadium "${name}" has been added.`))
+            .then(setErrMsg(""))
+        }
     }
     const addStadium = () => {
-        return <form  method="POST" action="/addStadium" onSubmit={clickAddStadium}>
+        return <><form  method="POST" action="/addStadium" onSubmit={clickAddStadium}>
                     <div className="newEntry">
                     <div className="newEntryField">
                         <p>Add a new Stadium</p>
@@ -52,7 +91,7 @@ const Manipulate = props => {
                             type="text" 
                             placeholder= "Name" 
                             autoComplete="off"
-                            onChange={(e) => {setName(e.target.value)}}
+                            onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                         />
                         </div>
                         <div className="newEntryInput">
@@ -60,7 +99,7 @@ const Manipulate = props => {
                                 type="location" 
                                 placeholder= "Location"
                                 autoComplete="off"
-                                onChange={(e) => {setLocation(e.target.value)}}
+                                onChange={(e) => {setLocation(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                         <div className="newEntryInput">
@@ -68,7 +107,7 @@ const Manipulate = props => {
                                 type="number" 
                                 placeholder= "Capacity"
                                 autoComplete="off"
-                                onChange={(e) => {setCapacity(e.target.value)}}
+                                onChange={(e) => {setCapacity(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                     </div>
@@ -76,26 +115,39 @@ const Manipulate = props => {
                         <img className="actionIcon" src={plus} alt="alternative text" title="Add Stadium" />
                     </button>
                 </div></form>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                </>
     }
 
     const clickDelStadium = async (e) => {
         e.preventDefault();
-        await fetch(`http://localhost:5000/delStadium`, {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name
-            })
+        var existingStadium = false;
+        stadiums.forEach(stadium => {
+            if (stadium.name === name) {
+                existingStadium = true;   
+            }
         })
-        .then(res => res.json())
-        .then(clear());
+        if (!existingStadium) {setErrMsg(`"${name}" is not a stadium.`)}
+        else {
+            await fetch(`http://localhost:5000/delStadium`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: {name}.name
+                })
+            })
+            .then(res => res.json())
+            .then(setSuccessMsg(`The stadium "${name}" has been deleted.`))
+            .then(setErrMsg(""))
+        }
     }
     const deleteStadium = () => {
-        return <form  method="POST" action="/delStadium" onSubmit={clickDelStadium}>
+        return <><form  method="POST" action="/delStadium" onSubmit={clickDelStadium}>
                 <div className="newEntry">
                     <div className="newEntryField">
                         <p>Delete a Stadium</p>
@@ -104,32 +156,46 @@ const Manipulate = props => {
                                 type="text" 
                                 placeholder= "Name"
                                 autoComplete="off"
-                                onChange={(e) => {setName(e.target.value)}}
+                                onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                     </div>
                     <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="alternative text" title="Delete Stadium" /></button>
                 </div></form>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                </>
     }
 
     const clickAddClub = async (e) => {
         e.preventDefault();
-        await fetch(`http://localhost:5000/addClub`, {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name,
-                location: {location}.location
-            })
+        var existingClub = false;
+        clubs.forEach(club => {
+            if (club.name === name) {
+                console.log(club.name === name)
+                existingClub = true;   
+            }
         })
-        .then(res => res.json())
+        if (existingClub) {setErrMsg("This club name already exists."); setSuccessMsg("")}
+        else {
+            await fetch(`http://localhost:5000/addClub`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: {name}.name,
+                    location: {location}.location
+                })
+            })
+            .then(res => res.json())
+            .then(setSuccessMsg(`The club "${name}" has been added`))
+        }
     }
     const addClub = () => {
-        return <form method="POST" action="/addClub" onSubmit={clickAddClub}><div className="newEntry">
+        return <><form method="POST" action="/addClub" onSubmit={clickAddClub}><div className="newEntry">
                     <div className="newEntryField">
                         <p>Add a new Club</p>
                         <div className="newEntryInput">
@@ -137,7 +203,7 @@ const Manipulate = props => {
                             type="text" 
                             placeholder= "Name" 
                             autoComplete="off"
-                            onChange={(e) => {setName(e.target.value)}}
+                            onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                         />
                         </div>
                         <div className="newEntryInput">
@@ -145,31 +211,45 @@ const Manipulate = props => {
                                 type="location" 
                                 placeholder= "Location" 
                                 autoComplete="off"
-                                onChange={(e) => {setLocation(e.target.value)}}
+                                onChange={(e) => {setLocation(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                     </div>
                     <button type="submit" className="actionButton"><img className="actionIcon" src={plus} alt="alternative text" title="Add Club" /></button>
                 </div></form>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                </>
     }
 
     const clickDelClub = async (e) => {
         e.preventDefault();
-        await fetch(`http://localhost:5000/delClub`, {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: {name}.name.toString()
-            })
+        var existingClub = false;
+        clubs.forEach(club => {
+            if (club.name === name) {
+                existingClub = true;   
+            }
         })
-        .then(res => res.json())
+        if (!existingClub) {setErrMsg(`"${name}" is not a club.`); setSuccessMsg("")} 
+        else {
+            await fetch(`http://localhost:5000/delClub`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: {name}.name.toString()
+                })
+            })
+            .then(res => res.json())
+            .then(setSuccessMsg(`The club "${name}" has been deleted.`))
+            .then(setErrMsg(""))
+        }
     }
     const deleteClub = () => {
-        return <form method="POST" action="/delClub" onSubmit={clickDelClub}>
+        return <><form method="POST" action="/delClub" onSubmit={clickDelClub}>
                     <div className="newEntry">
                     <div className="newEntryField">
                         <p>Delete a Club</p>
@@ -178,31 +258,45 @@ const Manipulate = props => {
                                 type="text" 
                                 placeholder= "Name" 
                                 autoComplete="off"
-                                onChange={(e) => {setName(e.target.value)}}
+                                onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                     </div>
                     <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="alternative text" title="Delete Club" /></button>
                 </div></form>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                </>
     }
 
     const clickBlockFan = async (e) => {
         e.preventDefault();
-        await fetch(`http://localhost:5000/blockFan`, {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                nat_id: {nat_id}.nat_id.toString()
-            })
+        var existingFan = false;
+        fans.forEach(fan => {
+            if (fan.national_id === nat_id) {
+                existingFan = true;   
+            }
         })
-        .then(res => res.json())
+        if (!existingFan) {setErrMsg(`Fan with national id "${nat_id}" not found.`); setSuccessMsg("")} 
+        else {
+            await fetch(`http://localhost:5000/blockFan`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    nat_id: {nat_id}.nat_id.toString()
+                })
+            })  
+            .then(res => res.json())
+            .then(setSuccessMsg(`The fan "${nat_id}" has been blocked`))
+            .then(setErrMsg(""))
+        }
     }
     const blockFan = () => {
-        return  <form action="/blockFan" method="POST" onSubmit={clickBlockFan}>
+        return  <><form action="/blockFan" method="POST" onSubmit={clickBlockFan}>
                     <div className="newEntry">
                     <div className="newEntryField">
                         <p>Block a Fan</p>
@@ -211,31 +305,45 @@ const Manipulate = props => {
                             type="text" 
                             placeholder= "National ID" 
                             autoComplete="off"
-                            onChange={(e) => {setNat_id(e.target.value)}}
+                            onChange={(e) => {setNat_id(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                         />
                         </div>
                     </div>
                     <button type="submit" className="actionButton"><img className="actionIcon" src={block} alt="alternative text" title="Block Fan" /></button>
                 </div></form>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                </>
     }
 
     const clickUnblockFan = async (e) => {
         e.preventDefault();
-        await fetch(`http://localhost:5000/unblockFan`, {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                nat_id: {nat_id}.nat_id.toString()
-            })
+        var existingFan = false;
+        fans.forEach(fan => {
+            if (fan.national_id === nat_id) {
+                existingFan = true;   
+            }
         })
-        .then(res => res.json())
+        if (!existingFan) {setErrMsg(`Fan with national id "${nat_id}" not found.`); setSuccessMsg("")} 
+        else {
+            await fetch(`http://localhost:5000/unblockFan`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    nat_id: {nat_id}.nat_id.toString()
+                })
+            })
+            .then(res => res.json())
+            .then(setSuccessMsg(`The fan "${nat_id}" has been unblocked`))
+            .then(setErrMsg(""))
+        }
     }
     const unblockFan = () => {
-        return  <form method="POST" action="/unblockFan" onSubmit={clickUnblockFan}>
+        return  <><form method="POST" action="/unblockFan" onSubmit={clickUnblockFan}>
                     <div className="newEntry">
                     <div className="newEntryField">
                         <p>Unblock a Fan</p>
@@ -244,35 +352,65 @@ const Manipulate = props => {
                             type="text" 
                             placeholder= "National ID" 
                             autoComplete="off"
-                            onChange={(e) => {setNat_id(e.target.value)}}
+                            onChange={(e) => {setNat_id(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                         />
                         </div>
                     </div>
                     <button type="submit" className="actionButton"><img className="actionIcon" src={unblock} alt="alternative text" title="Unblock Fan" /></button>
                 </div>
                 </form>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                </>
     }
 
     const clickAddMatch = async (e) => {
         e.preventDefault();
-        await fetch(`http://localhost:5000/newMatch`, {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                host: {host}.host,
-                guest: {guest}.guest,
-                startTime: {startTime}.startTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
-                endTime: {endTime}.endTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
-            })
+        var existingMatch = false;
+        var existingHost = false;
+        var existingGuest = false;
+        console.log(allMatches)
+        console.log(clubs)
+        allMatches.forEach(match => {
+            if (match.host === host && match.guest === guest 
+                && match.startTime.toString().replaceAll('T', '').replaceAll('-', '').replaceAll(':', '').replaceAll('Z', '').replaceAll('.', '').substring(0,12)
+                === startTime.toString().replaceAll('T', '').replaceAll('-', '').replaceAll(':', '').replaceAll('Z', '').replaceAll('.', '').substring(0,12)
+                && match.endTime.toString().replaceAll('T', '').replaceAll('-', '').replaceAll(':', '').replaceAll('Z', '').replaceAll('.', '').substring(0,12)  
+                === endTime.toString().replaceAll('T', '').replaceAll('-', '').replaceAll(':', '').replaceAll('Z', '').replaceAll('.', '').substring(0,12)) {
+                existingMatch = true;   
+            }
         })
-        .then(res => res.json())
+        clubs.forEach(club => {
+            if (club.name === host) 
+                existingHost = true;
+            if (club.name === guest)
+                existingGuest = true;
+        });
+        if (existingMatch) {setErrMsg(`This match already exists.`); setSuccessMsg("")} 
+        else if (!existingHost) {setErrMsg(`The host club "${host}" does not exist.`); setSuccessMsg("")} 
+        else if (!existingGuest) {setErrMsg(`The guest club "${guest} does not exist."`); setSuccessMsg("")} 
+        else {
+            await fetch(`http://localhost:5000/newMatch`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    host: {host}.host,
+                    guest: {guest}.guest,
+                    startTime: {startTime}.startTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
+                    endTime: {endTime}.endTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
+                })
+            })
+            .then(res => res.json())
+            .then(setSuccessMsg(`A new "${host}" VS "${guest}" match has been added.`))
+            .then(setErrMsg(""))
+        }
     }
     const addMatch = () => {
-        return <form method="POST" action="/newMatch" onSubmit={clickAddMatch}>
+        return <><form method="POST" action="/newMatch" onSubmit={clickAddMatch}>
                     <div className="newEntry">
                     <div className="newEntryField">
                         <p>Add new Match</p>
@@ -281,7 +419,7 @@ const Manipulate = props => {
                             type="text" 
                             placeholder= "Host Club" 
                             autoComplete="off"
-                            onChange={(e) => {setHost(e.target.value)}}
+                            onChange={(e) => {setHost(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                         />
                         </div>
                         <div className="newEntryInput">
@@ -289,16 +427,14 @@ const Manipulate = props => {
                             type="text" 
                             placeholder= "Guest Club" 
                             autoComplete="off"
-                            onChange={(e) => {setGuest(e.target.value)}}
+                            onChange={(e) => {setGuest(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                         />
                         </div>
                         <div className="newEntryInput">
                             <input 
                                 type="datetime-local" 
                                 placeholder= "Start Time" 
-                                onChange={(e) => {
-                                    setStartTime(e.target.value);
-                                }}
+                                onChange={(e) => {setStartTime(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                         <div className="newEntryInput">
@@ -306,35 +442,63 @@ const Manipulate = props => {
                                 type="datetime-local" 
                                 placeholder= "End Time" 
                                 autoComplete="off"
-                                onChange={(e) => {setEndTime(e.target.value)}}
+                                onChange={(e) => {setEndTime(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                     </div>
                     <button type="submit" className="actionButton"><img className="actionIcon" src={plus} alt="alternative text" title="Add Match" /></button>
                 </div>
                 </form>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                </>
     }
 
     const clickDelMatch = async (e) => {
         e.preventDefault();
-        await fetch(`http://localhost:5000/delMatch`, {
-            method: 'POST', 
-            url: 'http://localhost:5000',
-            header : {
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                host: {host}.host,
-                guest: {guest}.guest,
-                startTime: {startTime}.startTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
-                endTime: {endTime}.endTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
-            })
+        var existingMatch = false;
+        var existingHost = false;
+        var existingGuest = false;
+        allMatches.forEach(match => {
+            if (match.host === host && match.guest === guest 
+                && match.startTime.toString().replaceAll('T', '').replaceAll('-', '').replaceAll(':', '').replaceAll('Z', '').replaceAll('.', '').substring(0,12)
+                === startTime.toString().replaceAll('T', '').replaceAll('-', '').replaceAll(':', '').replaceAll('Z', '').replaceAll('.', '').substring(0,12)
+                && match.endTime.toString().replaceAll('T', '').replaceAll('-', '').replaceAll(':', '').replaceAll('Z', '').replaceAll('.', '').substring(0,12)  
+                === endTime.toString().replaceAll('T', '').replaceAll('-', '').replaceAll(':', '').replaceAll('Z', '').replaceAll('.', '').substring(0,12)) {
+                existingMatch = true;   
+            }
         })
-        .then(res => res.json())
+        clubs.forEach(club => {
+            if (club.name === host) 
+                existingHost = true;
+            if (club.name === guest)
+                existingGuest = true;
+        });
+        if (!existingHost) {setErrMsg(`The host club "${host}" does not exist.`); setSuccessMsg("")} 
+        else if (!existingGuest) {setErrMsg(`The guest club "${guest} does not exist."`); setSuccessMsg("")} 
+        else if (!existingMatch) {setErrMsg(`The match does not exist.`); setSuccessMsg("")} 
+        else {
+            await fetch(`http://localhost:5000/delMatch`, {
+                method: 'POST', 
+                url: 'http://localhost:5000',
+                header : {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    host: {host}.host,
+                    guest: {guest}.guest,
+                    startTime: {startTime}.startTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
+                    endTime: {endTime}.endTime.replaceAll('-', '').replaceAll(':', '').replaceAll('T', ''),
+                })
+            })
+            .then(res => res.json())
+            .then(setSuccessMsg(`A "${host}" VS "${guest}" match has been deleted.`))
+            .then(setErrMsg(""))
+        }
     }
     const deleteMatch = () => {
-        return <form method="POST" action="/delMatch" onSubmit={clickDelMatch}>
+        return <><form method="POST" action="/delMatch" onSubmit={clickDelMatch}>
                     <div className="newEntry">
                     <div className="newEntryField">
                         <p>Delete a Match</p>
@@ -343,7 +507,7 @@ const Manipulate = props => {
                             type="text" 
                             placeholder= "Host Club" 
                             autoComplete="off"
-                            onChange={(e) => {setHost(e.target.value)}}
+                            onChange={(e) => {setHost(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                         />
                         </div>
                         <div className="newEntryInput">
@@ -351,7 +515,7 @@ const Manipulate = props => {
                             type="text" 
                             placeholder= "Guest Club" 
                             autoComplete="off"
-                            onChange={(e) => {setGuest(e.target.value)}}
+                            onChange={(e) => {setGuest(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                         />
                         </div>
                         <div className="newEntryInput">
@@ -359,7 +523,7 @@ const Manipulate = props => {
                                 type="datetime-local" 
                                 placeholder= "Start Time" 
                                 autoComplete="off"
-                                onChange={(e) => {setStartTime(e.target.value)}}
+                                onChange={(e) => {setStartTime(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                         <div className="newEntryInput">
@@ -367,13 +531,16 @@ const Manipulate = props => {
                                 type="datetime-local" 
                                 placeholder= "End Time" 
                                 autoComplete="off"
-                                onChange={(e) => {setEndTime(e.target.value)}}
+                                onChange={(e) => {setEndTime(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             />
                         </div>
                     </div>
                     <button type="submit" className="actionButton"><img className="actionIcon" src={minus} alt="alternative text" title="Delete Match" /></button>
                 </div>
                 </form>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                </>
     }
 
     const openStadium = async (e) => {
@@ -440,8 +607,6 @@ const Manipulate = props => {
         return openStadium();
     else if (props.object === "myStadium" && props.action === "delete")
         return closeStadium();
-    
-    
 }
 
 export default Manipulate;

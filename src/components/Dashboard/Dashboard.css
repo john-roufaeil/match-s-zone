@@ -186,17 +186,18 @@ th {
 
 
 .offscreen {
-    /* position: absolute;
-    left: -9999px; */
-    color: transparent;
-    background-color: transparent;
+    position: absolute;
+    left: -9999px;
+    /* color: transparent;
+    background-color: transparent; */
 }
 
 .errMsg {
     background-color: var(--error-bg);
     color: var(--error);
     font-weight: bold;
-    width: 97%;
+    /* width: 97%; */
+    width: fit-content;
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 5px;
@@ -208,7 +209,7 @@ th {
     background-color: var(--success-bg);
     color: var(--success);
     font-weight: bold;
-    width: 97%;
+    width: fit-content;
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 5px;

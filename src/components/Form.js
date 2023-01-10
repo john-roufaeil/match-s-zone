@@ -4,6 +4,8 @@ import FadeIn from 'react-fade-in';
 import { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from '../UserContext';
+import error from "../assets/icons/actions/error.png"
+import success from "../assets/icons/actions/success.png"
 
 
 const Form = props => { 
@@ -89,8 +91,8 @@ const Form = props => {
 
 
     const submitNewF = async (e) => {
-        try {
         e.preventDefault(); 
+        try {
         var exisitingUsername = false;
         users.forEach(user => {
             if (user.username == username) {
@@ -133,8 +135,8 @@ const Form = props => {
     };
     const fanForm = () => {
         return  <FadeIn>
-                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
-                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
+                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                     <form  method="POST" action="/newF" className="fanForm" onSubmit={submitNewF}> 
                         <div className="field">
                             <label htmlFor="name">
@@ -265,8 +267,8 @@ const Form = props => {
     };
     const managerForm = () => {
         return <FadeIn>
-                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
-                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
+                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                     <form method="POST" action="/newSAM" className="managerForm" onSubmit={submitNewSAM}> 
                         <div className="field">
                             <label htmlFor="name">
@@ -363,8 +365,8 @@ const Form = props => {
     };
     const clubRepresentativeForm = () => {
         return <FadeIn>
-                <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
-                <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
+                <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                 <form  method="POST" action="/newCR" className="clubRepresentativeForm" onSubmit={submitNewCR}> 
                     <div className="field">
                         <label htmlFor="name">
@@ -474,8 +476,8 @@ const Form = props => {
     };
     const stadiumManagerForm = () => {
         return  <FadeIn>
-                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}>{successMsg}</p>
-                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
+                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                     <form  method="POST" action="/newSM" className="stadiumManagerForm" onSubmit={submitNewSM}> 
                         <div className="field">
                             <label htmlFor="name">
@@ -584,7 +586,7 @@ const Form = props => {
     };
     const logInForm = () => {
         return  <FadeIn><div>
-                <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}>{errMsg}</p>
+                <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                 <form autoComplete='new-password' className="logInForm" > 
                     <div className="field"> 
                         <label htmlFor="username">Username</label><br />

@@ -24,7 +24,7 @@ const Dashboard = props => {
             <div className="dashboardMenu">
                 <button 
                     className={`dashboardMenuButton ${selected === "myClub" ? "selectedButton" : ""}`}
-                    onClick={() => {setSelected("myClub"); setDescription("View all information about my stadium")}}>
+                    onClick={() => {setSelected("myClub"); setDescription("View all information about my club")}}>
                     My Club
                 </button>
                 <button 
