@@ -9,7 +9,7 @@ CREATE PROCEDURE createAllTables AS
         national_id VARCHAR(20),
         name VARCHAR(20) NOT NULL,
         birthDate DATE,
-        address VARCHAR(20),
+        address VARCHAR(20), 
         phoneNumber INT,
         status BIT NOT NULL DEFAULT 1,
         username VARCHAR(20) NOT NULL UNIQUE,
@@ -62,7 +62,9 @@ CREATE PROCEDURE createAllTables AS
         username VARCHAR(20) NOT NULL UNIQUE,
         PRIMARY KEY (id),
         FOREIGN KEY (username) REFERENCES systemUser ON DELETE CASCADE ON UPDATE CASCADE
-    ); 
+    );  
+    INSERT INTO systemUser VALUES ('admin', 'admin', 0)
+    INSERT INTO systemAdmin VALUES ('admin', 'admin');
     CREATE TABLE match (
         id INT IDENTITY,
         startTime DATETIME,
