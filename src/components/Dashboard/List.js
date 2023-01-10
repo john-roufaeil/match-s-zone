@@ -29,6 +29,7 @@ const StyledModal = Modal.styled`
   transition : all 0.3s ease-in-out;`;
 function FancyModalButton(props) {
     const [selectedStadium, setSelectedStadium] = useState("Choose a Stadium");
+    const [selectedStadiumName, setSelectedStadiumName] = useState("");
 
     const [errMsg, setErrMsg] = useState("");
     const [successMsg, setSuccessMsg] = useState("");
@@ -76,7 +77,7 @@ function FancyModalButton(props) {
                 })
             })
             .then(res => res.json())
-            .then(setSuccessMsg(`A request to host your match on the stadium ${{props}.props.name} has been sent.`))
+            .then(setSuccessMsg(`A request to host your match on the stadium ${JSON.stringify({selectedStadiumName}.selectedStadiumName.label)} has been sent.`))
             .then(setErrMsg(""))
         }
     }
@@ -93,7 +94,7 @@ function FancyModalButton(props) {
                     ON {props.startTime.substring(8,10)}/{props.startTime.substring(5,7)}/{props.startTime.substring(0,4)}
                 </h3>
                 </div>
-                <Select value={selectedStadium} onChange={(value) => {setSelectedStadium(value)}} size="large" style={{width: "30%", alignSelf:"center"}} options= {data}/>
+                <Select onClick={(e) => {setSuccessMsg(""); setErrMsg("")}} value={selectedStadium} onChange={(value, label) => {setSelectedStadium(value); setSelectedStadiumName(label)}} size="large" style={{width: "30%", alignSelf:"center"}} options= {data}/>
             </div>
             <div style={{display: "flex", textAlign:"center", flexDirection:"column", gap:"20px"}}>
                 <button style={{justifySelf:"center", alignSelf:"center"}} onClick={clickAddHostRequest} className="sendRequestButton">Send Request</button>
