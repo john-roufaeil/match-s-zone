@@ -10,10 +10,8 @@ import acceptDisabled from "../../assets/icons/actions/accept-disabled.png"
 import reject from "../../assets/icons/actions/reject.png"
 import rejectDisabled from "../../assets/icons/actions/reject-disabled.png"
 import tct from "../../assets/icons/actions/tct.png"
-import styled from "styled-components";
-import Modal, { ModalProvider, BaseModalBackground } from "styled-react-modal";
-import DropdownButton from 'antd/es/dropdown/dropdown-button';
-import { Dropdown, Select } from 'antd';
+import Modal, { ModalProvider } from "styled-react-modal";
+import { Select } from 'antd';
 import error from "../../assets/icons/actions/error.png"
 import success from "../../assets/icons/actions/success.png"
 import FadeIn from 'react-fade-in';
