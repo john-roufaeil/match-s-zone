@@ -9,6 +9,7 @@ import "./styles.css"
 import FadeIn from 'react-fade-in';
 import Modal, { ModalProvider } from "styled-react-modal";
 import arrow from "../assets/gifs/arrow.gif"
+import balls from "../assets/icons/decoration/balls.png"
 
 function FancyModalButton(props) {
     const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +43,6 @@ function FancyModalButton(props) {
                         </div>
                     <hr />
                     </FadeIn>
-                    <FadeIn>
                         <div className="block">
                             <h3>About</h3>
                             <ul>
@@ -97,7 +97,7 @@ function FancyModalButton(props) {
                             <img src={arrow} width="40px" /> <span>When a stadium manager approves a host request, tickets get added to the system according to the stadium's capacity.</span> <br />
                             <img src={arrow} width="40px" /> <span>Fans can log in to their account if they were unblocked and view tickets that are still available and purchase any.</span> <br />
                         </div>
-                    </FadeIn>
+                        <img src={balls} className="balls" />
                 </div>
             </FadeIn>
         </Modal>

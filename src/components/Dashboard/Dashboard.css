@@ -310,7 +310,8 @@ th {
 .info {
     width: 65rem;
     height: 30rem;
-    padding: 5%;
+    padding: 5% 5% 0 5%;
+    margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -352,4 +353,8 @@ th {
 
 .process {
     margin-bottom: 2px;
+}
+
+.balls {
+    width: 100%;
 }
