@@ -1,15 +1,15 @@
-import axios, * as others from 'axios';
-import '../App.css'; 
+import { useState, useEffect, useContext } from "react";
+import { UserContext, BlockedUser } from '../Contexts';
 import FadeIn from 'react-fade-in';
-import { useState, useEffect, useContext, useRef } from "react";
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import { UserContext } from '../UserContext';
-import { BlockedUser } from "../BlockedContext"
 import error from "../assets/icons/actions/error.png"
 import success from "../assets/icons/actions/success.png"
 
-
 const Form = props => { 
+    const {loggedInUser, setLoggedInUser} = useContext(UserContext);
+    const {showBlocked, setShowBlocked} = useContext(BlockedUser);
+
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -19,60 +19,58 @@ const Form = props => {
     const [phone, setPhone] = useState("");
     const [clubName, setClubName] = useState("");
     const [stadiumName, setStadiumName] = useState("");
+
     const [users, setUsers] = useState([]);
     const [fans, setFans] = useState([]);
     const [stadiumManagers, setStadiumManagers] = useState([]);
     const [clubRepresentatives, setClubRepresentatives] = useState([]);
     const [stadiums, setStadiums] = useState([]);
+    const [clubs, setClubs] = useState([]);
+    const [errMsg, setErrMsg] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
+
     useEffect(() => {
         axios.get('http://localhost:5000/viewStadiums')
         .then(res => setStadiums(res.data))
+        .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
     }, [stadiums]);
 
-    const [clubs, setClubs] = useState([]);
     useEffect(() => {
         axios.get('http://localhost:5000/viewClubs')
         .then(res => setClubs(res.data))
+        .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
     }, [clubs]);
 
     useEffect(() => {
-        try {
         axios.get('http://localhost:5000/viewFans')
         .then(res => setFans(res.data))
-        } catch(e) {
-            console.log(e);
-            setErrMsg("Server Error");
-            setSuccessMsg("");
-        }
+        .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
     }, [fans]);
     
-    const [errMsg, setErrMsg] = useState("");
-    const errorRef = useRef();
-
-    const [successMsg, setSuccessMsg] = useState("");
-    const successRef = useRef();
-
     useEffect(() => {
         setSuccessMsg("") 
         setErrMsg("")
     }, [props.type])
 
-    const {loggedInUser, setLoggedInUser} = useContext(UserContext);
-    const {showBlocked, setShowBlocked} = useContext(BlockedUser);
-
     useEffect(() => {
-        axios.get('http://localhost:5000/getUsers').then(res => setUsers(res.data))
-        axios.get('http://localhost:5000/getStadiumManagers').then(res => setStadiumManagers(res.data))
-        axios.get('http://localhost:5000/getClubRepresentatives').then(res => setClubRepresentatives(res.data))
+        axios.get('http://localhost:5000/getUsers')
+        .then(res => setUsers(res.data))
+        .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
+        axios.get('http://localhost:5000/getStadiumManagers')
+        .then(res => setStadiumManagers(res.data))
+        .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
+        axios.get('http://localhost:5000/getClubRepresentatives')
+        .then(res => setClubRepresentatives(res.data))
+        .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
     }, []);
 
     const getIsFormValid = type => {
         if (!(username && password))
             return false;
         switch(type) {
-            case "stadiumManager": return name&&stadiumName?true:false;
-            case "clubRepresentative": return name&&clubName?true:false;
-            case "fan": return name&&nationalId?true:false; 
+            case "stadiumManager": return name && stadiumName?true:false;
+            case "clubRepresentative": return name && clubName?true:false;
+            case "fan": return name && nationalId && birthDate && phone && address?true:false; 
             default: return true;
         }
     };
@@ -91,15 +89,12 @@ const Form = props => {
 
 
 
-
     const submitNewF = async (e) => {
         e.preventDefault(); 
-        try {
         var exisitingUsername = false;
         users.forEach(user => {
-            if (user.username == username) {
+            if (user.username == username)
                 exisitingUsername = true;   
-            }
         });
         if (exisitingUsername) {setErrMsg("This username is unavailable."); setSuccessMsg("");}
         else if (username.includes(" ")) {setErrMsg("Username cannot contain spaces."); setSuccessMsg("");}
@@ -107,41 +102,28 @@ const Form = props => {
         else if (parseInt(birthDate.substring(0,4)) > parseInt((new Date().getFullYear()))) {setErrMsg("Please enter a valid birth date."); setSuccessMsg("");}
         else if (parseInt(birthDate.substring(0,4)) + 16 >= parseInt((new Date().getFullYear()))) {setErrMsg("You must be at least 16 years old to register."); setSuccessMsg("");}
         else {
-            const newData = await fetch('http://localhost:5000/newF', {
-                method: 'POST', 
-                url: 'http://localhost:5000',
-                header : {
-                    'Content-Type': 'application/json',  
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: {name}.name,
-                    username: {username}.username,
-                    password: {password}.password,
-                    nat_id: {nationalId}.nationalId,
-                    birthdate: {birthDate}.birthDate.replaceAll('-', ''),
-                    address: {address}.address,
-                    phone: {phone}.phone
-                })
+            axios.post('http://localhost:5000/newF', {
+                name: {name}.name,
+                username: {username}.username,
+                password: {password}.password,
+                nat_id: {nationalId}.nationalId,
+                birthdate: {birthDate}.birthDate.replaceAll('-', ''),
+                address: {address}.address,
+                phone: {phone}.phone
             })
-            .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
-            .then(setErrMsg(""));
-        }
-        } catch(e) {
-            console.log(e);
-            setErrMsg("Server Error");
-            setSuccessMsg("");
+            .then(setErrMsg(""))
+            .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
         }
     };
     const fanForm = () => {
         return  <FadeIn>
-                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
-                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
+                    <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                    <p className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                     <form  method="POST" action="/newF" className="fanForm" onSubmit={submitNewF}> 
-                        <div className="field">
-                            <label htmlFor="name">
+                        <div className = "field">
+                            <label htmlFor = "name">
                                 Name
                             </label><br />
                             <input
@@ -149,72 +131,79 @@ const Form = props => {
                                 id = "name" 
                                 name = "name"
                                 value = {name}
-                                onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("")}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("")}}
                                 required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="username">
+                        <div className = "field">
+                            <label htmlFor = "username">
                                 Username
                             </label><br />
                             <input
-                                type= "text"
+                                type = "text"
                                 id = "username" 
                                 name = "username"
                                 value = {username}
+                                autoComplete = "off"
                                 onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="password">
+                        <div className = "field">
+                            <label htmlFor = "password">
                                 Password
                             </label><br />
                             <input
-                                type="password"
+                                type = "password"
                                 id = "password" 
                                 name = "password"
                                 value = {password}
-                                onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete= "new-password"
+                                onChange = {(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
-                                autoComplete='new-password'
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="nationalId">
+                        <div className = "field">
+                            <label htmlFor = "nationalId">
                                 National ID Number 
                             </label><br />
                             <input
-                                type= "text"
+                                type = "text"
                                 id = "nationalId" 
                                 name = "nationalId"
-                                onChange={(e) => {setNationalId(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setNationalId(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 value = {nationalId}
                                 required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="birthDate">
+                        <div className = "field">
+                            <label htmlFor = "birthDate">
                                 Date of Birth
                             </label><br />
                             <input
-                                type= "date"
+                                type = "date"
                                 id = "birthDate" 
                                 name = "birthDate"
                                 value = {birthDate}
-                                onChange={(e) => {setBirthDate(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setBirthDate(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="address">
+                        <div className = "field">
+                            <label htmlFor = "address">
                                 Address
                             </label><br />
                             <input
-                                type= "location"
+                                type = "location"
                                 id = "address" 
                                 name = "address"
                                 value = {address}
-                                onChange={(e) => {setAddress(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setAddress(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                required
                             />
                         </div>
                         <div className="field">
@@ -226,7 +215,9 @@ const Form = props => {
                                 id = "phone" 
                                 name = "phone"
                                 value = {phone}
-                                onChange={(e) => {setPhone(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setPhone(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                required
                             />
                         </div>
                         <button type="submit" disabled={!getIsFormValid("fan")}> 
@@ -240,9 +231,8 @@ const Form = props => {
         e.preventDefault(); 
         var exisitingUsername = false;
         users.forEach(user => {
-            if (user.username == username) {
+            if (user.username == username)
                 exisitingUsername = true;
-            }
         });
         if (exisitingUsername) {setErrMsg("This username is unavailable."); setSuccessMsg("");}
         else if (username.includes(" ")) {setErrMsg("Username cannot contain spaces."); setSuccessMsg("");}
@@ -261,55 +251,57 @@ const Form = props => {
                     password: {password}.password
                 })
             })
-            .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
-            .then(setErrMsg(""));
+            .then(setErrMsg(""))
+            .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
         }
     };
     const managerForm = () => {
         return <FadeIn>
-                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
-                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
+                    <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                    <p className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                     <form method="POST" action="/newSAM" className="managerForm" onSubmit={submitNewSAM}> 
-                        <div className="field">
-                            <label htmlFor="name">
+                        <div className ="field">
+                            <label htmlFor = "name">
                                 Name 
                             </label><br />
                             <input
-                                type="text"
-                                id ="name" 
+                                type = "text"
+                                id = "name" 
                                 name = "name"
                                 value = {name}
-                                onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="username">
+                        <div className = "field">
+                            <label htmlFor = "username">
                                 Username 
                             </label><br />
                             <input
-                                type="text"
-                                id ="username" 
-                                name="username"
+                                type = "text"
+                                id = "username" 
+                                name = "username"
                                 value = {username}
-                                onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="password">
+                        <div className = "field">
+                            <label htmlFor = "password">
                                 Password 
                             </label><br />
                             <input
-                                required
-                                value = {password}
-                                onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
-                                name="password"
-                                id ="password" 
                                 type="password"
+                                id ="password" 
+                                name="password"
+                                value = {password}
                                 autoComplete='new-password'
+                                onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                required
                             />
                         </div>
                         <button type="submit" disabled={!getIsFormValid("manager")}> 
@@ -325,19 +317,16 @@ const Form = props => {
         var takenClub = false;
         var invalidClub = true;
         users.forEach(user => {
-            if (user.username == username) {
+            if (user.username == username)
                 exisitingUsername = true;
-            }
         });
         clubRepresentatives.forEach(rep => {
-            if (rep.name == clubName) {
+            if (rep.name == clubName)
                 takenClub = true;
-            }
         });
         clubs.forEach(club => {
-            if (club.name == clubName) {
+            if (club.name == clubName)
                 invalidClub = false;
-            }
         });
         if (exisitingUsername) {setErrMsg("This username is unavailable."); setSuccessMsg("");}
         else if (username.includes(" ")) {setErrMsg("Username cannot contain spaces."); setSuccessMsg("");}
@@ -359,27 +348,28 @@ const Form = props => {
                     club: {clubName}.clubName
                 })
             })
-            .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
             .then(setErrMsg(""))
+            .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
         }
     };
     const clubRepresentativeForm = () => {
         return <FadeIn>
-                <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
-                <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
+                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                 <form  method="POST" action="/newCR" className="clubRepresentativeForm" onSubmit={submitNewCR}> 
-                    <div className="field">
-                        <label htmlFor="name">
+                    <div className = "field">
+                        <label htmlFor = "name">
                             Name 
                         </label><br />
                         <input
-                            type= "text"
+                            type = "text"
                             id = "name"
                             name = "name" 
                             value = {name}
-                            onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                            autoComplete = "off"
+                            onChange = {(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                         />
                     </div>
@@ -388,11 +378,12 @@ const Form = props => {
                             Username 
                         </label><br />
                         <input
-                            type= "text"
+                            type = "text"
                             id = "username" 
                             name = "username"
                             value = {username}
-                            onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                            autoComplete = "off"
+                            onChange = {(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                         />
                     </div>
@@ -401,12 +392,12 @@ const Form = props => {
                             Password 
                         </label><br />
                         <input
-                            type="password"
-                            id ="password" 
+                            type = "password"
+                            id = "password" 
                             name = "password"
                             value = {password}
-                            onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
-                            autoComplete="new-password"
+                            autoComplete = "new-password"
+                            onChange = {(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                         />
                     </div>
@@ -415,10 +406,11 @@ const Form = props => {
                             Club to Represent 
                         </label><br />
                         <input
-                            type= "text"
+                            type = "text"
                             id = "clubName" 
                             name = "name"
                             value = {clubName}
+                            autoComplete = "off"
                             onChange={(e) => {setClubName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                             required
                         />
@@ -436,19 +428,16 @@ const Form = props => {
         var takenStadium = false;
         var invalidStadium = true;
         users.forEach(user => {
-            if (user.username == username) {
+            if (user.username == username)
                 exisitingUsername = true;
-            }
         });
         stadiumManagers.forEach(manager => {
-            if (manager.name == stadiumName) {
+            if (manager.name == stadiumName)
                 takenStadium = true;
-            }
         });
         stadiums.forEach(stadium => {
-            if (stadium.name == stadiumName) {
+            if (stadium.name == stadiumName) 
                 invalidStadium = false;
-            }
         });
         if (exisitingUsername) {setErrMsg("This username is unavailable."); setSuccessMsg("");}
         else if (username.includes(" ")) {setErrMsg("Username cannot contain spaces."); setSuccessMsg("");}
@@ -470,67 +459,70 @@ const Form = props => {
                     stadium: {stadiumName}.stadiumName
                 })
             })
-            .then(res => console.log(res.json()))
             .then(clearForm())
             .then(setSuccessMsg("You have successfully registered."))
             .then(setErrMsg(""))
+            .catch(e => {setErrMsg("Server Error, please logout and reload.");setSuccessMsg("")})
         }
     };
     const stadiumManagerForm = () => {
         return  <FadeIn>
-                    <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
-                    <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
+                    <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                    <p className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                     <form  method="POST" action="/newSM" className="stadiumManagerForm" onSubmit={submitNewSM}> 
-                        <div className="field">
-                            <label htmlFor="name">
+                        <div className = "field">
+                            <label htmlFor = "name">
                                 Name 
                             </label><br />
                             <input
-                                type= "text"
+                                type = "text"
                                 id = "name" 
                                 name = "name"
                                 value = {name}
-                                onChange={(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="username">
+                        <div className = "field">
+                            <label htmlFor = "username">
                                 Username 
                             </label><br />
                             <input
-                                type= "text"
+                                type = "text"
                                 id = "username" 
                                 name = "username"
                                 value = {username}
-                                onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="password">
+                        <div className = "field">
+                            <label htmlFor = "password">
                                 Password 
                             </label><br />
                             <input
-                                type= "password"
+                                type = "password"
                                 id = "password" 
                                 name = "password"
                                 value = {password}
-                                onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 autoComplete='new-password'
+                                onChange = {(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
-                        <div className="field">
-                            <label htmlFor="stadiumName">
+                        <div className = "field">
+                            <label htmlFor = "stadiumName">
                                 Stadium to Manage 
                             </label><br />
                             <input
-                                type= "text"
+                                type = "text"
                                 id = "stadiumName" 
                                 name = "stadiumName"
                                 value = {stadiumName}
-                                onChange={(e) => {setStadiumName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
+                                autoComplete = "off"
+                                onChange = {(e) => {setStadiumName(e.target.value); setSuccessMsg(""); setErrMsg("");}}
                                 required
                             />
                         </div>
@@ -544,7 +536,6 @@ const Form = props => {
     const navigate = useNavigate();
 
     const logIn = (e) => {
-        try {
         e.preventDefault();
         var foundUsr = false;
         var foundPw = false;
@@ -581,44 +572,38 @@ const Form = props => {
             }
             setLoggedInUser(username);
         }
-        } catch (e) {
-            console.log(e);
-            setErrMsg("Server Error");
-            setSuccessMsg("");
-        }      
     };
     const logInForm = () => {
         return  <FadeIn><div>
-                <p ref={errorRef} className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
+                <p className={errMsg ? "errMsg" : "offscreen"}><img src={error} width='10px'/>{' '} {errMsg}</p>
                 <form autoComplete='new-password' className="logInForm" > 
                     <div className="field"> 
                         <label htmlFor="username">Username</label><br />
                         <input
-                            type="text"
+                            type = "text"
                             id ="username" 
                             value = {username}
-                            autoComplete="new-password"
-                            autoFocus="on"
-                            onChange={(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg(""); setShowBlocked(false);}}
+                            autoComplete = "new-password"
+                            autoFocus = "on"
+                            onChange = {(e) => {setUsername(e.target.value); setSuccessMsg(""); setErrMsg(""); setShowBlocked(false);}}
                             required
                         />
                     </div>
-                    <div className="field">
-                        <label htmlFor="password">
+                    <div className = "field">
+                        <label htmlFor = "password">
                             Password
                         </label><br />
                         <input
-                            type="password"
-                            id ="password" 
+                            type = "password"
+                            id = "password" 
                             value = {password}
-                            autoComplete="new-password"
-                            onChange={(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg(""); setShowBlocked(false);}}
+                            autoComplete = "new-password"
+                            onChange = {(e) => {setPassword(e.target.value); setSuccessMsg(""); setErrMsg(""); setShowBlocked(false);}}
                             required
-                            
                         />
                     </div>
                     <p>Forgot Password?</p>
-                    <button onClick={logIn} disabled={!getIsFormValid("logIn")}> 
+                    <button onClick = {logIn} disabled={!getIsFormValid("logIn")}> 
                         Log In
                     </button>  
                 </form></div>

@@ -1,16 +1,14 @@
-import axios, * as others from 'axios';
-import NavBar from "../NavBar";
-import "./Dashboard.css";
 import { useState, useContext, useEffect } from "react";
-import Manipulate from "./Manipulate";
+import { UserContext } from '../../Contexts';
+import NavBar from "../NavBar";
+import Footer from "../Footer";
 import List from "./List";
-import Footer from "../Footer"
-import { UserContext } from '../../UserContext';
 import { timeGreet } from "../../utils";
+import "./Dashboard.css";
 
 const Dashboard = props => {
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
-    const barComponents = {left: null, right: "logout"};
+    const barComponents = {left: "info", right: "logout"};
     const [description, setDescription] = useState("View All Information About My Stadium");
     const [selected, setSelected] = useState("myStadium");
 

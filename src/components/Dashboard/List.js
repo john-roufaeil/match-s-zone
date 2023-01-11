@@ -4,7 +4,7 @@ import open from "../../assets/icons/actions/open.png"
 import close from "../../assets/icons/actions/close.png"
 import request from "../../assets/icons/actions/request.png"
 import requestDisabled from "../../assets/icons/actions/request-disabled.png"
-import { UserContext } from '../../UserContext';
+import { UserContext } from '../../Contexts';
 import accept from "../../assets/icons/actions/accept.png"
 import acceptDisabled from "../../assets/icons/actions/accept-disabled.png"
 import reject from "../../assets/icons/actions/reject.png"
@@ -16,17 +16,9 @@ import DropdownButton from 'antd/es/dropdown/dropdown-button';
 import { Dropdown, Select } from 'antd';
 import error from "../../assets/icons/actions/error.png"
 import success from "../../assets/icons/actions/success.png"
+import FadeIn from 'react-fade-in';
 
-const StyledModal = Modal.styled`
-  width: 65rem;
-  height: 30rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  background-color: #22303c;
-  opacity: ${(props) => props.opacity};
-  transition : all 0.3s ease-in-out;`;
+
 function FancyModalButton(props) {
     const [selectedStadium, setSelectedStadium] = useState("Choose a Stadium");
     const [selectedStadiumName, setSelectedStadiumName] = useState("");
@@ -37,6 +29,12 @@ function FancyModalButton(props) {
         setSuccessMsg("");
         setErrMsg("");
     }, [])
+
+    const [requests, setRequests] = useState("");
+    useEffect(() => {
+        axios.get('http://localhost:5000/viewRequests')
+        .then(res => setRequests(res.data))
+    }, [requests])
 
     const [isOpen, setIsOpen] = useState(false);
     const [opacity, setOpacity] = useState(0);
@@ -61,7 +59,14 @@ function FancyModalButton(props) {
 
     const clickAddHostRequest = async (e) => {
         e.preventDefault();
-        if (selectedStadium != "Choose a Stadium") {
+        var existingRequest = false;
+        requests.forEach(req => {
+            if (req.representative_id === props.cr_id && req.manager_id === selectedStadium && req.match_id === props.m_id) {
+                existingRequest = true;   
+            }
+        })
+        if (existingRequest) {setErrMsg("You have already sent a request to this stadium."); setSuccessMsg("");}
+        else if (selectedStadium != "Choose a Stadium") {
             console.log(selectedStadium)
             await fetch(`http://localhost:5000/addHostRequest`, {
                 method: 'POST', 
@@ -84,31 +89,37 @@ function FancyModalButton(props) {
 
     return (
       <div>
-        <button  style={{backgroundColor: "transparent", cursor:"pointer"}} onClick={toggleModal}><img width="50px" src={request} alt="alternative text" style={{backgroundColor: "transparent"}} title="Send a host request" /> </button>
-        <StyledModal isOpen={isOpen} afterOpen={afterOpen} beforeClose={beforeClose} onBackgroundClick={toggleModal} onEscapeKeydown={toggleModal} opacity={opacity} backgroundProps={{ opacity }}>
-            <div style={{display: "flex", textAlign:"center", flexDirection:"column", gap:"20px"}}>
-                <div style={{color:'white'}}>
-                <h2>Choose a Stadium to Send a Request to Host Your Match on it</h2>
-                <h3>{props.host.toString().toUpperCase()} VS {props.guest.toString().toUpperCase()}  { }
-                    AT {props.startTime.substring(11,13)}:{props.startTime.substring(14,16)} { }
-                    ON {props.startTime.substring(8,10)}/{props.startTime.substring(5,7)}/{props.startTime.substring(0,4)}
-                </h3>
+        <button style={{backgroundColor: "transparent", cursor:"pointer"}} onClick={toggleModal}><img width="50px" src={request} alt="alternative text" style={{backgroundColor: "transparent"}} title="Send a host request" /> </button>
+        <Modal isOpen={isOpen} afterOpen={afterOpen} beforeClose={beforeClose} onBackgroundClick={toggleModal} onEscapeKeydown={toggleModal} opacity={opacity} backgroundProps={{ opacity }}>
+            <FadeIn><div className="modal">
+                <div style={{display: "flex", textAlign:"center", flexDirection:"column", gap:"20px"}}>
+                    <FadeIn>
+                        <div>
+                            <h2>Choose a Stadium to Send a Request to Host Your Match on it</h2>
+                            <h3>{props.host.toString().toUpperCase()} VS {props.guest.toString().toUpperCase()}  { }
+                                AT {props.startTime.substring(11,13)}:{props.startTime.substring(14,16)} { }
+                                ON {props.startTime.substring(8,10)}/{props.startTime.substring(5,7)}/{props.startTime.substring(0,4)}
+                            </h3>
+                        </div>
+                    <Select 
+                        onClick={(e) => {setSuccessMsg(""); setErrMsg("")}} value={selectedStadium} 
+                        onChange={(value, label) => {setSelectedStadium(value); setSelectedStadiumName(label)}} 
+                        size="large" style={{width: "30%", alignSelf:"center"}} options= {data}
+                    />
+                    </FadeIn>
                 </div>
-                <Select onClick={(e) => {setSuccessMsg(""); setErrMsg("")}} value={selectedStadium} onChange={(value, label) => {setSelectedStadium(value); setSelectedStadiumName(label)}} size="large" style={{width: "30%", alignSelf:"center"}} options= {data}/>
-            </div>
-            <div style={{display: "flex", textAlign:"center", flexDirection:"column", gap:"20px"}}>
-                <button style={{justifySelf:"center", alignSelf:"center"}} onClick={clickAddHostRequest} className="sendRequestButton">Send Request</button>
-                <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
-                <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
-            </div>
-        </StyledModal>
+                <div style={{display: "flex", textAlign:"center", flexDirection:"column", gap:"20px"}}>
+                    <FadeIn>
+                    <button style={{justifySelf:"center", alignSelf:"center"}} onClick={clickAddHostRequest} className="sendRequestButton">Send Request</button>
+                    <p className={successMsg ? "successMsg" : "offscreen"}><img src={success} width='10px'/>{' '} {successMsg}</p>
+                    <p className={errMsg ? "errMsg" : "offscreen"}> <img src={error} width='10px'/>{' '} {errMsg}</p>
+                    </FadeIn>
+                </div>
+            </div></FadeIn>
+        </Modal>
       </div>
     );
   }
-  const FadingBackground = styled(BaseModalBackground)`
-  opacity: ${(props) => props.opacity};
-  transition: all 0.3s ease-in-out;
-`;
 
 
 
@@ -691,7 +702,7 @@ const List = props => {
                 if (cr.name == match.club && cr.username == loggedInUser) 
                     isHost = true;
             });
-            return  <ModalProvider>
+            return  <ModalProvider className="modal">
                         <tr key = {`${match.club}, ${match.competent}, ${match.startTime}`} className="fade-in">
                             <td>{match.club}</td>
                             <td>{match.competent}</td>
@@ -700,7 +711,7 @@ const List = props => {
                             <td>{match.name 
                                 ? match.name 
                                 : isHost 
-                                ? <button style={{backgroundColor: "transparent"}} onClick={(e) =>{e.preventDefault(); setSelectTime({match}.match.startTime.replace('Z', '').replace('T', '').substring(0,19))}}><FancyModalButton
+                                ? <div style={{backgroundColor: "transparent"}} onClick={(e) =>{e.preventDefault(); setSelectTime({match}.match.startTime.replace('Z', '').replace('T', '').substring(0,19))}}><FancyModalButton
                                     host = {{match}.match.club} 
                                     guest = {{match}.match.competent} 
                                     startTime = {{match}.match.startTime} 
@@ -708,7 +719,7 @@ const List = props => {
                                     sm_username = {{loggedInUser}.loggedInUser}
                                     cr_id = {{match}.match.cr_id}
                                     m_id = {{match}.match.m_id}
-                                /></button>
+                                /></div>
                                 : <img style={{cursor: 'not-allowed'}}width="50px" src={requestDisabled}  alt="alternative text" title={"You are not the hosting club,\n cannot send a host request"} />}
                             </td>
                         </tr>

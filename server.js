@@ -148,6 +148,11 @@ app.post('/addHostRequest', jsonParser, async (req, res) => {
     return res.send(result.recordset);
 })
 
+app.get('/viewRequests', jsonParser, async(req, res) => {
+    const result = await dbOperation.viewRequests();
+    res.send(JSON.stringify(result.recordset));
+})
+
 
 
 // Stadium Manager //

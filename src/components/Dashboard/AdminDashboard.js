@@ -1,15 +1,15 @@
-import NavBar from "../NavBar";
-import "./Dashboard.css";
 import { useState, useContext } from "react";
+import { UserContext } from '../../Contexts';
 import Manipulate from "./Manipulate";
+import NavBar from "../NavBar";
+import Footer from "../Footer";
 import List from "./List";
-import Footer from "../Footer"
-import { UserContext } from '../../UserContext';
 import { timeGreet } from "../../utils";
+import "./Dashboard.css";
 
 const Dashboard = props => {
     const greet = timeGreet;
-    const barComponents = {left: null, right: "logout"};
+    const barComponents = {left: "info", right: "logout"};
     const [selected, setSelected] = useState("clubs");
     const [description, setDescription] = useState("View and manage all clubs");
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);

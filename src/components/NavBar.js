@@ -1,23 +1,22 @@
-import darkLogo from "../assets/icons/match-s-zone/dark.png";
-import lightLogo from "../assets/icons/match-s-zone/light.png";
-import { Routes, Route, Link } from "react-router-dom";
-import "./styles.css"
-import logout from "../assets/icons/actions/logout.png"
+import { Link } from "react-router-dom";
 import { Toggle } from 'react-hook-theme';
+import darkLogo from "../assets/icons/match-s-zone/dark.png";
+import logout from "../assets/icons/actions/logout.png"
+import info from "../assets/icons/actions/info.png"
 import 'react-hook-theme/dist/styles/style.css';
-import { UserContext } from '../UserContext';
-import { useState, useContext } from "react";
-
+import "./styles.css"
 
 const NavBar = props => {
-    const {loggedInUser, setLoggedInUser} = useContext(UserContext);
-
     const left = props.barComponents.left;
     const right = props.barComponents.right;
     return (
         <nav>
             <div className="left">
-                {left == null?null:null}
+                {left == "info"?
+                    <button style={{backgroundColor:"transparent"}}>
+                        <img width="45px" src={info} />
+                    </button>
+                :null}
             </div>
             <img src={darkLogo} alt="logo" className="logo"></img>
             <div className="right">   

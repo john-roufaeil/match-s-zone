@@ -32,8 +32,6 @@ const getClubRepresentatives = async() => {
     }
 }
 
-
-
 // Admin //
 const addClub = async (name, location) => {
     try {
@@ -145,8 +143,6 @@ const closeStadium = async (name) => {
     }
 }
 
-
-
 // Sports Association Manager //
 const addNewSAM = async (name, username, password) => {
     try {
@@ -246,8 +242,6 @@ const viewClubsNotScheduledTogether = async () => {
     }
 }
 
-
-
 // Club Representative //
 const addNewCR = async (name, username, password, club) => {
     try {
@@ -298,7 +292,6 @@ const availableStadiumsOn = async (date) => {
 
 const addHostRequest = async (cr_id, sm_id, m_id) => {
     try {
-        console.log(`in dboperation: ${cr_id}, ${sm_id}, ${m_id}`)
         let pool = await sql.connect(config);
         let exec = await pool.request().query(`EXEC CR_addHostRequest [${cr_id}], [${sm_id}], [${m_id}]`);
         return exec;
@@ -307,9 +300,15 @@ const addHostRequest = async (cr_id, sm_id, m_id) => {
     }
 }
 
-
-
-
+const viewRequests = async () =>{
+    try {
+        let pool = await sql.connect(config);
+        let exec = await pool.request().query(`SELECT * FROM hostRequest`);
+        return exec;
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 // Stadium Manager //
 const addNewSM = async (name, username, password, stadium) => {
@@ -383,8 +382,6 @@ const viewMatchesOnStadium = async (username) => {
     }
 }
 
-
-
 // Fan //
 const addNewF = async (name, username, password, nat_id, birthdate, address, phone) => {
     try {
@@ -435,7 +432,6 @@ const purchaseTicket = async(username, id) => {
     }
 }
 
-
 module.exports = {
     getUsers,
     getStadiumManagers,
@@ -466,6 +462,7 @@ module.exports = {
     myUpcomingMatches,
     availableStadiumsOn,
     addHostRequest,
+    viewRequests,
 
     addNewSM,
     viewMyStadium,

@@ -1,3 +1,6 @@
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { ThemeProvider } from 'react-hook-theme';
+import { useState } from "react"
 import SignUp from "./SignUp"
 import LogIn from "./LogIn"
 import AdminDashboard from "./components/Dashboard/AdminDashboard"
@@ -5,11 +8,7 @@ import FanDashboard from "./components/Dashboard/FanDashboard"
 import ManagerDashboard from "./components/Dashboard/ManagerDashboard"
 import StadiumDashbaord from "./components/Dashboard/StadiumDashboard"
 import ClubDashboard from "./components/Dashboard/ClubDashboard"
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import { ThemeProvider } from 'react-hook-theme';
-import { UserContext } from "./UserContext"
-import { BlockedUser } from "./BlockedContext"
-import { useState } from "react"
+import { UserContext, BlockedUser } from "./Contexts"
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState("");

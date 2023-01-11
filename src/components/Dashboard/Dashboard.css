@@ -81,6 +81,7 @@ body {
     gap: 20px;
 }
 
+
 .actionIcon {
     width: 35px;
     height: 35px;
@@ -112,7 +113,6 @@ body {
 input {
     border-radius: 5px;
     border: 1px solid #888;
-    padding: 5px;
 }
 
 table {
@@ -154,7 +154,7 @@ th, td {
 th {
     background-color: var(--head-row);
     color: var(--head-txt);
-    top: 1rem;
+    top: 0;
     position: sticky;
 }
 
@@ -269,11 +269,13 @@ th {
     padding: 0 3% 3%;
 }
 
-
+.blackme {
+    background-color: #000;
+}
 .sendRequestButton {
     justify-self:"flex-end";
     width: fit-content;
-    height: fit-content%; 
+    height: fit-content; 
     padding: 1rem;
     border-radius: 15px;
     font-size: 1.2rem;
@@ -288,4 +290,18 @@ th {
 
 .sendRequestButton:active {
     transform: scale(1)
+}
+
+
+
+.modal {
+    width: 65rem;
+    height: 30rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    background-color: var(--main-background);
+    opacity: 1;
+    transition : all 0.3s ease-in-out;
 }

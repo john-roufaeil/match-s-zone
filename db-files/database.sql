@@ -105,7 +105,7 @@ CREATE PROCEDURE createAllTables AS
         FOREIGN KEY (match_id) REFERENCES match ON DELETE CASCADE ON UPDATE CASCADE
     );
 GO;
-
+exec createAllTables
 CREATE PROCEDURE dropAllTables AS
     DROP TABLE hostRequest;
     DROP TABLE ticketBuyingTransaction;

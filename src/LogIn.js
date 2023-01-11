@@ -4,30 +4,29 @@ import greetingGif from "./assets/icons/match-s-zone/greeting.gif"
 import stopGif from "./assets/gifs/stop.gif"
 import Footer from "./components/Footer"
 import { useContext } from "react";
-import { BlockedUser } from "./BlockedContext"
+import { BlockedUser } from "./Contexts"
 
 
 const LogIn = () => {
     const {showBlocked, setShowBlocked} = useContext(BlockedUser);
-    const barComponents = {left: null, right: "signup"};
+    const barComponents = {left: "info", right: "signup"};
     const type = "login";
 
     return (
         <div>
             <NavBar barComponents = {barComponents} />
             <main>
-            <div className = "form">
-                <Form type={type} />
-            </div>
-            <div className = "welcome" style={{textAlign:"center"}}>
-                {showBlocked ? <h1>You cannot enter.</h1> : <h1>Welcome back! <br /> Log in to your account.</h1>}
-                <div className = "greeting-gif">
-                    <img src={showBlocked ? stopGif : greetingGif} alt="man waving" width="180px"/>
+                <div className = "form">
+                    <Form type={type} />
                 </div>
-            </div>
-            
-        </main>
-        <Footer />
+                <div className = "welcome" style={{textAlign:"center"}}>
+                    {showBlocked ? <h1>You cannot enter.</h1> : <h1>Welcome back! <br /> Log in to your account.</h1>}
+                    <div className = "greeting-gif">
+                        <img src={showBlocked ? stopGif : greetingGif} alt="man waving" width="180px"/>
+                    </div>
+                </div>
+            </main>
+            <Footer />
     </div>
     )
 }

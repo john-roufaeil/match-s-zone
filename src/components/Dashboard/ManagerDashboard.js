@@ -1,16 +1,15 @@
-import NavBar from "../NavBar";
-import "./Dashboard.css";
 import { useState, useContext } from "react";
+import { UserContext } from '../../Contexts';
 import Manipulate from "./Manipulate";
+import NavBar from "../NavBar";
+import Footer from "../Footer";
 import List from "./List";
-import Choose from "./Choose";
-import Footer from "../Footer"
-import { UserContext } from '../../UserContext';
 import { timeGreet } from "../../utils";
+import "./Dashboard.css";
 
 
 const Dashboard = props => {
-    const barComponents = {left: null, right: "logout"};
+    const barComponents = {left: "info", right: "logout"};
     const [selected, setSelected] = useState("matches");
     const [description, setDescription] = useState("View and Manage All Matches");
     const {loggedInUser, setLoggedInUser} = useContext(UserContext);
@@ -44,7 +43,6 @@ const Dashboard = props => {
                 </button>
             </div>
             <p style={{textAlign:"center", fontWeight: "600", margin:"0", padding:"0"}}>{description}</p>
-            <Choose object={selected} />
             <Manipulate object={selected} action="add" />
             <Manipulate object={selected} action="delete" />
             <List object={selected} />

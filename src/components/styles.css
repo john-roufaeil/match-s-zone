@@ -7,7 +7,7 @@ body {
 }
 
 nav {
-    padding-bottom: 15px;
+    /* padding-bottom: 15px; */
     /* border-bottom: 3px solid #333; */
     background-color : var(--special1);
     display: flex;
@@ -16,7 +16,7 @@ nav {
 }
 
 .logo {
-    padding-top: 10px;
+    padding: 10px 0 15px;
     width: 200px;
     justify-content: center;
     align-items: center;
@@ -25,7 +25,8 @@ nav {
 nav .left {
     margin-left: 50px;
     width: 300px;
-    align-self: flex-start;
+    display: flex;
+    align-items: center;
 }
 
 nav .right {
@@ -155,7 +156,7 @@ sup {
 
 main .form input {
     font-size: 17px;
-    padding: 2px 2px;
+    padding: 3px 5px;
     width: 120%;
     border-radius: 3px;
     border: 2px solid var(--background)
