@@ -362,7 +362,7 @@ CREATE PROCEDURE CR_viewAvailableStadiumsOn (@date DATETIME) AS
 	FROM stadium S
     INNER JOIN stadiumManager SM ON SM.stadium_id = S.id
     INNER JOIN match M ON M.stadium_id = S.id
-    WHERE M.startTime = @date
+    WHERE M.startTime <= @date AND M.endTime >= @date
     )
 GO;
 
