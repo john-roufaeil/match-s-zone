@@ -211,13 +211,15 @@ CREATE PROCEDURE SA_unblockFan @n_id VARCHAR(20) AS
 GO;
 
 CREATE PROCEDURE SA_viewStadiums AS  
-    SELECT DISTINCT S.name, S.location, S.capacity, S.status
-    FROM stadium S;
+    SELECT DISTINCT S.name, S.location, S.capacity, S.[status], SM.username
+    FROM stadium S
+    LEFT JOIN stadiumManager SM ON SM.stadium_id = S.id
 GO;
 
 CREATE PROCEDURE SA_viewClubs AS 
-    SELECT DISTINCT C.name, C.location
-    FROM club C;
+    SELECT DISTINCT C.name, C.location, CR.username
+    FROM club C
+    LEFT JOIN clubRepresentative CR ON CR.club_id = C.id;
 GO;
 
 CREATE PROCEDURE SA_viewFans AS  

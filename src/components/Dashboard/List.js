@@ -310,6 +310,7 @@ const List = props => {
                             ?<form onSubmit={closeStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} alt="alternative text" title="Set stadium as unavailable" /></button></form>
                             :<form onSubmit={openStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} alt="alternative text" title="Set stadium as available" /></button></form>}
                         </td>
+                        <td>@{stadium.username}</td>
                     </tr>
         });
         return  <table>
@@ -320,6 +321,7 @@ const List = props => {
                             <th>Capacity</th>
                             <th>Status</th>
                             <th></th>
+                            <th>Managed by</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -333,6 +335,7 @@ const List = props => {
             return  <tr key={club.name} className="fade-in">
                         <td>{club.name}</td>
                         <td>{club.location.toUpperCase()}</td>
+                        <td>@{club.username}</td>
                     </tr>
         });
         return  <table>
@@ -340,6 +343,7 @@ const List = props => {
                         <tr>
                             <th>Name</th>
                             <th>Location</th>
+                            <th>Reprsented by</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -351,7 +355,7 @@ const List = props => {
     const viewFans = () => {
         const data = fans.map((fan) => {
             return  <tr key={fan.national_id} className="fade-in">
-                        <td>{fan.username}</td>
+                        <td>@{fan.username}</td>
                         <td>{fan.password}</td>
                         <td>{fan.name}</td>
                         <td>{fan.national_id}</td>
@@ -383,7 +387,7 @@ const List = props => {
     const viewUsers = () => {
         const data = users.map((user) => {
             return  <tr key={user.username} className="fade-in">
-                        <td>{user.username}</td>
+                        <td>@{user.username}</td>
                         <td>{user.password}</td>
                         <td>{
                             user.type === 0 ? 'admin' 
@@ -750,7 +754,7 @@ const List = props => {
         return  <>
                     <div className="newEntry">
                         <p>Select Your Match's Start Time</p>
-                        <input className="choose" type="datetime-local" value={selectTime} onChange={(e) => {setSelectTime(e.target.value.replace('T', ' ').substring(0,19))}} />
+                        <input className="choose" type="datetime-local" min="2000-01-01T00:00" max="2100-01-01T00:00" value={selectTime} onChange={(e) => {if(e.target.value.charAt(0) === '2')setSelectTime(e.target.value.replace('T', ' ').substring(0,19))}} />
                     </div>
                     
                     <table>
