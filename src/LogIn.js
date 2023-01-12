@@ -15,7 +15,7 @@ const LogIn = () => {
     return (
         <div>
             <NavBar barComponents = {barComponents} />
-            <main>
+            {/* <main>
                 <div className = "form">
                     <Form type={type} />
                 </div>
@@ -25,7 +25,7 @@ const LogIn = () => {
                         <img src={showBlocked ? stopGif : greetingGif} alt="man waving" width="180px"/>
                     </div>
                 </div>
-            </main>
+            </main> */}
             <Footer />
     </div>
     )

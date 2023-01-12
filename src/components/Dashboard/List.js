@@ -310,7 +310,8 @@ const List = props => {
                             ?<form onSubmit={closeStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={close} alt="alternative text" title="Set stadium as unavailable" /></button></form>
                             :<form onSubmit={openStadium}><button type="submit" style={{backgroundColor: 'transparent', cursor: 'pointer', padding:'0', margin:'0'}}><img width="25px" src={open} alt="alternative text" title="Set stadium as available" /></button></form>}
                         </td>
-                        <td>@{stadium.username}</td>
+                        <td>{stadium.username ? '@' + stadium.username : '🗙'}</td>
+
                     </tr>
         });
         return  <table>
@@ -333,9 +334,9 @@ const List = props => {
     const viewClubs = () => {
         const data = clubs.map((club) => {
             return  <tr key={club.name} className="fade-in">
-                        <td>{club.name}</td>
-                        <td>{club.location.toUpperCase()}</td>
-                        <td>@{club.username}</td>
+                        <td>{club.name.toUpperCase()}</td>
+                        <td>{club.location.charAt(0).toUpperCase() + club.location.substring(1).toLowerCase()}</td>
+                        <td>{club.username ? '@' + club.username : '🗙'}</td>
                     </tr>
         });
         return  <table>
@@ -398,7 +399,7 @@ const List = props => {
                         </td>
                     </tr>
         });
-        return  <table>
+        return  <table className="sortable">
                     <thead>
                         <tr>
                             <th>Username</th>

@@ -19,7 +19,7 @@ const SignUp = () => {
     return (
         <div>
             <NavBar barComponents = {barComponents} />
-            <main>
+            {/* <main>
                 <div className = "welcome">
                     <h1>Welcome, <br /> Join Us Today!</h1>
                     <div className = "userType">
@@ -54,7 +54,7 @@ const SignUp = () => {
                     <Form type={type} />
                     </FadeIn></FadeProps>
                 </div>
-            </main>
+            </main> */}
             <Footer />
         </div>
     );
