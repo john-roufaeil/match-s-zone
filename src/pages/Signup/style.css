@@ -1,0 +1,43 @@
+main {
+    display: flex;
+    justify-self: center;
+    flex-direction: row;
+    position: relative;
+    background-color: var(--main-background);
+    margin: 50px 15%;
+    height: fit-content;
+    width: 70%;
+    padding: 10px 50px;
+    flex-direction: row;
+}
+
+main .welcome {
+    width: 50%;
+}
+
+main .welcome .userType figure {
+    padding:10px;
+    margin: 0;
+    width: 200px;
+    text-align: center;
+}
+
+main .welcome .userType button {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+main .welcome .userType button:hover {
+    transform: scale(1.2);
+    color: var(--txt);
+}
+
+main .welcome .userType img{
+    width:100px;
+    padding: 0;
+    margin: 0;
+}
+
