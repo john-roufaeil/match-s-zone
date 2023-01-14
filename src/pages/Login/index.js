@@ -1,16 +1,16 @@
+import { useContext } from "react"
+import { BlockedUser } from "../../Context"
 import NavBar from "../../components/molecules/NavBar"
 import Footer from "../../components/molecules/Footer"
 import Login_User from "../../components/organisms/Login_User"
 import greetingGif from "../../assets/gifs/greeting.gif"
 import stopGif from "../../assets/gifs/stop.gif"
-
 import "../../assets/global.css"
 import "./style.css"
 
 const Login = () => {
     const barComponents = {left: "info", right: "signup"};
-    const type = "login";
-    const showBlocked = false;
+    const {showBlocked, setShowBlocked} = useContext(BlockedUser);
 
     return (
         <div>

@@ -7,4 +7,4 @@ const Input = ({ className, ...rest }) => {
     );
 }
 
-export default Input;   
+export default Input;    

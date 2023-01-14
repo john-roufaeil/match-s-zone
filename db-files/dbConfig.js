@@ -11,9 +11,8 @@ var config = {
     },
     port: 1433,
     pool: {
-        max: 100,
-        log: log
-    },
+        max: 100
+    }
 };
 
 module.exports = config

@@ -1,40 +1,8 @@
 const sql = require('mssql');
-// const config = require('./dbConfig');
+const config = require('./dbConfig');
 
-
-let connectionCount = 0;
-
-const log = (message) => {
-  console.log(`[mssql] ${message}`);
-}
-
-var config = {
-    user: 'bitte',
-    password: '',
-    server: 'localhost',  
-    database: 'match-s-zone-database',
-    options: {
-        trustServerCertificate: true,
-        trustedConnection: false,
-        enableArithAbort: true,
-        instancename: 'SQLEXPRESS',
-    },
-    port: 1433,
-    pool: {
-        max: 3000,
-        log: log
-    },
-};
 //create the pool
 const pool = new sql.ConnectionPool(config);
-pool.on('connect', (connection) => {
-    connectionCount += 1;
-    console.log(`[ConnectionPool] Connection established. Current connection count: ${connectionCount}`);
-});
-pool.on('close', (connection) => {
-    connectionCount -= 1;
-    console.log(`[ConnectionPool] Connection closed. Current connection count: ${connectionCount}`);
-});
 pool.connect();
 
 const getUsers = async() => {

@@ -1,0 +1,19 @@
+.error  {
+    background-color: var(--error-bg);
+    color: var(--error);
+    width: 100%;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.success {
+    background-color: var(--success-bg);
+    color: var(--success);
+    width: 100%;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 5px;
+}
