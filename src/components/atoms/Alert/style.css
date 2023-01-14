@@ -6,6 +6,7 @@
     font-size: 0.9rem;
     padding: 10px;
     border-radius: 5px;
+    margin: 0;
 }
 
 .success {
@@ -16,4 +17,5 @@
     font-size: 0.9rem;
     padding: 10px;
     border-radius: 5px;
+    margin: 0;
 }

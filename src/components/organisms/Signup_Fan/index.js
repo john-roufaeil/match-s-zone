@@ -43,7 +43,6 @@ const Signup_Fan = props => {
         setPhone(""); 
     }; 
 
-    console.log(fans)
     const submitNewF = async (e) => {
         e.preventDefault(); 
         var exisitingUsername = false;
@@ -79,7 +78,7 @@ const Signup_Fan = props => {
             .catch(e => {setErrMsg("Server Error, please logout and reload.");setSucMsg(""); setCode("")})
         }
     }
-    console.log(name)
+    
     return  (<Form sucMsg={sucMsg} errMsg={errMsg}> 
                 <div className = "field">
                     <label htmlFor = "name"> Name </label><br />

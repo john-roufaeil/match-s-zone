@@ -544,3 +544,6 @@ CREATE PROCEDURE viewClubRepresentatives AS
     FROM clubRepresentative CR
     INNER JOIN club C ON CR.club_id = C.id
 GO;
+
+
+select * from sportsassociationmanager
