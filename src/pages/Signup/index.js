@@ -1,9 +1,11 @@
 import { useState } from "react";
-// import FadeIn from 'react-fade-in';
-// import FadeProps from 'fade-props';
 import NavBar from "../../components/molecules/NavBar"
 import Footer from "../../components/molecules/Footer"
 import Button from "../../components/atoms/Button";
+import Signup_Fan from "../../components/organisms/Signup_Fan";
+import Signup_Manager from "../../components/organisms/Signup_Manager";
+import Signup_ClubRepresentative from "../../components/organisms/Signup_ClubRepresentative/index.js";
+import Signup_StadiumManager from "../../components/organisms/Signup_StadiumManager";
 import fan from "../../assets/icons/fan/fan.png"
 import fanDisabled from "../../assets/icons/fan/fan-disabled.png"
 import manager from "../../assets/icons/sports-manager/manager.png"
@@ -12,13 +14,19 @@ import stadiumManager from "../../assets/icons/stadium-manager/stadium-manager.p
 import stadiumManagerDisabled from "../../assets/icons/stadium-manager/stadium-manager-disabled.png"
 import clubRepresentative from "../../assets/icons/club-representative/club-representative.png"
 import clubRepresentativeDisabled from "../../assets/icons/club-representative/club-reprsentative-disabled.png"
-
 import "../../assets/global.css"
 import "./style.css"
 
 const SignUp = () => {
     const barComponents = {left: "info", right: "login"};
     const [type, setType] = useState("fan");
+    var form = <></>;
+    switch(type) {
+        case "fan": form = <Signup_Fan />; break;
+        case "manager": form = <Signup_Manager />; break;
+        case "clubRepresentative": form = <Signup_ClubRepresentative />; break;
+        default: form = <Signup_StadiumManager />; 
+    }
     return (
         <div>
             <NavBar barComponents = {barComponents} />
@@ -54,7 +62,7 @@ const SignUp = () => {
                     </div>
                 </div>
                 <div className = "form">
-                    {/* <Form type={type} /> */}
+                    {form}
                 </div>
             </main>
             <Footer />

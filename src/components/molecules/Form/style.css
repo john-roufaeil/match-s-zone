@@ -11,6 +11,10 @@ main {
     flex-direction: row;
 }
 
+form {
+    padding: 5%;
+}
+
 main .welcome {
     width: 50%;
 }
@@ -39,7 +43,7 @@ main .form {
     text-align: center;
     display: flex;
     justify-self: center;
-    width: fit-content;
+    width: 100%;
     padding: 5px 100px;
 } 
 

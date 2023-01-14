@@ -2,11 +2,10 @@ import Form from "../../molecules/Form";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// import Input from "../../atoms/Input"
-import { Input } from 'antd';
-
+import {Input} from "antd"
 import { UserContext, BlockedUser } from "../../../Context"
 import { EyeTwoTone, EyeInvisibleOutlined, LockOutlined } from '@ant-design/icons';
+import { placeholder } from "@babel/types";
 
 
 const Login_User = props => {
@@ -78,6 +77,7 @@ const Login_User = props => {
                         prefix="@" 
                         autoComplete = "off"
                         autoFocus = "on"
+                        placeholder="Enter your username"
                         status= {errMsg ? "error" : ""}
                         onChange = {(e) => {setUsername(e.target.value); setSucMsg(""); setErrMsg(""); setShowBlocked(false);}}
                         className="usernameInput"
@@ -85,15 +85,14 @@ const Login_User = props => {
                     />
                 </div>
                 <div className = "field">
-                    <label htmlFor = "password">
-                        Password
-                    </label><br />
+                    <label htmlFor = "password"> Password </label> <br />
                     <Input.Password
                         type = "password"
                         id = "password" 
                         value = {password}
                         autoComplete = "new-password"
                         prefix=<LockOutlined />
+                        placeholder="Enter your password"
                         status= {errMsg ? "error" : ""}
                         onChange = {(e) => {setPassword(e.target.value); setSucMsg(""); setErrMsg(""); setShowBlocked(false);}}
                         iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
@@ -101,9 +100,7 @@ const Login_User = props => {
                     />
                 </div>
                 <p>Forgot your password?</p>
-                <button onClick = {logIn} disabled={!getIsFormValid("logIn")}> 
-                    Log In
-                </button>  
+                <button onClick = {logIn} disabled={!getIsFormValid("logIn")}> Log In </button>  
             </Form>
 }
 
