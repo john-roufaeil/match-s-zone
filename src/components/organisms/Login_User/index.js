@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {Input} from "antd"
 import { UserContext, BlockedUser } from "../../../Context"
 import { EyeTwoTone, EyeInvisibleOutlined, LockOutlined } from '@ant-design/icons';
-import { placeholder } from "@babel/types";
+import Button from "../../atoms/Button";
 
 
 const Login_User = props => {
@@ -67,7 +67,7 @@ const Login_User = props => {
             setLoggedInUser(username);
         }
     };
-    return <Form sucMsg={sucMsg} errMsg={errMsg}>
+    return <div style={{width:"80%"}}><Form sucMsg={sucMsg} errMsg={errMsg}>
                 <div className="field"> 
                     <label htmlFor="username">Username</label><br />
                     <Input 
@@ -99,9 +99,9 @@ const Login_User = props => {
                         required
                     />
                 </div>
-                <p>Forgot your password?</p>
-                <button onClick = {logIn} disabled={!getIsFormValid("logIn")}> Log In </button>  
-            </Form>
+                <p style={{margin: "10px 0 0 0"}}>Forgot your password?</p>
+                <Button type="submit" ghost block size="large" className="submit" onClick = {logIn} disabled={!getIsFormValid("logIn")}> Log In </Button>  
+            </Form></div>
 }
 
 export default Login_User;

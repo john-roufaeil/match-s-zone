@@ -3,6 +3,7 @@ import axios from "axios";
 import Form from "../../molecules/Form";
 import { Input, DatePicker } from 'antd';
 import { EyeTwoTone, EyeInvisibleOutlined, LockOutlined, ExclamationOutlined } from '@ant-design/icons';
+import Button from "../../atoms/Button";
 
 
 const Signup_Fan = props => {
@@ -78,8 +79,8 @@ const Signup_Fan = props => {
             .catch(e => {setErrMsg("Server Error, please logout and reload.");setSucMsg(""); setCode("")})
         }
     }
-    
-    return  (<Form sucMsg={sucMsg} errMsg={errMsg}> 
+
+    return  (<div style={{width:"80%"}}><Form sucMsg={sucMsg} errMsg={errMsg}> 
                 <div className = "field">
                     <label htmlFor = "name"> Name </label><br />
                     <Input
@@ -182,8 +183,8 @@ const Signup_Fan = props => {
                         required
                     />
                 </div>
-                <button type="submit" onClick={submitNewF} disabled={!getIsFormValid("fan")}> Create account </button>  
-            </Form>
+                <Button type="ghost" block size="large" className="submit" onClick = {submitNewF} disabled={!getIsFormValid("logIn")}> Create Account </Button>  
+            </Form></div>
         );
 }
 

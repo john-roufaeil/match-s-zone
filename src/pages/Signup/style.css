@@ -41,3 +41,6 @@ main .welcome .userType img{
     margin: 0;
 }
 
+.form {
+    width: 80%;
+}

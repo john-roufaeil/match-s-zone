@@ -3,3 +3,12 @@
     height: fit-content;
     color: var(--txt);   
 }
+
+.ant-btn.submit {
+    display: block;
+    background-color: var(--special2);
+    border: 2px solid var(--special2);
+    color: var(--button-txt);
+    width: 100%;
+    margin-top: 30px;
+}
