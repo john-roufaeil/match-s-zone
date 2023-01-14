@@ -89,6 +89,7 @@ const Signup_Fan = props => {
                         name = "name"
                         value = {name}
                         autoComplete = "off"
+                        autoFocus="true"
                         prefix = <ExclamationOutlined style={{width:"0px"}} />
                         placeholder="Enter your name"
                         onChange = {(e) => {setName(e.target.value); setSucMsg(""); setErrMsg(""); setCode("")}}
@@ -183,6 +184,7 @@ const Signup_Fan = props => {
                         required
                     />
                 </div>
+                <input style={{display:"none"}} type="submit" onClick={submitNewF}></input>
                 <Button type="ghost" block size="large" className="submit" onClick = {submitNewF} disabled={!getIsFormValid("logIn")}> Create Account </Button>  
             </Form></div>
         );

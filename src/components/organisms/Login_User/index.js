@@ -100,6 +100,7 @@ const Login_User = props => {
                     />
                 </div>
                 <p style={{margin: "10px 0 0 0"}}>Forgot your password?</p>
+                <input style={{display:"none"}} type="submit" onClick={logIn}></input>
                 <Button type="submit" ghost block size="large" className="submit" onClick = {logIn} disabled={!getIsFormValid("logIn")}> Log In </Button>  
             </Form></div>
 }

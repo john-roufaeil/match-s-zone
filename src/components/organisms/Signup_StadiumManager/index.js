@@ -87,6 +87,7 @@ const Signup_StadiumManager = props => {
                         name = "name"
                         value = {name}
                         autoComplete = "off"
+                        autoFocus="true"
                         prefix = <ExclamationOutlined style={{width:"0px"}} />
                         placeholder="Enter your name"
                         onChange = {(e) => {setName(e.target.value); setSucMsg(""); setErrMsg(""); setCode("")}}
@@ -139,6 +140,7 @@ const Signup_StadiumManager = props => {
                         required
                     />
                 </div>
+                <input style={{display:"none"}} type="submit" onClick={submitNewSM}></input>
                 <Button type="submit" ghost block size="large" className="submit" onClick = {submitNewSM} disabled={!getIsFormValid()}> Create Account </Button>  
             </Form>
             </div>

@@ -88,6 +88,7 @@ const Signup_Manager = props => {
                         name = "name"
                         value = {name}
                         autoComplete = "off"
+                        autoFocus="true"
                         prefix = <ExclamationOutlined style={{width:"0px"}} />
                         placeholder="Enter your name"
                         onChange = {(e) => {setName(e.target.value); setSucMsg(""); setErrMsg(""); setCode("")}}
@@ -140,6 +141,7 @@ const Signup_Manager = props => {
                         required
                     />
                 </div>
+                <input style={{display:"none"}} type="submit" onClick={submitNewCR}></input>
                 <Button type="ghost" block size="large" className="submit" onClick = {submitNewCR} disabled={!getIsFormValid("logIn")}> Create Account </Button>  
             </Form>
             </div>
