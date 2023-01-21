@@ -87,7 +87,7 @@ const Signup_StadiumManager = props => {
                         name = "name"
                         value = {name}
                         autoComplete = "off"
-                        autoFocus="true"
+                        autoFocus="on"
                         prefix = <ExclamationOutlined style={{width:"0px"}} />
                         placeholder="Enter your name"
                         onChange = {(e) => {setName(e.target.value); setSucMsg(""); setErrMsg(""); setCode("")}}

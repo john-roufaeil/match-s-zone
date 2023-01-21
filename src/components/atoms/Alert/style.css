@@ -1,12 +1,13 @@
 .error  {
     background-color: var(--error-bg);
     color: var(--error);
-    width: 100%;
+    width: 90%;
     font-weight: 600;
     font-size: 0.9rem;
     padding: 10px;
     border-radius: 5px;
-    margin: 0;
+    margin: auto;
+    /* text-align: center; */
 }
 
 .success {

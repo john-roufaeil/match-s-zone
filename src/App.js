@@ -5,8 +5,11 @@ import { UserContext, BlockedUser } from "./Context"
 
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
-import NavBar from "./components/molecules/NavBar";
-
+import Admin from "./pages/Admin"
+import Fan from "./pages/Fan"
+import Manager from "./pages/Manager"
+import ClubRepresentative from "./pages/ClubRepresentative"
+import StadiumManager from "./pages/StadiumManager"
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState("");
@@ -21,11 +24,11 @@ function App() {
                 <Route path="/" element={<Login />} exact />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                {/* <Route path="/admin-dashboard" element={<AdminDashboard />} />        
-                <Route path="/fan-dashboard" element={<FanDashboard />} />        
-                <Route path="/manager-dashboard" element={<ManagerDashboard />} />        
-                <Route path="/stadium-manager-dashboard" element={<StadiumDashbaord />} />        
-                <Route path="/club-representative-dashboard" element={<ClubDashboard />} />         */}
+                <Route path="/admin-dashboard" element={<Admin />} />        
+                <Route path="/fan-dashboard" element={<Fan />} />        
+                <Route path="/manager-dashboard" element={<Manager />} />        
+                <Route path="/stadium-manager-dashboard" element={<StadiumManager />} />        
+                <Route path="/club-representative-dashboard" element={<ClubRepresentative />} />        
               </Routes>
             </BrowserRouter>
           </BlockedUser.Provider>

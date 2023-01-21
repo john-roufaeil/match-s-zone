@@ -41,7 +41,6 @@ const Signup_Manager = props => {
         setPassword("");
         setClubName("");
     }; 
-    console.log(clubRepresentatives)
     const submitNewCR = async (e) => {
         e.preventDefault(); 
         var exisitingUsername = false;
@@ -88,7 +87,7 @@ const Signup_Manager = props => {
                         name = "name"
                         value = {name}
                         autoComplete = "off"
-                        autoFocus="true"
+                        autoFocus="on"
                         prefix = <ExclamationOutlined style={{width:"0px"}} />
                         placeholder="Enter your name"
                         onChange = {(e) => {setName(e.target.value); setSucMsg(""); setErrMsg(""); setCode("")}}

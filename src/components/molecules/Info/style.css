@@ -29,7 +29,6 @@
     font-weight: 200;
     font-size: smaller;
     text-align: center;
-
 }
 
 .info li {
@@ -42,8 +41,32 @@
 }
 
 .info table, .info td {
-    padding: 5px;
+    padding: 5px 20px;
     box-shadow: none;
     text-align: left;
     width: fit-content
+}
+
+.divider {
+    width: 50%;
+}
+
+.process {
+    margin-bottom: 2px;
+}
+
+.balls {
+    width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    box-shadow: var(--table-shadow);
+}
+
+tr:nth-of-type(even) {
+    background-color: var(--row-even);
 }

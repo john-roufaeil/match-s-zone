@@ -143,7 +143,6 @@ app.post('/availableStadiumsOn', jsonParser, async (req, res) => {
 })
 
 app.post('/addHostRequest', jsonParser, async (req, res) => {
-    console.log(req.body)
     const result = await dbOperation.addHostRequest(req.body.cr_id, req.body.sm_id, req.body.m_id);
     return res.send(result.recordset);
 })

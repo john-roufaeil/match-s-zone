@@ -10,7 +10,6 @@ const Form = props => {
 
     const clearForm = () => { 
     }; 
-    console.log(props);
     var msg = props.sucMsg ? <Alert className="success">{props.sucMsg}</Alert>
             : props.errMsg ? <Alert className="error">{props.errMsg}</Alert>
             : null;

@@ -32,7 +32,7 @@ const Info = props => {
                         <h1>Welcome to Match'S Zone!</h1>
                         <p className="champions">Where Champions Meet</p>
                     </div>
-                    <Divider></Divider>
+                    <div className="divider"><Divider></Divider></div>
                     <div className="block">
                         <h3>About</h3>
                         <ul>
