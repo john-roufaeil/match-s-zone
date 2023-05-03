@@ -1,6 +1,7 @@
+require('dotenv').config();
 const sql = require('mssql');
-// const config = require('./dbConfig');
 
+const config = require('./dbConfig.js');
 
 let connectionCount = 0;
 
@@ -8,23 +9,6 @@ const log = (message) => {
   console.log(`[mssql] ${message}`);
 }
 
-var config = {
-    user: 'bitte',
-    password: '',
-    server: 'localhost',  
-    database: 'match-s-zone-database',
-    options: {
-        trustServerCertificate: true,
-        trustedConnection: false,
-        enableArithAbort: true,
-        instancename: 'SQLEXPRESS',
-    },
-    port: 1433,
-    pool: {
-        max: 3000,
-        log: log
-    },
-};
 //create the pool
 const pool = new sql.ConnectionPool(config);
 pool.on('connect', (connection) => {
@@ -111,7 +95,7 @@ const delStadium = async (name) => {
 const blockFan = async (nat_id) => {
     try {
         let request = pool.request();
-        let exec = await request.query(`EXEC SA_blockFan [${nat_id}.toLowerCase()]`);
+        let exec = await request.query(`EXEC SA_blockFan [${nat_id}]`);
         return exec;
     } catch (error) {
         console.log(error);
@@ -121,7 +105,7 @@ const blockFan = async (nat_id) => {
 const unblockFan = async (nat_id) => {
     try {
         let request = pool.request();
-        let exec = await request.query(`EXEC SA_unblockFan[${nat_id.toLowerCase()}]`);
+        let exec = await request.query(`EXEC SA_unblockFan[${nat_id}]`);
         return exec;
     } catch (error) {
         console.log(error);

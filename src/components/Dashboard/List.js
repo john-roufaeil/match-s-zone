@@ -681,7 +681,7 @@ const List = props => {
             return  <tr key={club.id} className="fade-in">
                         <td>{club.id}</td>
                         <td>{club.name}</td>
-                        <td>{club.LOCATION.toUpperCase()}</td>
+                        <td>{club.location.toUpperCase()}</td>
                     </tr>
         });
         return  <table>

@@ -1,18 +1,17 @@
 var config = {
-    user: 'bitte',
-    password: '',
-    server: 'localhost',  
-    database: 'match-s-zone-database',
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_DATABASE,
     options: {
         trustServerCertificate: true,
         trustedConnection: false,
         enableArithAbort: true,
-        instancename: 'SQLEXPRESS',
+        instancename: process.env.DB_INSTANCE,
     },
     port: 1433,
     pool: {
-        max: 100,
-        log: log
+        max: 3000,
     },
 };
 

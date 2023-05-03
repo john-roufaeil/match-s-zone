@@ -120,8 +120,8 @@ app.get('/viewClubsNotScheduledTogether', jsonParser, async (req, res) => {
 // Club Representative //
 app.post('/newCR', jsonParser, async (req, res) => {
     return await dbOperation.addNewCR(
-        req.body.name, 
-        req.body.username, 
+        req.body.name,
+        req.body.username,
         req.body.password,
         req.body.club
     );

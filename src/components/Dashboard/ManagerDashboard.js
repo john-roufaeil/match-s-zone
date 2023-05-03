@@ -31,7 +31,7 @@ const Dashboard = props => {
                     onClick={() => {setSelected("upcoming"); setDescription("View all upcoming matches");}}>
                     Upcoming Matches
                 </button>
-                <button 
+                <button
                     className={`dashboardMenuButton ${selected === "previous" ? "selectedButton" : ""}`}
                     onClick={() => {setSelected("previous"); setDescription("View all previous matches");}}>
                     Previous Matches
