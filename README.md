@@ -1,4 +1,7 @@
-# Match'S Zone 🏟️
+<div align="center">
+    <img src="./src/assets/icons/match-s-zone/website-icon.png" width="200" height="200">
+<h1>Match'S Zone 🏟️<h1>
+</div>
 
 ## Description
 
@@ -79,11 +82,3 @@ To demonstrate the system's capabilities, a default system admin user with the c
 |    Blocked Fan    |
 |:-------------------:|
 | System administrators have the authority to block fans and prevent them from accessing the system. Once a fan is blocked, they are no longer able to log in or use the system until they are unblocked by an administrator.|
-
-<br><br>
-
-
-## Badges
-
-![badmath](https://img.shields.io/github/languages/top/lernantino/badmath)
-Check out the badges hosted by [shields.io](https://shields.io/). 
